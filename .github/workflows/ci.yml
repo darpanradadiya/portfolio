@@ -52,17 +52,12 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Verify committed fonts match the subset definition
-        # The fonts are generated and committed. This re-runs the generator and
-        # fails if the result differs, so a change to MONO_SUBSET cannot be merged
-        # without the regenerated font alongside it.
+      - name: Verify committed fonts
+        # Checks glyph coverage rather than byte equality: woff2 output is not
+        # reproducible across fontTools and brotli versions, so a byte comparison
+        # would fail for reasons unrelated to correctness. What matters is that the
+        # monospace font contains exactly MONO_SUBSET and the text font covers
+        # everything the site renders.
         run: |
           python3 -m pip install --quiet fonttools brotli
-          python3 scripts/subset-fonts.py
-          if ! git diff --quiet -- public/fonts src/assets/og; then
-            echo "::error::Committed fonts do not match the current subset definition."
-            echo "Run: python3 scripts/subset-fonts.py, then commit the result."
-            git diff --stat -- public/fonts src/assets/og
-            exit 1
-          fi
-          echo "Committed fonts match the subset definition."
+          npm run lint:fonts

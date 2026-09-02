@@ -16,31 +16,29 @@ export default function AppleIcon() {
   ];
 
   return new ImageResponse(
-    (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          position: 'relative',
-          backgroundColor: '#161A1D',
-        }}
-      >
-        {bars.map((bar) => (
-          <div
-            key={bar.left}
-            style={{
-              position: 'absolute',
-              left: bar.left,
-              top: bar.top,
-              width: 22,
-              height: bar.height,
-              backgroundColor: '#FBFBF9',
-            }}
-          />
-        ))}
-      </div>
-    ),
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        position: 'relative',
+        backgroundColor: '#161A1D',
+      }}
+    >
+      {bars.map((bar) => (
+        <div
+          key={bar.left}
+          style={{
+            position: 'absolute',
+            left: bar.left,
+            top: bar.top,
+            width: 22,
+            height: bar.height,
+            backgroundColor: '#FBFBF9',
+          }}
+        />
+      ))}
+    </div>,
     size,
   );
 }

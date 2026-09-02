@@ -16,7 +16,8 @@
     "lint:mono": "tsx scripts/check-mono-subset.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "verify": "npm run typecheck && npm run lint && npm run lint:css && npm run lint:mono"
+    "verify": "npm run typecheck && npm run lint && npm run lint:css && npm run lint:mono && npm run lint:fonts && npm run format:check",
+    "lint:fonts": "python3 scripts/check-fonts.py"
   },
   "dependencies": {
     "gray-matter": "4.0.3",
