@@ -112,11 +112,8 @@ export const profile = {
     },
     linkedin: {
       label: 'LinkedIn',
-      // TODO(darpan): the resume's "LinkedIn" hyperlink points at bare
-      // https://linkedin.com rather than a profile, so the real URL is unknown.
-      // Worth fixing in the PDF too — recruiters click that link.
-      url: null,
-      handle: null,
+      url: 'https://www.linkedin.com/in/darpan-radadiya-146a49215',
+      handle: 'darpan-radadiya-146a49215',
       inSameAs: true,
       showStats: false,
     },
@@ -137,8 +134,10 @@ export const profile = {
     },
     geeksforgeeks: {
       label: 'GeeksforGeeks',
-      // TODO(darpan): profile name is "Darpan", which is not enough to build a URL.
-      // Need the full profile link.
+      // TODO(darpan): the profile display name is "Darpan", which is not enough to
+      // build a URL, and the slug is not yet known. Left null rather than guessed —
+      // a wrong sameAs asserts an identity that is not his. The 719 figure below is
+      // hand-entered because GeeksforGeeks has no public API.
       url: null,
       handle: null,
       inSameAs: true,

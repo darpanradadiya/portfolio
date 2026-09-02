@@ -24,7 +24,10 @@ metrics:
 repo: null
 demo: null
 screenshot: null
-dataNote: null
+dataNote: >-
+  The 5,000 patients and 12,000 appointments are generated data, loaded to validate
+  query performance and schema constraints at scale. No real clinical records were
+  used.
 ---
 
 {/*
@@ -41,9 +44,10 @@ dataNote: null
     - KPI dashboards with a live SQL viewer tracing metrics back to source tables
     - Full CRUD REST API served to a React front end, with CSV export
 
-  CONFIRM: was the 5,000-patient dataset generated for load testing, or is it a
-  public dataset? If generated, set `dataNote` in the frontmatter and say so — the
-  brief is explicit that dataset provenance gets disclosed, not omitted.
+  Data provenance is confirmed and disclosed in `dataNote`: the 5,000 patients and
+  12,000 appointments are generated, loaded to validate query performance at scale.
+  That renders at the top of the case study. Restate it in Context in your own
+  words — volunteering it is what makes the schema work credible.
 */}
 
 ## Context
