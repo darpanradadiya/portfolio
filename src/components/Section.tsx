@@ -29,7 +29,7 @@ export function Section({
     <section
       id={id}
       aria-labelledby={labelledBy}
-      className={divided ? 'border-t border-rule pt-10 md:pt-14' : ''}
+      className={divided ? 'border-rule border-t pt-10 md:pt-14' : ''}
     >
       <div className="railed">
         <div className="text-2xs text-ink-muted md:pt-[0.45rem] md:text-right">

@@ -41,6 +41,8 @@ export type ProofPoint = {
 export type EducationEntry = {
   readonly institution: string;
   readonly credential: string;
+  /** Abbreviated form for tight spaces such as the hero meta line. */
+  readonly credentialShort: string;
   readonly location: string;
   readonly completion: string;
   readonly result: string;
@@ -92,6 +94,13 @@ export const profile = {
   contact: {
     email: 'radadiya.d@northeastern.edu',
   },
+
+  /**
+   * When the coding-profile figures in `proof` were last checked against the live
+   * profiles. Rendered beside the numbers, so a stale figure is honest rather than
+   * silently wrong.
+   */
+  statsVerifiedOn: '2026-09-02',
 
   links: {
     github: {
@@ -175,6 +184,7 @@ export const profile = {
     {
       institution: 'Northeastern University',
       credential: 'Master of Professional Studies in Analytics',
+      credentialShort: 'MPS Analytics',
       location: 'Boston, MA',
       completion: 'December 2026',
       result: 'GPA 3.96/4.0',
@@ -182,6 +192,7 @@ export const profile = {
     {
       institution: 'Dhirubhai Ambani University',
       credential: 'B.Tech, Information and Communication Technology',
+      credentialShort: 'B.Tech ICT',
       location: 'Gujarat, India',
       completion: 'June 2024',
       result: 'CGPA 7.45/10.0',
@@ -309,6 +320,22 @@ export const profile = {
     },
   ] satisfies readonly SkillGroup[],
 } as const;
+
+/**
+ * The current qualification.
+ *
+ * `noUncheckedIndexedAccess` is on, so indexing is checked rather than asserted.
+ * The throw documents an invariant that holds at build time: this array is never
+ * empty, and if someone empties it the build fails loudly instead of rendering a
+ * gap in the hero.
+ */
+export function currentEducation(): EducationEntry {
+  const first = profile.education[0];
+  if (first === undefined) {
+    throw new Error('profile.education must contain at least one entry');
+  }
+  return first;
+}
 
 /** Absolute URLs for JSON-LD `sameAs`, excluding profiles whose URL is unknown. */
 export function sameAsUrls(): string[] {

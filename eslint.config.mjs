@@ -28,12 +28,15 @@ const reservedClassPattern = RESERVED_CLASSES.join('|');
 const eslintConfig = [
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
-    ignores: ['.next/**', 'node_modules/**', 'out/**', 'next-env.d.ts'],
+    // MDX is not linted here: no MDX parser is installed, and the TypeScript
+    // parser chokes on YAML frontmatter. Case-study content is validated instead
+    // by the Zod schema in src/lib/projects.ts and by scripts/check-mono-subset.ts.
+    ignores: ['.next/**', 'node_modules/**', 'out/**', 'next-env.d.ts', '**/*.mdx'],
   },
   {
     // Scoped to source files: the rule's own definition below mentions the
     // reserved class names, and a config file is not a render path.
-    files: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.mdx'],
+    files: ['src/**/*.ts', 'src/**/*.tsx'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',

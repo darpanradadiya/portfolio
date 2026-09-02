@@ -9,7 +9,7 @@ import { profile } from '@/content/profile';
  */
 export function SiteHeader() {
   return (
-    <header className="border-b border-rule">
+    <header className="border-rule border-b">
       <div className="page flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 py-4">
         <Link href="/" className="text-base font-medium no-underline">
           {profile.name}

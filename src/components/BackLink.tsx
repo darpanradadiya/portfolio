@@ -29,7 +29,7 @@ export function BackLink({ href, children }: BackLinkProps) {
       >
         <path d="M11 6H1.5M5 2L1 6l4 4" />
       </svg>
-      <span className="underline decoration-rule-strong underline-offset-[0.2em]">
+      <span className="decoration-rule-strong underline underline-offset-[0.2em]">
         {children}
       </span>
     </Link>

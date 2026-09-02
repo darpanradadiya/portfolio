@@ -77,7 +77,8 @@ for (const dir of SCAN_DIRS) {
           violations.push({
             file: rel,
             line: i + 1,
-            detail: 'applies `font-mono` outside Measured.tsx — render measured values with <Measured>',
+            detail:
+              'applies `font-mono` outside Measured.tsx — render measured values with <Measured>',
           });
         }
       });

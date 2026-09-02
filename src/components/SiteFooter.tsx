@@ -4,7 +4,7 @@ import { profile } from '@/content/profile';
 
 export function SiteFooter() {
   return (
-    <footer className="mt-20 border-t border-rule md:mt-28">
+    <footer className="border-rule mt-20 border-t md:mt-28">
       <div className="page flex flex-col gap-6 py-10 md:flex-row md:justify-between">
         <div className="text-2xs text-ink-muted">
           <p>

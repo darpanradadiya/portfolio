@@ -76,7 +76,9 @@ function readProject(fileName: string): Project {
     const issues = parsed.error.issues
       .map((issue) => `    ${issue.path.join('.') || '(root)'}: ${issue.message}`)
       .join('\n');
-    throw new Error(`Invalid frontmatter in src/content/projects/${fileName}:\n${issues}`);
+    throw new Error(
+      `Invalid frontmatter in src/content/projects/${fileName}:\n${issues}`,
+    );
   }
 
   return { ...parsed.data, slug, body: content };
