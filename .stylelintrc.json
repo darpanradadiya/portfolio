@@ -1,0 +1,36 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "rules": {
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": [
+          "theme",
+          "source",
+          "utility",
+          "variant",
+          "custom-variant",
+          "apply",
+          "reference",
+          "plugin",
+          "config"
+        ]
+      }
+    ],
+    "import-notation": "string",
+    "custom-property-pattern": null,
+    "declaration-property-value-no-unknown": null,
+    "function-no-unknown": [true, { "ignoreFunctions": ["light-dark", "theme"] }],
+    "declaration-property-value-disallowed-list": {
+      "/.*/": ["/var\\(\\s*--(signal|warn)\\b/"]
+    }
+  },
+  "overrides": [
+    {
+      "files": ["src/styles/reserved.css"],
+      "rules": {
+        "declaration-property-value-disallowed-list": null
+      }
+    }
+  ]
+}
