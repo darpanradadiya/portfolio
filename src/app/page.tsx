@@ -5,6 +5,7 @@ import { WorkRow } from '@/components/WorkRow';
 import { Section } from '@/components/Section';
 import { MetaList } from '@/components/MetaList';
 import { CopyEmail } from '@/components/CopyEmail';
+import { ContactForm } from '@/components/ContactForm';
 import { Limitation } from '@/components/Limitation';
 import { currentEducation, profile } from '@/content/profile';
 import { getFeaturedProjects } from '@/lib/projects';
@@ -99,13 +100,16 @@ export default function Home() {
 
       <Section marker="Contact" divided>
         <h2 className="text-xl">Get in touch</h2>
-        <div className="mt-5 text-base">
-          <CopyEmail email={profile.contact.email} />
-        </div>
-        <p className="text-ink-muted mt-4 text-xs">
+        <p className="text-ink-muted mt-3 text-xs">
           Open to analytics engineering, data engineering, and applied ML roles from
           December 2026.
         </p>
+        <div className="mt-5 text-base">
+          <CopyEmail email={profile.contact.email} />
+        </div>
+        <div className="mt-8">
+          <ContactForm email={profile.contact.email} />
+        </div>
       </Section>
     </div>
   );
