@@ -1,6 +1,7 @@
 /**
  * Fails the build if anything rendered in the monospace class uses a glyph the
- * subset font cannot draw. See PORTFOLIO_BRIEF.md §11.3 and DESIGN.md.
+ * subset font cannot draw. See DESIGN.md, "The monospace face is subset to
+ * numeric glyphs".
  *
  * Two checks:
  *   1. Every literal child of <Measured> in .tsx / .mdx is inside the subset.

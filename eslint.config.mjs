@@ -7,7 +7,7 @@ const compat = new FlatCompat({
 });
 
 /**
- * Reserved-token enforcement — see PORTFOLIO_BRIEF.md §11.5.
+ * Reserved-token enforcement — see DESIGN.md, "Two rules enforced by tooling".
  *
  * `--signal` and `--warn` are reserved for verified-data and limitation UI only.
  * Three layers keep that true without relying on discipline:
@@ -45,17 +45,17 @@ const eslintConfig = [
         {
           selector: `Literal[value=/\\b(${reservedClassPattern})\\b/]`,
           message:
-            'Reserved: `is-verified` / `is-limitation` consume --signal / --warn and may only be used in VerifiedValue.tsx or Limitation.tsx. See PORTFOLIO_BRIEF.md §11.5.',
+            'Reserved: `is-verified` / `is-limitation` consume --signal / --warn and may only be used in VerifiedValue.tsx or Limitation.tsx. See DESIGN.md.',
         },
         {
           selector: `TemplateElement[value.raw=/\\b(${reservedClassPattern})\\b/]`,
           message:
-            'Reserved: `is-verified` / `is-limitation` consume --signal / --warn and may only be used in VerifiedValue.tsx or Limitation.tsx. See PORTFOLIO_BRIEF.md §11.5.',
+            'Reserved: `is-verified` / `is-limitation` consume --signal / --warn and may only be used in VerifiedValue.tsx or Limitation.tsx. See DESIGN.md.',
         },
         {
           selector: 'Literal[value=/var\\(\\s*--(signal|warn)\\b/]',
           message:
-            'Reserved: --signal / --warn must not be referenced from TSX. Use the VerifiedValue or Limitation component. See PORTFOLIO_BRIEF.md §11.5.',
+            'Reserved: --signal / --warn must not be referenced from TSX. Use the VerifiedValue or Limitation component. See DESIGN.md.',
         },
       ],
     },
