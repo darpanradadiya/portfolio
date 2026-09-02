@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+
+# A newer push to the same branch makes an in-flight run redundant.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Typecheck, lint, and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          # Reads .node-version, so CI and local development cannot drift.
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Lint styles
+        run: npm run lint:css
+
+      # Fails if a string rendered in the monospace class uses a glyph outside the
+      # subset font. See DESIGN.md, "The monospace face is subset to numeric glyphs".
+      - name: Check monospace subset
+        run: npm run lint:mono
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify committed fonts match the subset definition
+        # The fonts are generated and committed. This re-runs the generator and
+        # fails if the result differs, so a change to MONO_SUBSET cannot be merged
+        # without the regenerated font alongside it.
+        run: |
+          python3 -m pip install --quiet fonttools brotli
+          python3 scripts/subset-fonts.py
+          if ! git diff --quiet -- public/fonts src/assets/og; then
+            echo "::error::Committed fonts do not match the current subset definition."
+            echo "Run: python3 scripts/subset-fonts.py, then commit the result."
+            git diff --stat -- public/fonts src/assets/og
+            exit 1
+          fi
+          echo "Committed fonts match the subset definition."

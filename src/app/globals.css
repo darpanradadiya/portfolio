@@ -72,7 +72,9 @@ a {
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
   text-decoration-color: var(--color-rule-strong);
-  transition: text-decoration-color 120ms ease, text-decoration-thickness 120ms ease;
+  transition:
+    text-decoration-color 120ms ease,
+    text-decoration-thickness 120ms ease;
 }
 
 a:hover {

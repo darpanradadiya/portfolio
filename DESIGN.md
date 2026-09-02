@@ -13,20 +13,20 @@ and it is why the type system carries the argument rather than decorating it.
 
 Six roles. Nothing outside this table is a colour decision that can be made ad hoc.
 
-| Token | Light | Dark | Role | Contrast |
-|---|---|---|---|---|
-| `--paper` | `#FBFBF9` | `#121416` | Page ground | — |
-| `--ink` | `#161A1D` | `#E7E9E5` | Body text | 16.90:1 / 15.11:1 |
-| `--ink-muted` | `#5B6570` | `#9BA4AD` | Provenance lines, captions | 5.73:1 / 7.30:1 |
-| `--rule` | `#DFE1DC` | `#262A2E` | Decorative hairlines only | 1.27:1 / 1.28:1 |
-| `--rule-strong` | `#848981` | `#5E656B` | Hairlines bounding interactive rows | 3.45:1 / 3.12:1 |
-| `--signal` | `#1F6F5C` | `#4FB99B` | **Reserved** — verified data only | 5.81:1 / 7.69:1 |
-| `--warn` | `#A6522C` | `#D98A5E` | **Reserved** — limitations, stale data | 5.24:1 / 6.81:1 |
+| Token           | Light     | Dark      | Role                                   | Contrast          |
+| --------------- | --------- | --------- | -------------------------------------- | ----------------- |
+| `--paper`       | `#FBFBF9` | `#121416` | Page ground                            | —                 |
+| `--ink`         | `#161A1D` | `#E7E9E5` | Body text                              | 16.90:1 / 15.11:1 |
+| `--ink-muted`   | `#5B6570` | `#9BA4AD` | Provenance lines, captions             | 5.73:1 / 7.30:1   |
+| `--rule`        | `#DFE1DC` | `#262A2E` | Decorative hairlines only              | 1.27:1 / 1.28:1   |
+| `--rule-strong` | `#848981` | `#5E656B` | Hairlines bounding interactive rows    | 3.45:1 / 3.12:1   |
+| `--signal`      | `#1F6F5C` | `#4FB99B` | **Reserved** — verified data only      | 5.81:1 / 7.69:1   |
+| `--warn`        | `#A6522C` | `#D98A5E` | **Reserved** — limitations, stale data | 5.24:1 / 6.81:1   |
 
 Ratios are measured, not estimated. Every text pair clears WCAG 2.2 AA.
 
 `--rule-strong` exists because `--rule` measures 1.27:1 — correct for decoration, but
-below the 3:1 that SC 1.4.11 requires of a hairline that is the *sole* boundary of an
+below the 3:1 that SC 1.4.11 requires of a hairline that is the _sole_ boundary of an
 interactive row. Decorative hairlines keep `--rule`.
 
 Dark mode is CSS-only, via `color-scheme: light dark` and `light-dark()`. There is no
@@ -50,16 +50,16 @@ which is common enough in developer tooling that it reads as "screenshot of an
 editor"; Plex Mono comes from a technical-documentation lineage, which is closer to
 "instrument readout".
 
-| Step | Size | Use |
-|---|---|---|
-| `--text-2xs` | 13px | Provenance lines, captions |
-| `--text-xs` | 15px | Navigation, stack lists, secondary text |
-| `--text-base` | 17px | Body — line-height 1.6, measure 66ch |
-| `--text-lg` | 21px | Lead paragraphs, row subtitles |
-| `--text-xl` | 26px | `h3`, row titles on small screens |
-| `--text-2xl` | 34px | `h2`, row titles on wide screens |
-| `--text-3xl` | 44px | `h1` page titles |
-| `--text-display` | `clamp(2.5rem, 9vw, 4.5rem)` | Proof-strip numerals only |
+| Step             | Size                         | Use                                     |
+| ---------------- | ---------------------------- | --------------------------------------- |
+| `--text-2xs`     | 13px                         | Provenance lines, captions              |
+| `--text-xs`      | 15px                         | Navigation, stack lists, secondary text |
+| `--text-base`    | 17px                         | Body — line-height 1.6, measure 66ch    |
+| `--text-lg`      | 21px                         | Lead paragraphs, row subtitles          |
+| `--text-xl`      | 26px                         | `h3`, row titles on small screens       |
+| `--text-2xl`     | 34px                         | `h2`, row titles on wide screens        |
+| `--text-3xl`     | 44px                         | `h1` page titles                        |
+| `--text-display` | `clamp(2.5rem, 9vw, 4.5rem)` | Proof-strip numerals only               |
 
 The ratio is ~1.25 through the text range, then `--text-display` jumps deliberately
 off-scale. That gap is where the page spends its boldness; nothing else competes.

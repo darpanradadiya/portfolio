@@ -5,3 +5,9 @@ public/fonts
 data/stats.json
 *.pdf
 PORTFOLIO_BRIEF.md
+
+# Case-study content. Prettier's MDX printer escapes the asterisks in JSX comment
+# blocks ({/* ... */} becomes {/\* ... \*/}) and collapses nested lists, which makes
+# the file fail to compile. Content formatting is not worth that risk; frontmatter
+# correctness is enforced by the Zod schema in src/lib/projects.ts instead.
+src/content/projects/*.mdx

@@ -9,14 +9,14 @@ Read it before changing anything.
 
 ## Stack
 
-| Concern | Choice |
-|---|---|
-| Framework | Next.js 15 (App Router), React 19 |
-| Language | TypeScript, `strict` + `noUncheckedIndexedAccess`, no `any` |
-| Styling | Tailwind CSS v4, design tokens as CSS custom properties |
-| Content | MDX case studies, frontmatter validated with Zod at build time |
-| Fonts | Self-hosted, subset, `font-display: swap` |
-| Hosting | Vercel |
+| Concern   | Choice                                                         |
+| --------- | -------------------------------------------------------------- |
+| Framework | Next.js 15 (App Router), React 19                              |
+| Language  | TypeScript, `strict` + `noUncheckedIndexedAccess`, no `any`    |
+| Styling   | Tailwind CSS v4, design tokens as CSS custom properties        |
+| Content   | MDX case studies, frontmatter validated with Zod at build time |
+| Fonts     | Self-hosted, subset, `font-display: swap`                      |
+| Hosting   | Vercel                                                         |
 
 ## Local development
 
@@ -30,15 +30,15 @@ npm run dev
 
 ## Scripts
 
-| Script | Purpose |
-|---|---|
-| `npm run dev` | Development server |
-| `npm run build` | Production build |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm run lint` | ESLint, including the reserved-token rule |
-| `npm run lint:css` | stylelint, including the reserved-token rule |
+| Script              | Purpose                                                            |
+| ------------------- | ------------------------------------------------------------------ |
+| `npm run dev`       | Development server                                                 |
+| `npm run build`     | Production build                                                   |
+| `npm run typecheck` | `tsc --noEmit`                                                     |
+| `npm run lint`      | ESLint, including the reserved-token rule                          |
+| `npm run lint:css`  | stylelint, including the reserved-token rule                       |
 | `npm run lint:mono` | Fails if any monospace string uses a glyph outside the font subset |
-| `npm run verify` | All of the above — what CI runs |
+| `npm run verify`    | All of the above — what CI runs                                    |
 
 ## Two rules worth knowing before you edit
 
