@@ -45,12 +45,32 @@ jobs:
         # The snapshot feeds <Measured>, so it has to stay inside the font subset.
         run: npm run lint:mono
 
-      - name: Commit if the snapshot changed
+      - name: Commit only if a figure actually changed
         run: |
           if git diff --quiet -- data/stats.json; then
             echo "No change to data/stats.json."
             exit 0
           fi
+
+          # fetchedAt moves on every run, so committing on any diff would add a
+          # daily commit that changes nothing anyone can see. The per-section
+          # verifiedAt dates are what the site renders, so a run that confirms the
+          # same figures is a no-op worth discarding.
+          substantive=$(git diff -U0 -- data/stats.json \
+            | grep -E '^[+-]' \
+            | grep -vE '^(\+\+\+|---)' \
+            | grep -v '"fetchedAt"' \
+            || true)
+
+          if [ -z "$substantive" ]; then
+            echo "Only fetchedAt moved — every figure is unchanged. Not committing."
+            git checkout -- data/stats.json
+            exit 0
+          fi
+
+          echo "Changed figures:"
+          echo "$substantive"
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/stats.json
