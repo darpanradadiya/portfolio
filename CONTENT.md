@@ -44,27 +44,31 @@ closed list: `ML pipelines`, `Data engineering`, `Data modelling`,
 
 ---
 
-## Decision needed before you write six titles
+## Titles: how the two fields work
 
-`outcomeTitle` is used for both the on-page `<h1>` and the browser `<title>`, and
-the title template appends ` | Darpan Radadiya` — 18 characters. So the §9 window of
-50–60 characters leaves **32–42 characters** for the title itself.
+Settled and enforced by the schema, so you can write freely.
 
-The brief's own example of a good title, _"Turning feature-length video into
-per-character reels, unattended"_, is 65 characters, which yields an 83-character
-`<title>`. Outcome-shaped titles and the 50–60 window are in direct conflict.
+- **`outcomeTitle`** is the on-page heading. Write it for a human — a full sentence
+  is fine, length is not a constraint.
+- **`seoTitle`** is the browser title and the search result. Budgeted to **42
+  characters**, because the template appends ` | Darpan Radadiya` (18) and the floor
+  wants 50–60 total.
 
-Pick one:
+The build enforces the pairing rather than trusting either of us to remember:
 
-- **Write for humans, accept long titles.** Google truncates around 60 characters;
-  the beginning still carries the meaning. Costs a few SEO points.
-- **Add an optional `seoTitle` field.** Long outcome title for the `<h1>`, short one
-  for the `<title>`. One nullable frontmatter field; tell me and I will add it.
+| Situation                                | What happens                                                    |
+| ---------------------------------------- | --------------------------------------------------------------- |
+| `outcomeTitle` is 42 characters or fewer | `seoTitle` may stay `null`                                      |
+| `outcomeTitle` is longer than 42         | `seoTitle` is **required** — the build fails, naming the counts |
+| `seoTitle` is longer than 42             | **Rejected**, whether or not it was required                    |
+| `seoTitle` key is missing entirely       | **Rejected** — every file carries the key, even as `null`       |
 
-`summary` is also used as the meta description, so aim for **130–160 characters**
-there if you want that page to clear the floor.
+So: write the outcome title you want, and add a short `seoTitle` alongside it when
+it runs long. If you forget, the build tells you, with both numbers.
 
----
+`summary` doubles as the meta description and reads best at **130–160 characters**.
+Outside that the build logs a note and carries on — prose length never fails a
+build.
 
 ## `src/content/profile.ts`
 

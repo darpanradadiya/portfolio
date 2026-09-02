@@ -10,6 +10,7 @@ import { StackList } from '@/components/StackList';
 import { mdxComponents } from '@/components/mdx';
 import {
   displayTitle,
+  documentTitle,
   getAllProjects,
   getProject,
   getProjectNeighbours,
@@ -29,9 +30,9 @@ export async function generateMetadata({
   const project = getProject(slug);
   if (project === undefined) return {};
 
-  const heading = displayTitle(project);
   return {
-    title: heading,
+    // <h1> may be a full sentence; <title> is budgeted, so it uses the short form.
+    title: documentTitle(project),
     description:
       project.summary ??
       `${project.title} — ${project.stack.slice(0, 4).join(', ')}. Case study by Darpan Radadiya.`,
