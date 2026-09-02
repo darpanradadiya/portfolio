@@ -1,0 +1,90 @@
+---
+title: Healthcare Clinic ERP and Analytics Platform
+outcomeTitle: null
+summary: null
+featured: true
+order: 2
+role: Schema design, reporting layer, and REST API
+timeframe: null
+stack:
+  - SQL
+  - Node.js
+  - Express
+  - React
+domains:
+  - Data modelling
+  - Analytics and reporting
+metrics:
+  - value: '10'
+    label: tables, 3NF
+  - value: '5,000'
+    label: patients loaded
+  - value: '12,000'
+    label: appointments loaded
+repo: null
+demo: null
+screenshot: null
+dataNote: null
+---
+
+{/*
+  TODO(darpan) — this case study exists to prove you can model data, which is the
+  single most asked-about skill in analytics engineering interviews.
+
+  Facts already verified from your resume, safe to use:
+    - 10-table clinical schema in 3NF
+    - Covers patients, providers, encounters, ICD-10 diagnoses, invoices, payments
+    - Documented ERD
+    - Loaded with 5,000 patients and 12,000 appointments to validate query
+      performance at scale
+    - Provider-productivity, billing, and clinical-diagnosis reporting layers
+    - KPI dashboards with a live SQL viewer tracing metrics back to source tables
+    - Full CRUD REST API served to a React front end, with CSV export
+
+  CONFIRM: was the 5,000-patient dataset generated for load testing, or is it a
+  public dataset? If generated, set `dataNote` in the frontmatter and say so — the
+  brief is explicit that dataset provenance gets disclosed, not omitted.
+*/}
+
+## Context
+
+TODO — two sentences.
+
+## The problem
+
+TODO — open with the business question. Something in the shape of: which reports
+disagreed with each other, and why did the schema make that inevitable?
+
+## Constraints
+
+TODO — what made this hard. ICD-10 as a real coding system, billing that has to
+reconcile, query performance at 12,000 appointments.
+
+## What I built
+
+TODO — the schema, with the ERD as the diagram. This is the one case study where
+the diagram is the centrepiece rather than an aid.
+
+## Decisions
+
+TODO — three to five. Candidates:
+
+1. 3NF rather than a star schema — a real tradeoff worth defending, since
+   reporting is one of the stated goals.
+2. How you modelled encounters against diagnoses — the cardinality choice.
+3. The live SQL viewer tracing metrics to source tables. This is unusual and good;
+   explain what problem it solved for whoever read the dashboards.
+
+## Results
+
+TODO — measured. The table count and row counts are measured. Query timings would
+be strong here if you have them.
+
+## Limitations
+
+TODO — what breaks at ten times the data, and what a real clinic would need that
+this does not have.
+
+## Stack and links
+
+TODO — repository URL.

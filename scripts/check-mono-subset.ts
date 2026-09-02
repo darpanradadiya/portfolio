@@ -16,6 +16,8 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { MONO_SUBSET, outOfSubset } from '../src/lib/mono-subset';
+import { profile } from '../src/content/profile';
+import { getAllProjects } from '../src/lib/projects';
 
 // npm scripts run from the package root. Resolved from cwd rather than
 // import.meta.dirname because tsx transpiles this module to CJS, where
@@ -83,11 +85,38 @@ for (const dir of SCAN_DIRS) {
   }
 }
 
+// 3. The typed content itself. Every value that reaches <Measured> at runtime
+//    lives in profile.ts or a case study's frontmatter, so both are checked
+//    directly rather than by scanning for literals.
+for (const [index, point] of profile.proof.entries()) {
+  const bad = outOfSubset(point.value);
+  if (bad.length > 0) {
+    violations.push({
+      file: 'src/content/profile.ts',
+      line: 0,
+      detail: `proof[${index}] value ${JSON.stringify(point.value)} contains ${bad.map((c) => JSON.stringify(c)).join(', ')}`,
+    });
+  }
+}
+
+for (const project of getAllProjects()) {
+  for (const [index, metric] of project.metrics.entries()) {
+    const bad = outOfSubset(metric.value);
+    if (bad.length > 0) {
+      violations.push({
+        file: `src/content/projects/${project.slug}.mdx`,
+        line: 0,
+        detail: `metrics[${index}] value ${JSON.stringify(metric.value)} contains ${bad.map((c) => JSON.stringify(c)).join(', ')}`,
+      });
+    }
+  }
+}
+
 if (violations.length > 0) {
   console.error(`\n  Monospace subset check failed — ${violations.length} violation(s).`);
   console.error(`  The subset is: ${JSON.stringify(MONO_SUBSET)}\n`);
   for (const v of violations) {
-    console.error(`  ${v.file}:${v.line}`);
+    console.error(`  ${v.file}${v.line > 0 ? `:${v.line}` : ''}`);
     console.error(`    ${v.detail}`);
   }
   console.error(
@@ -98,4 +127,10 @@ if (violations.length > 0) {
   process.exit(1);
 }
 
-console.log(`  mono subset ok — subset ${JSON.stringify(MONO_SUBSET)}`);
+const checkedValues =
+  profile.proof.length +
+  getAllProjects().reduce((total, project) => total + project.metrics.length, 0);
+
+console.log(
+  `  mono subset ok — ${checkedValues} measured values checked against ${JSON.stringify(MONO_SUBSET)}`,
+);

@@ -1,0 +1,112 @@
+---
+title: Carbon Record Automation
+outcomeTitle: null
+summary: null
+featured: true
+order: 1
+role: Architecture, ML pipeline, and test suite
+timeframe: null
+stack:
+  - Python
+  - FastAPI
+  - Redis
+  - RQ
+  - APScheduler
+  - PyTorch
+  - ONNX Runtime
+  - Whisper
+  - InsightFace / ArcFace
+  - HDBSCAN
+  - PySceneDetect
+  - pytest
+domains:
+  - ML pipelines
+  - Data engineering
+metrics:
+  - value: '270'
+    label: Python modules
+  - value: 95K
+    label: lines of Python
+  - value: '185'
+    label: pytest functions
+  - value: '24'
+    label: test files
+repo: null
+demo: null
+screenshot: null
+dataNote: null
+---
+
+{/*
+  TODO(darpan) — this is the flagship case study and it carries the most weight of
+  anything on the site. Write it as an argument, not a timeline.
+
+  Facts already verified from your resume, safe to use:
+    - 270 modules, 95K lines of Python
+    - Ingests feature-length video, produces per-character vertical short-form reels
+    - FastAPI service, Redis + RQ workers, APScheduler orchestration
+    - Whisper speech-to-text, PySceneDetect shot segmentation,
+      InsightFace ArcFace embeddings served via ONNX Runtime, HDBSCAN clustering
+    - Human review gate for low-confidence model output
+    - Multi-model LLM calls for cluster labelling and scene scoring, configurable
+      timeouts, three-attempt retry logic
+    - On-disk embedding cache with per-stage checkpoints so multi-hour jobs resume
+    - 185 pytest functions across 24 test files behind a pre-commit gate
+
+  Still needed from you: outcomeTitle, summary, the repo URL, one architecture
+  diagram, one screenshot, and the Decisions section.
+*/}
+
+## Context
+
+TODO — two sentences. What it is, when you built it, whether solo or with others,
+and what your role was.
+
+## The problem
+
+TODO — the actual failure mode this solves. Open with the problem, never with the
+stack. What was happening before this existed, and why was it a problem worth
+270 modules of code?
+
+## Constraints
+
+TODO — what made this hard. Multi-hour jobs, no labelled cast data, model
+confidence that cannot be trusted blindly, cost of GPU inference. Be specific
+about which constraints drove which decisions.
+
+## What I built
+
+TODO — the architecture, with one real diagram. Ingest, segmentation, embedding,
+clustering, review gate, render. Show where the checkpoints are.
+
+## Decisions
+
+TODO — THE MOST IMPORTANT SECTION. Three to five forks in the road, each with the
+alternative you rejected and why. Candidates from what you have already described:
+
+1. ONNX Runtime for ArcFace inference rather than serving PyTorch directly — why?
+2. HDBSCAN rather than k-means for cast identity — presumably because the number of
+   characters is not known in advance. Say so, and say what it cost you.
+3. A human review gate rather than a confidence threshold alone — what did you see
+   that made this necessary?
+4. Per-stage checkpoints and an on-disk embedding cache rather than re-running —
+   what was the failure that taught you this?
+5. Three-attempt retry with configurable timeouts on LLM calls — what breaks
+   without it?
+
+## Results
+
+TODO — measured, with units. If something was not measured, say that plainly rather
+than reaching for a number. The 185 pytest functions and 24 test files are
+measured; job throughput and accuracy are not, unless you have figures.
+
+## Limitations
+
+TODO — what it does not do, and what breaks at ten times the load. Honest
+limitations read as senior. Candidates: single-machine assumptions, cast
+resolution on crowd scenes, cost per hour of video, no live/streaming path.
+
+## Stack and links
+
+TODO — add the repository URL to the frontmatter. The link on your resume PDF
+currently points at github.com rather than the repo.
