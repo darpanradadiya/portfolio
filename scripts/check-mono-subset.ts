@@ -18,6 +18,7 @@ import { join, relative } from 'node:path';
 import { MONO_SUBSET, outOfSubset } from '../src/lib/mono-subset';
 import { profile } from '../src/content/profile';
 import { getAllProjects } from '../src/lib/projects';
+import { stats } from '../src/lib/stats-snapshot';
 
 // npm scripts run from the package root. Resolved from cwd rather than
 // import.meta.dirname because tsx transpiles this module to CJS, where
@@ -86,9 +87,14 @@ for (const dir of SCAN_DIRS) {
   }
 }
 
-// 3. The typed content itself. Every value that reaches <Measured> at runtime
-//    lives in profile.ts or a case study's frontmatter, so both are checked
-//    directly rather than by scanning for literals.
+// 3. The typed content itself.
+//
+//    The scan above only sees literal children of <Measured>. Most values reach it
+//    as expressions — {String(stats.leetcode.data.hard)} and the like — which
+//    cannot be resolved by reading the source. So every datum that is rendered in
+//    the mono class is checked here at its source instead: the proof strip, case
+//    study frontmatter, the hand-entered GeeksforGeeks figures, and the committed
+//    coding-profile snapshot.
 for (const [index, point] of profile.proof.entries()) {
   const bad = outOfSubset(point.value);
   if (bad.length > 0) {
@@ -113,6 +119,54 @@ for (const project of getAllProjects()) {
   }
 }
 
+const geeks = profile.geeksforgeeks;
+const geeksValues: [string, number][] = [
+  ['total', geeks.total],
+  ['school', geeks.school],
+  ['basic', geeks.basic],
+  ['easy', geeks.easy],
+  ['medium', geeks.medium],
+  ['hard', geeks.hard],
+  ['codingScore', geeks.codingScore],
+  ['instituteRank', geeks.instituteRank],
+];
+for (const [field, value] of geeksValues) {
+  const bad = outOfSubset(String(value));
+  if (bad.length > 0) {
+    violations.push({
+      file: 'src/content/profile.ts',
+      line: 0,
+      detail: `geeksforgeeks.${field} renders as ${JSON.stringify(String(value))}, containing ${bad.map((c) => JSON.stringify(c)).join(', ')}`,
+    });
+  }
+}
+
+if (stats !== null) {
+  const snapshotValues: [string, number][] = [
+    ...(stats.leetcode === null
+      ? []
+      : ([
+          ['leetcode.total', stats.leetcode.data.total],
+          ['leetcode.easy', stats.leetcode.data.easy],
+          ['leetcode.medium', stats.leetcode.data.medium],
+          ['leetcode.hard', stats.leetcode.data.hard],
+        ] as [string, number][])),
+    ...(stats.github === null
+      ? []
+      : ([['github.publicRepos', stats.github.data.publicRepos]] as [string, number][])),
+  ];
+  for (const [field, value] of snapshotValues) {
+    const bad = outOfSubset(String(value));
+    if (bad.length > 0) {
+      violations.push({
+        file: 'data/stats.json',
+        line: 0,
+        detail: `${field} renders as ${JSON.stringify(String(value))}, containing ${bad.map((c) => JSON.stringify(c)).join(', ')}`,
+      });
+    }
+  }
+}
+
 if (violations.length > 0) {
   console.error(`\n  Monospace subset check failed — ${violations.length} violation(s).`);
   console.error(`  The subset is: ${JSON.stringify(MONO_SUBSET)}\n`);
@@ -128,9 +182,15 @@ if (violations.length > 0) {
   process.exit(1);
 }
 
+const snapshotCount =
+  stats === null
+    ? 0
+    : (stats.leetcode === null ? 0 : 4) + (stats.github === null ? 0 : 1);
 const checkedValues =
   profile.proof.length +
-  getAllProjects().reduce((total, project) => total + project.metrics.length, 0);
+  getAllProjects().reduce((total, project) => total + project.metrics.length, 0) +
+  geeksValues.length +
+  snapshotCount;
 
 console.log(
   `  mono subset ok — ${checkedValues} measured values checked against ${JSON.stringify(MONO_SUBSET)}`,

@@ -1,0 +1,59 @@
+name: Refresh coding stats
+
+on:
+  schedule:
+    # Daily, a little after midnight UTC.
+    - cron: '17 0 * * *'
+  push:
+    branches: [main]
+    # Without this the workflow's own commit retriggers it, forever.
+    paths-ignore:
+      - 'data/stats.json'
+  workflow_dispatch:
+
+concurrency:
+  group: refresh-stats
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    name: Fetch and commit the snapshot
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - run: npm ci
+
+      - name: Fetch statistics
+        # The built-in token raises the api.github.com rate limit. LeetCode and
+        # Codeforces need no credentials.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run fetch-stats
+
+      - name: Verify the snapshot still renders safely
+        # The snapshot feeds <Measured>, so it has to stay inside the font subset.
+        run: npm run lint:mono
+
+      - name: Commit if the snapshot changed
+        run: |
+          if git diff --quiet -- data/stats.json; then
+            echo "No change to data/stats.json."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/stats.json
+          git commit -m "chore(stats): refresh coding-profile snapshot [skip ci]"
+          git push
+          echo "Snapshot updated."

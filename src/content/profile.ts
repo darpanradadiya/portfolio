@@ -57,6 +57,25 @@ export type ExperienceEntry = {
   readonly highlights: readonly string[];
 };
 
+/**
+ * GeeksforGeeks figures.
+ *
+ * Hand-entered, not fetched: GeeksforGeeks has no public API, and the community
+ * scrapers that exist are unreliable enough that depending on one would be worse
+ * than a dated constant. `verifiedOn` is when these were read off the profile.
+ */
+export type GeeksforGeeksStats = {
+  readonly verifiedOn: string;
+  readonly total: number;
+  readonly school: number;
+  readonly basic: number;
+  readonly easy: number;
+  readonly medium: number;
+  readonly hard: number;
+  readonly codingScore: number;
+  readonly instituteRank: number;
+};
+
 export type SkillGroup = {
   readonly category: string;
   readonly items: readonly string[];
@@ -178,6 +197,19 @@ export const profile = {
       provenance: 'Clomotech ETL — Glue, Lambda, S3',
     },
   ] satisfies readonly ProofPoint[],
+
+  /** See GeeksforGeeksStats — these are read off the profile, not fetched. */
+  geeksforgeeks: {
+    verifiedOn: '2026-09-02',
+    total: 719,
+    school: 1,
+    basic: 74,
+    easy: 225,
+    medium: 348,
+    hard: 71,
+    codingScore: 2270,
+    instituteRank: 70,
+  } satisfies GeeksforGeeksStats,
 
   education: [
     {
@@ -334,6 +366,17 @@ export function currentEducation(): EducationEntry {
     throw new Error('profile.education must contain at least one entry');
   }
   return first;
+}
+
+/**
+ * Guards the hand-entered GeeksforGeeks breakdown against a typo.
+ *
+ * These numbers are not validated by any fetch, so the one check available is that
+ * the tiers add up to the stated total. Called from the unit tests.
+ */
+export function geeksforgeeksBreakdownSums(): boolean {
+  const g = profile.geeksforgeeks;
+  return g.school + g.basic + g.easy + g.medium + g.hard === g.total;
 }
 
 /** Absolute URLs for JSON-LD `sameAs`, excluding profiles whose URL is unknown. */
