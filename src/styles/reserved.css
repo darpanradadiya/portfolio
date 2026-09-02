@@ -1,0 +1,32 @@
+/*
+ * RESERVED TOKENS — the only file permitted to consume --signal and --warn.
+ *
+ * --signal  marks data that has been verified against a real source.
+ * --warn    marks a limitation, or a notice that data is stale.
+ *
+ * Neither is a general accent colour. Neither may appear on a button, a border, a
+ * heading, or a link. This is enforced, not merely documented:
+ *
+ *   1. Neither token is registered in @theme, so Tailwind generates no
+ *      `text-signal` / `bg-warn` utility to reach for.
+ *   2. stylelint blocks `var(--signal)` / `var(--warn)` in every other file
+ *      (.stylelintrc.json — declaration-property-value-disallowed-list).
+ *   3. ESLint blocks the two classes below outside VerifiedValue.tsx and
+ *      Limitation.tsx (eslint.config.mjs — no-restricted-syntax).
+ *
+ * If you are here to add a third use, that is a design decision, not a CSS change.
+ * See DESIGN.md, "Two rules enforced by tooling".
+ */
+
+:root {
+  --signal: light-dark(#1f6f5c, #4fb99b);
+  --warn: light-dark(#a6522c, #d98a5e);
+}
+
+.is-verified {
+  color: var(--signal);
+}
+
+.is-limitation {
+  color: var(--warn);
+}

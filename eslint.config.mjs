@@ -31,6 +31,9 @@ const eslintConfig = [
     ignores: ['.next/**', 'node_modules/**', 'out/**', 'next-env.d.ts'],
   },
   {
+    // Scoped to source files: the rule's own definition below mentions the
+    // reserved class names, and a config file is not a render path.
+    files: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.mdx'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',

@@ -1,5 +1,7 @@
 {
-  "extends": ["stylelint-config-standard"],
+  "extends": [
+    "stylelint-config-standard"
+  ],
   "rules": {
     "at-rule-no-unknown": [
       true,
@@ -20,14 +22,34 @@
     "import-notation": "string",
     "custom-property-pattern": null,
     "declaration-property-value-no-unknown": null,
-    "function-no-unknown": [true, { "ignoreFunctions": ["light-dark", "theme"] }],
+    "function-no-unknown": [
+      true,
+      {
+        "ignoreFunctions": [
+          "light-dark",
+          "theme"
+        ]
+      }
+    ],
     "declaration-property-value-disallowed-list": {
-      "/.*/": ["/var\\(\\s*--(signal|warn)\\b/"]
-    }
+      "/.*/": [
+        "/var\\(\\s*--(signal|warn)\\b/"
+      ]
+    },
+    "property-no-vendor-prefix": [
+      true,
+      {
+        "ignoreProperties": [
+          "/text-size-adjust/"
+        ]
+      }
+    ]
   },
   "overrides": [
     {
-      "files": ["src/styles/reserved.css"],
+      "files": [
+        "src/styles/reserved.css"
+      ],
       "rules": {
         "declaration-property-value-disallowed-list": null
       }
