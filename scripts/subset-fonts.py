@@ -30,6 +30,10 @@ UA = (
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "public" / "fonts"
+# Satori (which renders the Open Graph images) cannot read woff2, and does not
+# handle variable fonts reliably, so a static TTF instance is emitted separately.
+# It is not under public/: it is read from disk at build time, never served.
+OG_OUT = ROOT / "src" / "assets" / "og"
 
 # Keep in sync with src/lib/mono-subset.ts -- that file is the source of truth and
 # this script asserts against it below.
@@ -95,6 +99,28 @@ def subset(src: pathlib.Path, dest: pathlib.Path, *, text: str = "", unicodes: s
     subprocess.run(args, check=True, capture_output=True)
 
 
+def instance_ttf(src: pathlib.Path, dest: pathlib.Path, weight: int, unicodes: str) -> None:
+    """Pin the weight axis and emit a subset static TTF for Open Graph rendering."""
+    from fontTools.ttLib import TTFont
+    from fontTools.varLib import instancer
+
+    font = TTFont(src)
+    instancer.instantiateVariableFont(font, {"wght": weight}, inplace=True)
+    tmp = dest.with_suffix(".full.ttf")
+    font.save(tmp)
+    subprocess.run(
+        [
+            sys.executable, "-m", "fontTools.subset", str(tmp),
+            f"--output-file={dest}",
+            f"--unicodes={unicodes}",
+            "--no-hinting",
+        ],
+        check=True,
+        capture_output=True,
+    )
+    tmp.unlink()
+
+
 def report(path: pathlib.Path) -> None:
     from fontTools.ttLib import TTFont
 
@@ -123,6 +149,11 @@ def main() -> None:
     )
     subset(raw, OUT / "instrument-sans-latin.woff2", unicodes=TEXT_UNICODES)
     report(OUT / "instrument-sans-latin.woff2")
+
+    print("Instrument Sans (static TTF at wght 500, for Open Graph rendering):")
+    OG_OUT.mkdir(parents=True, exist_ok=True)
+    instance_ttf(raw, OG_OUT / "instrument-sans-og.ttf", 500, TEXT_UNICODES)
+    report(OG_OUT / "instrument-sans-og.ttf")
 
     print(f"IBM Plex Mono (400, subset to {len(set(declared))} glyphs):")
     raw = download(
