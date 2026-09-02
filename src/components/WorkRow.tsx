@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Measured } from '@/components/Measured';
 import { Limitation } from '@/components/Limitation';
+import { StackList } from '@/components/StackList';
 import { displayTitle, type Project } from '@/lib/projects';
 
 /**
@@ -48,19 +49,7 @@ export function WorkRow({
             </ul>
           )}
 
-          {/* Hairline-separated, never joined with middle dots. */}
-          <ul className="text-2xs text-ink-muted mt-4 flex list-none flex-wrap p-0">
-            {project.stack.map((tool, index) => (
-              <li
-                key={tool}
-                className={
-                  index === 0 ? 'pr-2.5' : 'border-rule border-l px-2.5 last:pr-0'
-                }
-              >
-                {tool}
-              </li>
-            ))}
-          </ul>
+          <StackList className="text-2xs text-ink-muted mt-4" items={project.stack} />
 
           {project.dataNote !== null && (
             <Limitation className="mt-4 max-w-prose">{project.dataNote}</Limitation>

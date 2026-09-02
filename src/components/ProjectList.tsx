@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Measured } from '@/components/Measured';
+import { StackList } from '@/components/StackList';
 import type { Project } from '@/lib/projects';
 
 type ProjectListProps = {
@@ -65,16 +66,7 @@ export function ProjectList({ projects, domains }: ProjectListProps) {
             {project.summary !== null && (
               <p className="measure mt-2">{project.summary}</p>
             )}
-            <ul className="text-2xs text-ink-muted mt-3 flex list-none flex-wrap p-0">
-              {project.stack.map((tool, i) => (
-                <li
-                  key={tool}
-                  className={i === 0 ? 'pr-2.5' : 'border-rule border-l px-2.5'}
-                >
-                  {tool}
-                </li>
-              ))}
-            </ul>
+            <StackList className="text-2xs text-ink-muted mt-3" items={project.stack} />
             {project.metrics.length > 0 && (
               <ul className="text-2xs text-ink-muted mt-3 flex list-none flex-wrap gap-x-5 p-0">
                 {project.metrics.map((metric) => (

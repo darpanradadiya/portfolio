@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { ProofStrip } from '@/components/ProofStrip';
 import { WorkRow } from '@/components/WorkRow';
 import { Section } from '@/components/Section';
+import { MetaList } from '@/components/MetaList';
 import { CopyEmail } from '@/components/CopyEmail';
 import { Limitation } from '@/components/Limitation';
 import { currentEducation, profile } from '@/content/profile';
@@ -29,13 +30,14 @@ export default function Home() {
 
         {profile.intro !== null && <p className="measure mt-4">{profile.intro}</p>}
 
-        <ul className="text-ink-muted mt-5 flex list-none flex-wrap p-0 text-xs">
-          <li className="pr-3">{profile.location}</li>
-          <li className="border-rule border-l px-3">
-            {education.credentialShort}, {education.institution}
-          </li>
-          <li className="border-rule border-l pl-3">{profile.availability}</li>
-        </ul>
+        <MetaList
+          className="text-ink-muted mt-5 text-xs"
+          items={[
+            profile.location,
+            `${education.credentialShort}, ${education.institution}`,
+            profile.availability,
+          ]}
+        />
 
         <ul className="mt-6 flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
           <li>

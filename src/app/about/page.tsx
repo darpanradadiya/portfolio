@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { Section } from '@/components/Section';
+import { MetaList } from '@/components/MetaList';
+import { StackList } from '@/components/StackList';
 import { Limitation } from '@/components/Limitation';
 import { profile } from '@/content/profile';
 import { absoluteUrl } from '@/lib/site';
@@ -40,10 +42,10 @@ export default function AboutPage() {
               <p className="text-ink-muted mt-1 text-xs">
                 {entry.institution}, {entry.location}
               </p>
-              <ul className="text-ink-muted mt-1 flex list-none flex-wrap p-0 text-xs">
-                <li className="pr-3">{entry.completion}</li>
-                <li className="border-rule border-l pl-3">{entry.result}</li>
-              </ul>
+              <MetaList
+                className="text-ink-muted mt-1 text-xs"
+                items={[entry.completion, entry.result]}
+              />
             </li>
           ))}
         </ol>
@@ -57,12 +59,10 @@ export default function AboutPage() {
               <h3 className="text-base">
                 {entry.role}, {entry.organisation}
               </h3>
-              <ul className="text-ink-muted mt-1 flex list-none flex-wrap p-0 text-xs">
-                <li className="pr-3">
-                  {entry.start} – {entry.end}
-                </li>
-                <li className="border-rule border-l pl-3">{entry.location}</li>
-              </ul>
+              <MetaList
+                className="text-ink-muted mt-1 text-xs"
+                items={[`${entry.start} – ${entry.end}`, entry.location]}
+              />
               <ul className="measure mt-4 flex list-disc flex-col gap-2 pl-5">
                 {entry.highlights.map((highlight) => (
                   <li key={highlight.slice(0, 32)}>{highlight}</li>
@@ -84,16 +84,7 @@ export default function AboutPage() {
             <div key={group.category}>
               <dt className="text-base">{group.category}</dt>
               <dd className="mt-2">
-                <ul className="text-ink-muted flex list-none flex-wrap p-0 text-xs">
-                  {group.items.map((item, index) => (
-                    <li
-                      key={item}
-                      className={index === 0 ? 'pr-2.5' : 'border-rule border-l px-2.5'}
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+                <StackList className="text-ink-muted text-xs" items={group.items} />
               </dd>
             </div>
           ))}

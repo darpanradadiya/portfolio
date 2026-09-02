@@ -6,6 +6,7 @@ import { compileMDX } from 'next-mdx-remote/rsc';
 import { BackLink } from '@/components/BackLink';
 import { Measured } from '@/components/Measured';
 import { Limitation } from '@/components/Limitation';
+import { StackList } from '@/components/StackList';
 import { mdxComponents } from '@/components/mdx';
 import {
   displayTitle,
@@ -82,16 +83,7 @@ export default async function ProjectPage({
           <div className="flex gap-3">
             <dt className="text-ink-muted w-20 shrink-0">Stack</dt>
             <dd>
-              <ul className="flex list-none flex-wrap p-0">
-                {project.stack.map((tool, index) => (
-                  <li
-                    key={tool}
-                    className={index === 0 ? 'pr-2.5' : 'border-rule border-l px-2.5'}
-                  >
-                    {tool}
-                  </li>
-                ))}
-              </ul>
+              <StackList items={project.stack} />
             </dd>
           </div>
         </dl>
