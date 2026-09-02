@@ -59,4 +59,14 @@ Coding-profile numbers are fetched **at build time in CI** and committed as a st
 snapshot to `data/stats.json`. Nothing is fetched from the browser: CORS blocks most
 of these endpoints, unofficial endpoints break without notice, and a visitor must
 never see a spinner or a zero. The fetch script refuses to overwrite good data with
-worse data. See §5 and §12.6.
+worse data.
+
+The merge rule is the guarantee the architecture rests on, so it is pure and
+unit-tested: incoming data is rejected when it is absent, zero, internally
+inconsistent, or lower than what is already stored, and sections are replaced
+atomically so a breakdown can never disagree with its own total.
+
+The snapshot type has no field for a streak, a submission calendar, or a
+last-active date, and no Codeforces entry at all — activity data cannot leak into
+the UI because there is nowhere to put it. Codeforces is queried only to confirm
+the handle still resolves; its rating is neither stored nor logged.

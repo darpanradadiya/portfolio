@@ -49,6 +49,11 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
+      - name: Unit tests
+        # Covers the snapshot merge rule (a fetch must never replace good data with
+        # worse), the monospace subset, the contact schema, and the rate limiter.
+        run: npm run test
+
       - name: Build
         run: npm run build
 
@@ -61,3 +66,34 @@ jobs:
         run: |
           python3 -m pip install --quiet fonttools brotli
           npm run lint:fonts
+
+  e2e:
+    name: End-to-end smoke tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: verify
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Smoke tests
+        # Runs against the production build at desktop and at 320px: every route
+        # 200s, logs no console errors, and does not scroll horizontally.
+        run: npm run test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

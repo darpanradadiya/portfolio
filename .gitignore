@@ -37,3 +37,9 @@ yarn-error.log*
 
 # private strategy doc — never commit (see DESIGN.md for the public design system)
 BRIEF.private.md
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
