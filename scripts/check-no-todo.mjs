@@ -25,6 +25,15 @@ const CHECKS = [
       'Write the section from evidence, or delete it. A visitor must never see the\n  word. Notes belong in MDX comments or CONTENT.md.',
   },
   {
+    // Review markers are notes to the author. A reader seeing one is the same
+    // failure as a TODO: the site narrating its own build status. Found live on a
+    // case study after the TODO guard shipped, because the guard only knew one word.
+    needle: /\[(INFERRED|CHECK|TBD|FIXME|XXX)\]/,
+    label: 'review marker',
+    advice:
+      'Move the note into an MDX comment and keep the prose, or rewrite the prose so\n  the caveat is unnecessary.',
+  },
+  {
     // An em-dash almost always marks two sentences, a comma, or a colon that was
     // not chosen. Recorded as a standing rule in the brief; enforced here so the
     // rule survives the next person writing copy.
@@ -80,4 +89,6 @@ for (const check of CHECKS) {
 }
 
 if (failed) process.exit(1);
-console.log(`  no TODO and no em-dash in build output, ${files.length} files scanned`);
+console.log(
+  `  build output clean: no TODO, review marker or em-dash in ${files.length} files`,
+);
