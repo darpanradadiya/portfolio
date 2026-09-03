@@ -28,75 +28,83 @@
 
 /* ---- base ------------------------------------------------------------ */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/*
+ * Declared in @layer base so Tailwind utilities can override these. Unlayered
+ * CSS beats every layer regardless of specificity, so an unlayered
+ * `svg { max-width: 100% }` silently defeats `max-w-*` on an SVG — which is
+ * exactly what happened to the first architecture diagram.
+ */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
-html {
-  -webkit-text-size-adjust: 100%;
-}
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
 
-body {
-  margin: 0;
-  background-color: var(--color-paper);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  line-height: var(--text-base--line-height);
-  font-synthesis-weight: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  body {
+    margin: 0;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-h1,
-h2,
-h3,
-h4 {
-  margin: 0;
-  font-weight: 550;
-  letter-spacing: -0.015em;
-  text-wrap: balance;
-}
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: 0;
+    font-weight: 550;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
 
-p {
-  margin: 0;
-  text-wrap: pretty;
-}
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
 
-/* Underline is the only link affordance. No arrows are appended anywhere. */
-a {
-  color: inherit;
-  text-decoration-line: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.2em;
-  text-decoration-color: var(--color-rule-strong);
-  transition:
-    text-decoration-color 120ms ease,
-    text-decoration-thickness 120ms ease;
-}
+  /* Underline is the only link affordance. No arrows are appended anywhere. */
+  a {
+    color: inherit;
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--color-rule-strong);
+    transition:
+      text-decoration-color 120ms ease,
+      text-decoration-thickness 120ms ease;
+  }
 
-a:hover {
-  text-decoration-thickness: 2px;
-  text-decoration-color: currentcolor;
-}
+  a:hover {
+    text-decoration-thickness: 2px;
+    text-decoration-color: currentcolor;
+  }
 
-:focus-visible {
-  outline: 2px solid var(--color-ink);
-  outline-offset: 2px;
-  border-radius: 1px;
-}
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    border-radius: 1px;
+  }
 
-:focus:not(:focus-visible) {
-  outline: none;
-}
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
 
-img,
-svg {
-  display: block;
-  max-width: 100%;
-  height: auto;
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
 }
 
 /* ---- layout primitives ----------------------------------------------
@@ -126,6 +134,93 @@ svg {
 
 .measure {
   max-width: var(--measure);
+}
+
+/* ---- diagrams --------------------------------------------------------
+ * Structural paint only. The categorical colours live in reserved.css and are
+ * reachable only through Diagram.tsx.
+ */
+
+.diagram svg {
+  width: 100%;
+
+  /*
+   * Capped so the drawing never scales far from its authored size. The viewBox is
+   * 380 wide; letting it stretch to a full measure would scale 14px labels to 28px.
+   */
+  max-width: 21.25rem;
+  height: auto;
+}
+
+.diagram svg text {
+  font-family: var(--font-sans);
+  fill: var(--color-ink);
+}
+
+.diagram-box {
+  fill: none;
+  stroke: var(--color-rule-strong);
+  stroke-width: 1;
+}
+
+.diagram-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.diagram-ordinal {
+  font-size: 11px;
+  fill: var(--color-ink-muted);
+}
+
+.diagram-flow {
+  stroke: var(--color-rule-strong);
+  stroke-width: 1;
+}
+
+.diagram-checkpoint {
+  fill: var(--color-paper);
+  stroke: var(--color-ink);
+  stroke-width: 1.5;
+}
+
+.diagram-gate {
+  stroke-width: 2.5;
+  stroke-linecap: butt;
+}
+
+.diagram-gate-post {
+  stroke-width: 2.5;
+  stroke-linecap: butt;
+}
+
+.diagram-gate-chevron {
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.diagram-branch {
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+}
+
+.diagram-gate-label {
+  font-size: 10px;
+  fill: var(--color-ink-muted);
+}
+
+/* ---- charts ---------------------------------------------------------- */
+
+.chart-separator {
+  stroke: var(--color-paper);
+  stroke-width: 2;
+}
+
+.chart-frame {
+  fill: none;
+  stroke: var(--color-rule-strong);
+  stroke-width: 1;
 }
 
 /* ---- the one motion moment ------------------------------------------
