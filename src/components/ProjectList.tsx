@@ -4,10 +4,16 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Measured } from '@/components/Measured';
 import { StackList } from '@/components/StackList';
-import type { Project } from '@/lib/projects';
+import type { ProjectCard } from '@/lib/projects';
 
 type ProjectListProps = {
-  projects: readonly (Project & { heading: string })[];
+  /**
+   * Deliberately not the full Project. A Project carries its MDX `body`, and this is
+   * a client component, so passing one would serialise every case study into the RSC
+   * payload of a page that only renders summaries — shipping the prose, and any
+   * unfinished note in it, to every visitor.
+   */
+  projects: readonly ProjectCard[];
   domains: readonly string[];
 };
 

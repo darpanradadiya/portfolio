@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ROUTES } from '@/lib/routes';
+import { NavLinks } from '@/components/NavLinks';
 import { profile } from '@/content/profile';
 
 /**
@@ -11,17 +11,11 @@ export function SiteHeader() {
   return (
     <header className="border-rule border-b">
       <div className="page flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 py-4">
-        <Link href="/" className="text-base font-medium no-underline">
+        <Link href="/" className="nav-link text-base font-medium">
           {profile.name}
         </Link>
         <nav aria-label="Main">
-          <ul className="flex list-none flex-wrap items-baseline gap-x-5 gap-y-1 p-0 text-xs">
-            {ROUTES.map((route) => (
-              <li key={route.href}>
-                <Link href={route.href}>{route.label}</Link>
-              </li>
-            ))}
-          </ul>
+          <NavLinks />
         </nav>
       </div>
     </header>

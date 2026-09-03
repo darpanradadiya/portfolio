@@ -9,7 +9,7 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${profile.name} — ${profile.role}`,
+    default: `${profile.name}, ${profile.role}`,
     template: `%s | ${SITE.name}`,
   },
   description:
@@ -52,7 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <SiteHeader />
-        <main id="main" className="page pt-10 md:pt-16">
+        <main id="main" className="pt-10 md:pt-16">
           {children}
         </main>
         <SiteFooter />

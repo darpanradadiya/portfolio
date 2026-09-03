@@ -35,7 +35,7 @@ export async function generateMetadata({
     title: documentTitle(project),
     description:
       project.summary ??
-      `${project.title} — ${project.stack.slice(0, 4).join(', ')}. Case study by Darpan Radadiya.`,
+      `${project.title}. Built with ${project.stack.slice(0, 4).join(', ')}. Case study by Darpan Radadiya.`,
     alternates: { canonical: absoluteUrl(`/projects/${slug}`) },
   };
 }
@@ -56,7 +56,7 @@ export default async function ProjectPage({
   });
 
   return (
-    <article>
+    <article className="page">
       <BackLink href="/projects">Work</BackLink>
 
       <header className="mt-6">

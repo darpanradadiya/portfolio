@@ -186,7 +186,7 @@ export function ContactForm({ email }: { email: string }) {
         <button
           type="submit"
           disabled={state.kind === 'submitting'}
-          className="border-ink bg-ink text-paper cursor-pointer border px-3 py-1.5 text-xs disabled:cursor-wait disabled:opacity-70"
+          className="border-accent bg-accent text-surface hover:border-accent-2 hover:bg-accent-2 cursor-pointer border px-3 py-1.5 text-xs transition-colors disabled:cursor-wait disabled:opacity-70"
         >
           {state.kind === 'submitting' ? 'Sending…' : 'Send message'}
         </button>

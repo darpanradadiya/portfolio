@@ -17,7 +17,36 @@
   /* ---- ground and ink ------------------------------------------------ */
   --color-transparent: transparent;
   --color-current: currentcolor;
-  --color-paper: light-dark(#fbfbf9, #121416);
+
+  /*
+   * Page ground. --color-paper is retained as an alias: it was measured at 1.01:1
+   * against --surface in light and 1.00:1 in dark, so shipping both as independent
+   * values would have been two names for one colour. One value, two spellings.
+   */
+  --color-surface: light-dark(#fafaf7, #10141c);
+  --color-paper: var(--color-surface);
+
+  /*
+   * Section bands. Deliberately equal in luminance to the ground (1.07:1) and to
+   * each other (1.00:1 light, 1.04:1 dark) — a band is a tint shift, not a
+   * lightness step. That also means a band edge is invisible on luminance alone,
+   * so every band carries a hairline.
+   */
+  --color-band-cool: light-dark(#edf4f2, #15201f);
+  --color-band-warm: light-dark(#faf1e8, #1f1913);
+
+  /*
+   * Chrome accents. Not reserved: these are for links, buttons, active states and
+   * hover, which is exactly what --signal and --warn may never be used for.
+   *
+   * Measured against all three grounds. accent: 5.47 / 5.13 / 5.13 light,
+   * 8.14 / 7.37 / 7.69 dark. accent-2: 4.80 / 4.50 / 4.50 light, 9.04 / 8.18 / 8.53
+   * dark — so accent-2 passes AA on a band by nothing at all, and is kept off small
+   * text there. The two differ by only 1.14:1 in luminance and are told apart by
+   * hue (teal against amber), which survives red-green colour blindness.
+   */
+  --color-accent: light-dark(#0d7368, #3fbfae);
+  --color-accent-2: light-dark(#b45309, #f5a524);
   --color-ink: light-dark(#161a1d, #e7e9e5);
   --color-ink-muted: light-dark(#5b6570, #9ba4ad);
 

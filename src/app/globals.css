@@ -78,24 +78,28 @@
   }
 
   /* Underline is the only link affordance. No arrows are appended anywhere. */
+
+  /*
+   * Links carry the accent and an underline drawn as a background gradient, so the
+   * underline can animate its width — text-decoration cannot be transitioned,
+   * background-size can. Sits in @layer base so a utility can still override it.
+   */
   a {
-    color: inherit;
-    text-decoration-line: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-    text-decoration-color: var(--color-rule-strong);
-    transition:
-      text-decoration-color 120ms ease,
-      text-decoration-thickness 120ms ease;
+    color: var(--color-accent);
+    text-decoration: none;
+    background-image: linear-gradient(currentcolor, currentcolor);
+    background-repeat: no-repeat;
+    background-position: 0 calc(100% - 0.02em);
+    background-size: 100% 1px;
   }
 
-  a:hover {
-    text-decoration-thickness: 2px;
-    text-decoration-color: currentcolor;
+  a:hover,
+  a:focus-visible {
+    color: var(--color-accent-2);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-ink);
+    outline: 2px solid var(--color-accent-2);
     outline-offset: 2px;
     border-radius: 1px;
   }
@@ -109,6 +113,150 @@
     display: block;
     max-width: 100%;
     height: auto;
+  }
+}
+
+/* ---- section bands --------------------------------------------------
+ * A band is a tint shift, not a lightness step: measured 1.07:1 against the
+ * ground and 1.00:1 against each other. So the hairline is what makes the edge
+ * legible, and the tint is what makes the zone feel different.
+ */
+
+.band-cool {
+  background-color: var(--color-band-cool);
+  border-block: 1px solid var(--color-rule);
+}
+
+.band-warm {
+  background-color: var(--color-band-warm);
+  border-block: 1px solid var(--color-rule);
+}
+
+/* ---- hero ------------------------------------------------------------
+ * Two stops, ground into the cool band, fading out before the text starts.
+ * Kept to the top 60% so it reads as the page lifting rather than as a panel.
+ */
+
+.hero-wash {
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-band-cool) 0%,
+    var(--color-surface) 60%
+  );
+}
+
+/* ---- links -----------------------------------------------------------
+ * The underline is drawn as a background gradient rather than a
+ * text-decoration, so it can animate its width. text-decoration cannot be
+ * transitioned; background-size can.
+ */
+
+@media (prefers-reduced-motion: no-preference) {
+  a {
+    background-size: 0% 1px;
+    transition:
+      background-size 180ms ease,
+      color 120ms ease;
+  }
+
+  a:hover,
+  a:focus-visible {
+    background-size: 100% 1px;
+  }
+}
+
+/* The skip link and nav are navigation, not prose: no growing underline. */
+.skip-link,
+.nav-link {
+  background-image: none;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.nav-link[aria-current='page'] {
+  color: var(--color-accent);
+  text-decoration-thickness: 2px;
+}
+
+/* ---- cards -----------------------------------------------------------
+ * A tinted surface with a hairline. The lift is a transform and a
+ * border-colour change; there is still no box-shadow anywhere in this system.
+ */
+
+.card {
+  /*
+   * The page ground, not a band. Cards sit inside banded sections, and a card
+   * tinted the same as the band it stands on is invisible: the two were measured
+   * 1.00:1 apart. Ground-on-band is what makes it read as a panel.
+   */
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-rule-strong);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card {
+    transition:
+      transform 160ms ease,
+      border-color 160ms ease,
+      background-color 160ms ease;
+  }
+
+  .card:hover,
+  .card:focus-within {
+    transform: translateY(-2px);
+    border-color: var(--color-accent-2);
+  }
+}
+
+/* ---- scroll reveal --------------------------------------------------
+ * Transform and opacity only, so it cannot reflow. Uses the CSS-only
+ * scroll-driven variant where supported and simply shows the content where it
+ * is not, so nothing depends on JavaScript to become visible.
+ */
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 18%;
+    }
+  }
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- view transitions ------------------------------------------------ */
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: vt-out 140ms ease both;
+  }
+
+  ::view-transition-new(root) {
+    animation: vt-in 200ms ease both;
+  }
+}
+
+@keyframes vt-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-in {
+  from {
+    opacity: 0;
   }
 }
 

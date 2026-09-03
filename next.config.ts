@@ -2,6 +2,11 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  experimental: {
+    // Cross-document view transitions on route change. The animation itself is
+    // defined in globals.css behind a prefers-reduced-motion guard.
+    viewTransition: true,
+  },
   poweredByHeader: false,
   images: {
     formats: ['image/avif', 'image/webp'],

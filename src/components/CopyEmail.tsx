@@ -36,7 +36,7 @@ export function CopyEmail({ email }: { email: string }) {
       {/* Announced to screen readers as well as shown. */}
       <span role="status" aria-live="polite" className="text-2xs text-ink-muted">
         {state === 'copied' && 'Copied to clipboard'}
-        {state === 'failed' && 'Could not copy — select the address instead'}
+        {state === 'failed' && 'Could not copy. Select the address instead.'}
       </span>
     </span>
   );
