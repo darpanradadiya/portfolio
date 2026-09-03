@@ -72,7 +72,7 @@ export function ErdDiagram() {
         'patient and portal account. Scheduling: provider, location and appointment. ' +
         'Clinical: encounter, diagnosis, and the bridge table joining them. Billing: ' +
         'invoice and payment. Three relationships are one-to-one and enforced by a ' +
-        'unique constraint — a patient has at most one portal account, an appointment ' +
+        'unique constraint: a patient has at most one portal account, an appointment ' +
         'at most one encounter, and an encounter at most one invoice. The remaining ' +
         'six are many-to-one. Every relationship is listed in full beneath the drawing.'
       }
@@ -84,7 +84,7 @@ export function ErdDiagram() {
                 <span className="text-ink">
                   {rel.from} → {rel.to}
                 </span>{' '}
-                on {rel.column} — {rel.cardinality}, {rel.enforcedBy}
+                on {rel.column}: {rel.cardinality}, {rel.enforcedBy}
               </li>
             ))}
           </ul>
@@ -93,8 +93,8 @@ export function ErdDiagram() {
             authoritative version, since a line style is no more readable than a colour to
             someone who cannot tell them apart. Transcribed from{' '}
             <code>server/schema.sql</code>, which opens with{' '}
-            <code>PRAGMA foreign_keys = ON</code> — without that line the constraints
-            would be documentation.
+            <code>PRAGMA foreign_keys = ON</code>. Without that line the constraints would
+            be documentation.
           </p>
         </div>
       }

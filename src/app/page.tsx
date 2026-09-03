@@ -12,7 +12,7 @@ import { getFeaturedProjects } from '@/lib/projects';
 import { absoluteUrl } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: `${profile.name} — data and analytics engineer in Boston`,
+  title: `${profile.name}, data and analytics engineer in Boston`,
   description:
     'Data and analytics engineer with applied ML depth. Ships tested systems: a 270-module ML pipeline behind 185 pytest functions. Graduating December 2026.',
   alternates: { canonical: absoluteUrl('/') },
@@ -23,14 +23,14 @@ export default function Home() {
   const education = currentEducation();
 
   return (
-    <div className="flex flex-col gap-14 md:gap-20">
+    <div>
       {/*
         Hero. First paint is content: no preloader, no entrance animation.
         No rail marker: the other markers name a section ("Work", "Method",
         "Contact") and this one has an h1 immediately beside it, so a label here
         would be decoration rather than navigation.
       */}
-      <Section>
+      <Section wash>
         <h1 className="text-3xl">{profile.name}</h1>
 
         {/*
@@ -79,11 +79,11 @@ export default function Home() {
         <ProofStrip />
       </section>
 
-      <Section marker="Work" divided>
+      <Section marker="Work" band="cool" reveal>
         <h2 className="text-xl">Selected work</h2>
         <div className="mt-8 flex flex-col gap-8">
-          {featured.map((project, index) => (
-            <WorkRow key={project.slug} project={project} showDivider={index > 0} />
+          {featured.map((project) => (
+            <WorkRow key={project.slug} project={project} />
           ))}
         </div>
         <p className="mt-8 text-xs">
@@ -91,7 +91,7 @@ export default function Home() {
         </p>
       </Section>
 
-      <Section marker="Method" divided>
+      <Section marker="Method" band="warm" reveal>
         <h2 className="text-xl">How I work</h2>
         {profile.howIWork.length > 0 ? (
           <div className="mt-8 flex flex-col gap-8">
@@ -109,7 +109,7 @@ export default function Home() {
         )}
       </Section>
 
-      <Section marker="Contact" divided>
+      <Section marker="Contact" band="cool" reveal>
         <h2 className="text-xl">Get in touch</h2>
         <p className="text-ink-muted mt-3 text-xs">
           Open to analytics engineering, data engineering, and applied ML roles from

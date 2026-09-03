@@ -122,7 +122,7 @@ export function chooseSection<T>(
     warnings.push(
       `${label}: fetched count ${score(incoming.data)} is lower than the stored ` +
         `${score(previous.data)}; keeping the snapshot from ${previous.verifiedAt}. ` +
-        `Counts do not go down — treat this as a upstream fault, not a correction.`,
+        `Counts do not go down, so treat this as an upstream fault rather than a correction.`,
     );
     return { section: previous, warnings };
   }

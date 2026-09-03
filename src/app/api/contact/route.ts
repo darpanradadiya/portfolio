@@ -71,7 +71,7 @@ async function deliver(input: {
         to: [to],
         reply_to: input.email,
         subject: `Portfolio enquiry from ${input.name}`,
-        text: `${input.message}\n\n—\n${input.name} <${input.email}>`,
+        text: `${input.message}\n\n--\n${input.name} <${input.email}>`,
       }),
       signal: AbortSignal.timeout(10_000),
     });

@@ -43,7 +43,7 @@ export const CLINIC_TABLES: readonly Table[] = [
     purpose: 'The registry. 5,000 generated rows.',
     columns: [
       { name: 'PATIENT_ID', type: 'INTEGER', notes: 'PK' },
-      { name: 'MRN', type: 'TEXT', notes: 'NOT NULL UNIQUE — medical record number' },
+      { name: 'MRN', type: 'TEXT', notes: 'NOT NULL UNIQUE, the medical record number' },
       { name: 'FIRST_NAME', type: 'TEXT', notes: 'NOT NULL' },
       { name: 'LAST_NAME', type: 'TEXT', notes: 'NOT NULL' },
       { name: 'DATE_OF_BIRTH', type: 'TEXT', notes: 'NOT NULL' },
@@ -76,7 +76,7 @@ export const CLINIC_TABLES: readonly Table[] = [
       {
         name: 'NPI',
         type: 'TEXT',
-        notes: 'NOT NULL UNIQUE — national provider identifier',
+        notes: 'NOT NULL UNIQUE, the national provider identifier',
       },
       { name: 'FIRST_NAME', type: 'TEXT', notes: 'NOT NULL' },
       { name: 'LAST_NAME', type: 'TEXT', notes: 'NOT NULL' },
@@ -161,7 +161,11 @@ export const CLINIC_TABLES: readonly Table[] = [
         notes: 'NOT NULL DEFAULT 0, CHECK IN (0,1)',
       },
       { name: 'NOTED_DATE', type: 'TEXT' },
-      { name: '—', type: 'TEXT', notes: 'UNIQUE (FK_ENCOUNTER_ID, FK_DIAGNOSIS_ID)' },
+      {
+        name: '(table)',
+        type: 'TEXT',
+        notes: 'UNIQUE (FK_ENCOUNTER_ID, FK_DIAGNOSIS_ID)',
+      },
     ],
   },
   {
@@ -187,7 +191,7 @@ export const CLINIC_TABLES: readonly Table[] = [
       { name: 'PAYMENT_ID', type: 'INTEGER', notes: 'PK' },
       { name: 'FK_INVOICE_ID', type: 'INTEGER', notes: 'NOT NULL -> INVOICE' },
       { name: 'PAYMENT_DATE', type: 'TEXT', notes: 'NOT NULL' },
-      { name: 'AMOUNT', type: 'REAL', notes: 'NOT NULL, CHECK > 0 — strictly positive' },
+      { name: 'AMOUNT', type: 'REAL', notes: 'NOT NULL, CHECK > 0, strictly positive' },
       {
         name: 'METHOD',
         type: 'TEXT',
@@ -203,7 +207,7 @@ export const CLINIC_RELATIONSHIPS: readonly Relationship[] = [
     column: 'FK_PATIENT_ID',
     to: 'PATIENT',
     cardinality: 'one-to-one',
-    enforcedBy: 'NOT NULL UNIQUE — a patient cannot have two accounts',
+    enforcedBy: 'NOT NULL UNIQUE, so a patient cannot have two accounts',
   },
   {
     from: 'APPOINTMENT',
@@ -231,7 +235,7 @@ export const CLINIC_RELATIONSHIPS: readonly Relationship[] = [
     column: 'FK_APPOINTMENT_ID',
     to: 'APPOINTMENT',
     cardinality: 'one-to-one',
-    enforcedBy: 'NOT NULL UNIQUE — an appointment yields at most one encounter',
+    enforcedBy: 'NOT NULL UNIQUE, so an appointment yields at most one encounter',
   },
   {
     from: 'ENCOUNTER_DIAGNOSIS',
@@ -252,13 +256,13 @@ export const CLINIC_RELATIONSHIPS: readonly Relationship[] = [
     column: 'FK_ENCOUNTER_ID',
     to: 'ENCOUNTER',
     cardinality: 'one-to-one',
-    enforcedBy: 'NOT NULL UNIQUE — one bill per encounter',
+    enforcedBy: 'NOT NULL UNIQUE, one bill per encounter',
   },
   {
     from: 'PAYMENT',
     column: 'FK_INVOICE_ID',
     to: 'INVOICE',
     cardinality: 'many-to-one',
-    enforcedBy: 'NOT NULL — an invoice can be paid in instalments',
+    enforcedBy: 'NOT NULL, so an invoice can be paid in instalments',
   },
 ];

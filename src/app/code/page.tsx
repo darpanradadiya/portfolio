@@ -30,7 +30,7 @@ export default function CodePage() {
         </p>
         <p className="measure text-ink-muted mt-4 text-xs">
           These are cumulative totals. The two platforms grade difficulty on their own
-          scales, so the tiers are reported separately rather than added together — a
+          scales, so the tiers are reported separately rather than added together. A
           &ldquo;hard&rdquo; on one is not a &ldquo;hard&rdquo; on the other.
         </p>
       </Section>
@@ -49,7 +49,7 @@ export default function CodePage() {
               { label: 'medium', count: gfg.medium },
               { label: 'hard', count: gfg.hard },
             ]}
-            note={`Basic through hard, ${gfg.basic + gfg.easy + gfg.medium + gfg.hard} problems. The one "school" problem is left off the bar — a single item is not a tier worth drawing — so the total across all levels is ${gfg.total}.`}
+            note={`Basic through hard, ${gfg.basic + gfg.easy + gfg.medium + gfg.hard} problems. The one "school" problem is left off the bar, because a single item is not a tier worth drawing, so the total across all levels is ${gfg.total}.`}
           />
         </div>
 
@@ -74,8 +74,8 @@ export default function CodePage() {
           there is no outbound link here rather than a guessed one.
         */}
         <p className="text-ink-muted text-2xs mt-6">
-          Read from the profile by hand — GeeksforGeeks publishes no API, and the
-          community scrapers are less reliable than a dated constant.
+          Read from the profile by hand. GeeksforGeeks publishes no API, and the community
+          scrapers are less reliable than a dated constant.
         </p>
       </Section>
 
@@ -97,7 +97,7 @@ export default function CodePage() {
                 { label: 'medium', count: leetcode.data.medium },
                 { label: 'hard', count: leetcode.data.hard },
               ]}
-              note={`${leetcode.data.total} problems in total. The bar is proportional within LeetCode only — the two platforms grade difficulty on their own scales, so the widths are not comparable between sections.`}
+              note={`${leetcode.data.total} problems in total. The bar is proportional within LeetCode only, because the two platforms grade difficulty on their own scales, so the widths are not comparable between sections.`}
             />
           </div>
           <p className="text-ink-muted text-2xs mt-4">

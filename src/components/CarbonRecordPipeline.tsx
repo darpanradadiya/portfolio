@@ -73,7 +73,7 @@ export function CarbonRecordPipeline() {
                   <>
                     {' '}
                     Low-confidence clusters are held at the review gate for a person to
-                    name — the only manual step, and manual on purpose.
+                    name. It is the only manual step, and manual on purpose.
                   </>
                 )}
               </span>

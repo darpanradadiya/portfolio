@@ -33,11 +33,11 @@ export default async function OpengraphImage({
   const headline = project.metrics[0];
   const meta =
     headline === undefined
-      ? project.stack.slice(0, 4).join('  ·  ')
-      : `${headline.value} ${headline.label}  —  ${project.stack.slice(0, 3).join(', ')}`;
+      ? project.stack.slice(0, 4).join(', ')
+      : `${headline.value} ${headline.label}. ${project.stack.slice(0, 3).join(', ')}`;
 
   return renderOgImage({
-    eyebrow: `${profile.name} — case study`,
+    eyebrow: `${profile.name}, case study`,
     title: displayTitle(project),
     meta,
   });

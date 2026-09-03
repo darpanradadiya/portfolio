@@ -26,7 +26,7 @@ export default function AboutPage() {
           </div>
         ) : (
           <Limitation className="measure mt-6">
-            A first-person account belongs here — how Darpan got from an ICT degree to
+            A first-person account belongs here: how Darpan got from an ICT degree to
             building tested ML pipelines, and what he is looking for next. It is
             deliberately empty rather than written for him.
           </Limitation>

@@ -95,7 +95,7 @@ export const profile = {
 
   headline: "Most ML pipelines break quietly. I build the ones that don't.",
   intro:
-    "I'm a data and analytics engineer finishing an MPS in Analytics at Northeastern in December 2026. My last project was a 270-module Python system that takes a feature film, works out who's in it, and cuts a reel for each character — six models in sequence, no labelled cast, and multi-hour runtimes. Most of the engineering went into making it survive failure rather than making it clever. That's the part of this work I'm actually interested in.",
+    "I'm a data and analytics engineer finishing an MPS in Analytics at Northeastern in December 2026. My last project was a 270-module Python system that takes a feature film, works out who's in it, and cuts a reel for each character. Six models in sequence, no labelled cast, and multi-hour runtimes. Most of the engineering went into making it survive failure rather than making it clever. That's the part of this work I'm actually interested in.",
 
   howIWork: [
     {
@@ -104,7 +104,7 @@ export const profile = {
     },
     {
       heading: '2. Bad data is cheaper to stop than to explain',
-      body: "Almost everything that goes wrong downstream started as a bad record upstream. At Clomotech I wrote preprocessing and validation rules that ran before anything reached a model, which cut manual data-wrangling by around 40% — not because the rules were clever, but because catching a malformed row costs seconds and debugging a model trained on it costs days. I'd rather fail loudly at ingestion than quietly at inference.",
+      body: "Almost everything that goes wrong downstream started as a bad record upstream. At Clomotech I wrote preprocessing and validation rules that ran before anything reached a model, which cut manual data-wrangling by around 40%. Not because the rules were clever, but because catching a malformed row costs seconds and debugging a model trained on it costs days. I'd rather fail loudly at ingestion than quietly at inference.",
     },
     {
       heading: '3. Anything that runs for hours will be interrupted',
@@ -112,7 +112,7 @@ export const profile = {
     },
     {
       heading: "4. When a model isn't sure, it should say so",
-      body: "Cast identification is the stage everything downstream depends on, and there's no labelled answer key — identities have to be discovered from the footage. I clustered face embeddings with HDBSCAN rather than k-means specifically because it infers the number of clusters and labels outliers as noise instead of forcing every extra into a lead's identity. Then I put a human naming step in front of low-confidence clusters. It's the only manual step in the pipeline and it's manual on purpose: a threshold is a guess about where a model stops being trustworthy, and it's wrong in both directions.",
+      body: "Cast identification is the stage everything downstream depends on, and there's no labelled answer key. Identities have to be discovered from the footage. I clustered face embeddings with HDBSCAN rather than k-means specifically because it infers the number of clusters and labels outliers as noise instead of forcing every extra into a lead's identity. Then I put a human naming step in front of low-confidence clusters. It's the only manual step in the pipeline and it's manual on purpose: a threshold is a guess about where a model stops being trustworthy, and it's wrong in both directions.",
     },
   ] satisfies readonly WorkPrinciple[],
 
@@ -121,7 +121,7 @@ export const profile = {
     "I got here through the unglamorous route. Nine months at PepCoding on data structures and full-stack web development, mentoring at my university's CINS club, a summer research internship. Then a data analyst internship at Clomotech building ETL on AWS Glue, Lambda, and S3 that processed over 100,000 operational records a day and replaced a legacy ingestion process that was holding up everything downstream. Most recently at Wisaxis, building reproducible Python and SQL workflows over a 100,000-record daily dataset that had no scalable process at all.",
     "Outside coursework I build things that are larger than they need to be, because that's where the interesting failures live. Carbon Record is 270 modules and six models deep. The clinic ERP is a ten-table 3NF schema with a live SQL viewer that traces every dashboard metric back to its source table, because I wanted to know whether the numbers on the dashboard were the numbers in the database.",
     "Alongside that I've solved around 950 algorithm problems across GeeksforGeeks and LeetCode, weighted toward medium and hard. Not the interesting part of my work, but the reason the interesting part goes faster.",
-    "What I'm looking for: analytics or data engineering work where the pipeline is the product — somewhere the correctness of the data matters as much as the model on top of it.",
+    "What I'm looking for: analytics or data engineering work where the pipeline is the product, somewhere the correctness of the data matters as much as the model on top of it.",
   ] as readonly string[],
 
   contact: {
@@ -193,7 +193,7 @@ export const profile = {
       // TODO(darpan): confirm whether these group into 24 subsystems. The resume
       // documents 270 modules, 65K lines, and 21 *test files* — "24 subsystems" is
       // not evidenced anywhere, so it is left off rather than guessed.
-      provenance: 'Carbon Record — 65K lines',
+      provenance: 'Carbon Record, 65K lines',
     },
     {
       value: '185',
@@ -208,7 +208,7 @@ export const profile = {
     {
       value: '100K+',
       label: 'records a day',
-      provenance: 'Clomotech ETL — Glue, Lambda, S3',
+      provenance: 'Clomotech ETL on Glue, Lambda and S3',
     },
   ] satisfies readonly ProofPoint[],
 

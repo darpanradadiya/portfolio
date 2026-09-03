@@ -126,7 +126,8 @@ test('the contact form rejects bad input with a visible message', async ({ page 
   await page.getByRole('button', { name: 'Send message' }).click();
 
   await expect(page.getByText(/does not look like an email address/)).toBeVisible();
-  await expect(page.getByText(/at least 20 characters/)).toBeVisible();
+  // Case-insensitive: the copy owns its own capitalisation, the test asserts the fact.
+  await expect(page.getByText(/at least 20 characters/i)).toBeVisible();
 });
 
 test('reduced motion removes the one animation', async ({ browser }) => {
