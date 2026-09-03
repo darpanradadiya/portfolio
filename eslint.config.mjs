@@ -17,10 +17,21 @@ const compat = new FlatCompat({
  *   3. The rule below bans the two semantic classes that consume them outside the
  *      two components allowed to render them.
  */
-const RESERVED_CLASSES = ['is-verified', 'is-limitation'];
+const RESERVED_CLASSES = [
+  'is-verified',
+  'is-limitation',
+  'data-fill-[1-4]',
+  'data-stroke-[1-4]',
+  'ramp-fill-[1-4]',
+  'ramp-bg-[1-4]',
+];
 const RESERVED_CLASS_OWNERS = [
   'src/components/VerifiedValue.tsx',
   'src/components/Limitation.tsx',
+  // Diagram and DifficultyBar map a semantic prop to a scale step internally, so
+  // these are the only files that ever name a data colour.
+  'src/components/Diagram.tsx',
+  'src/components/DifficultyBar.tsx',
 ];
 
 const reservedClassPattern = RESERVED_CLASSES.join('|');
@@ -45,17 +56,17 @@ const eslintConfig = [
         {
           selector: `Literal[value=/\\b(${reservedClassPattern})\\b/]`,
           message:
-            'Reserved: `is-verified` / `is-limitation` consume --signal / --warn and may only be used in VerifiedValue.tsx or Limitation.tsx. See DESIGN.md.',
+            'Reserved class: --signal, --warn and the --data / --ramp scales may only be reached through VerifiedValue, Limitation, Diagram or DifficultyBar. See DESIGN.md.',
         },
         {
           selector: `TemplateElement[value.raw=/\\b(${reservedClassPattern})\\b/]`,
           message:
-            'Reserved: `is-verified` / `is-limitation` consume --signal / --warn and may only be used in VerifiedValue.tsx or Limitation.tsx. See DESIGN.md.',
+            'Reserved class: --signal, --warn and the --data / --ramp scales may only be reached through VerifiedValue, Limitation, Diagram or DifficultyBar. See DESIGN.md.',
         },
         {
-          selector: 'Literal[value=/var\\(\\s*--(signal|warn)\\b/]',
+          selector: 'Literal[value=/var\\(\\s*--(signal|warn|data-[1-4]|ramp-[1-4])\\b/]',
           message:
-            'Reserved: --signal / --warn must not be referenced from TSX. Use the VerifiedValue or Limitation component. See DESIGN.md.',
+            'Reserved: --signal, --warn and the --data / --ramp scales must not be referenced from TSX. Use VerifiedValue, Limitation, Diagram or DifficultyBar. See DESIGN.md.',
         },
       ],
     },

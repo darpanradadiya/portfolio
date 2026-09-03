@@ -27,7 +27,7 @@
       }
     ],
     "declaration-property-value-disallowed-list": {
-      "/.*/": ["/var\\(\\s*--(signal|warn)\\b/"]
+      "/.*/": ["/var\\(\\s*--(signal|warn|data-[1-4]|ramp-[1-4])\\b/"]
     },
     "property-no-vendor-prefix": [
       true,

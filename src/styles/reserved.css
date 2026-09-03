@@ -3,6 +3,8 @@
  *
  * --signal  marks data that has been verified against a real source.
  * --warn    marks a limitation, or a notice that data is stale.
+ * --data-N  categorises a stage or series INSIDE a diagram or chart.
+ * --ramp-N  a single-hue ramp for ordered magnitudes inside a chart.
  *
  * Neither is a general accent colour. Neither may appear on a button, a border, a
  * heading, or a link. This is enforced, not merely documented:
@@ -14,13 +16,49 @@
  *   3. ESLint blocks the two classes below outside VerifiedValue.tsx and
  *      Limitation.tsx (eslint.config.mjs — no-restricted-syntax).
  *
- * If you are here to add a third use, that is a design decision, not a CSS change.
+ * The data scale is reserved just as strictly. It may appear inside the drawing
+ * area of a diagram or a chart and NOWHERE else — not on a button, a border, a
+ * heading, a link, the navigation, or any other chrome. Colour in this system means
+ * "this is a category of data", in the same way monospace means "this is a measured
+ * value". The moment it decorates something, it stops meaning anything.
+ *
+ * Colour is never the sole carrier. Under deuteranopia --data-1 and --data-2
+ * collapse to 1.01:1, so every stage and every series also carries a text label
+ * (WCAG 1.4.1). The scale is reinforcement, not information.
+ *
+ * If you are here to add a further use, that is a design decision, not a CSS change.
  * See DESIGN.md, "Two rules enforced by tooling".
  */
 
 :root {
   --signal: light-dark(#1f6f5c, #4fb99b);
   --warn: light-dark(#a6522c, #d98a5e);
+
+  /*
+   * Categorical scale for diagram stages. All eight values clear AA against their
+   * own ground: 6.51, 5.81, 4.85, 7.87 on paper; 7.23, 7.69, 9.14, 6.76 on ground.
+   * --data-2 is deliberately identical to --signal — "the model produced a verified
+   * value" is the same semantic in both places.
+   */
+  --data-1: light-dark(#2d5f8a, #6fa8d4); /* ingestion / input */
+  --data-2: light-dark(#1f6f5c, #4fb99b); /* model / inference */
+  --data-3: light-dark(#8a6a2d, #d4b26f); /* orchestration / storage */
+  --data-4: light-dark(#7a3b52, #c98ba0); /* human-in-the-loop / review */
+
+  /*
+   * Ordered magnitudes get a single hue, light to dark, so "more" reads as
+   * "denser" rather than as an unrelated category. Derived from --data-1's hue
+   * (208 degrees) at contrasts of 3.2, 4.6, 6.6 and 9.4 against paper, and 3.2,
+   * 4.8, 7.0 and 9.6 against ground. Even the lightest step clears the 3:1 that
+   * SC 1.4.11 asks of a graphical object.
+   *
+   * Adjacent steps sit around 1.4:1 apart, which is not enough on its own — so the
+   * chart draws a hairline between segments and labels every one.
+   */
+  --ramp-1: light-dark(#5592c8, #326a99);
+  --ramp-2: light-dark(#3877ad, #4287c1);
+  --ramp-3: light-dark(#2d5e89, #70a4d1);
+  --ramp-4: light-dark(#214767, #9bbfde);
 }
 
 .is-verified {
@@ -29,4 +67,80 @@
 
 .is-limitation {
   color: var(--warn);
+}
+
+/*
+ * Diagram and chart paint. Consumed only by Diagram.tsx and DifficultyBar.tsx,
+ * which expose semantic props instead of these class names — so no other component
+ * can reach a data colour even indirectly.
+ */
+
+.data-fill-1 {
+  fill: var(--data-1);
+}
+
+.data-fill-2 {
+  fill: var(--data-2);
+}
+
+.data-fill-3 {
+  fill: var(--data-3);
+}
+
+.data-fill-4 {
+  fill: var(--data-4);
+}
+
+.data-stroke-1 {
+  stroke: var(--data-1);
+}
+
+.data-stroke-2 {
+  stroke: var(--data-2);
+}
+
+.data-stroke-3 {
+  stroke: var(--data-3);
+}
+
+.data-stroke-4 {
+  stroke: var(--data-4);
+}
+
+.ramp-fill-1 {
+  fill: var(--ramp-1);
+}
+
+.ramp-fill-2 {
+  fill: var(--ramp-2);
+}
+
+.ramp-fill-3 {
+  fill: var(--ramp-3);
+}
+
+.ramp-fill-4 {
+  fill: var(--ramp-4);
+}
+
+/*
+ * Background variants of the ramp, for the stacked bar. Consumed only by
+ * DifficultyBar.tsx, which maps a difficulty tier to a step rather than exposing
+ * these names.
+ */
+
+.ramp-bg-1 {
+  background-color: var(--ramp-1);
+}
+
+.ramp-bg-2 {
+  background-color: var(--ramp-2);
+}
+
+.ramp-bg-3 {
+  background-color: var(--ramp-3);
+}
+
+.ramp-bg-4 {
+  background-color: var(--ramp-4);
 }
