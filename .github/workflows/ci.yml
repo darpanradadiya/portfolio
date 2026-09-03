@@ -57,6 +57,12 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Scans the build output, so it has to follow the build. Catches an
+      # unfinished note or an em-dash in rendered HTML or in an RSC payload —
+      # the payload being where the first leak actually was.
+      - name: Check rendered output for TODO and em-dashes
+        run: npm run lint:todo
+
       - name: Verify committed fonts
         # Checks glyph coverage rather than byte equality: woff2 output is not
         # reproducible across fontTools and brotli versions, so a byte comparison
