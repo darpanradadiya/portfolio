@@ -163,13 +163,10 @@ an `[INFERRED]` marker.
 - Its job on the site is showing R and a second visualisation stack, so lead with
   the segmentation method
 
-### 5. `site-intelligence-platform.mdx` — listed, not featured
+### (removed) Site Intelligence Platform
 
-- `role` needed
-- Confirm the size: frontmatter states 30 GB as a measured figure, the brief said
-  "~30GB". Correct it or make it a range.
-- Constraints is the section that matters here: what did 30 GB make impossible, and
-  what did you do about it?
+Deleted from the site on 2026-09-03. Kept here only as a note: it also needs
+removing from the résumé.
 
 ### 6. `bank-term-deposit-prediction.mdx` — listed, not featured
 
@@ -190,7 +187,12 @@ an `[INFERRED]` marker.
 3. **Results for Customer Segmentation** — the only section left TODO in the two
    secondary write-ups, because whether any recommendation was acted on is not
    something the code can say.
-4. **Site Intelligence** — verify or remove.
+4. **Remove the Site Intelligence Platform from your résumé.** It has been deleted
+   from the site: no repository exists for it, no PySpark appears anywhere in the
+   GitHub account, and all eight of its sections had to be deleted for lack of
+   evidence. That left an empty entry on a site whose argument is that every claim
+   is checkable. It is still on the résumé PDF, which is the one place it now
+   contradicts the site.
 5. **Screenshots.** Customer Segmentation's repository already has seven committed
    under `screenshots/`, so that one is a copy job rather than a capture job.
 
