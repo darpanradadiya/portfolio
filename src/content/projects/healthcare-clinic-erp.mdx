@@ -104,8 +104,7 @@ separate table.
 **The browser gets its own database.** The SQL viewer runs SQLite in WebAssembly via
 sql.js against an 8-patient sample committed to `public/`, so the viewer works on a
 static deploy with no server. The full 5,000-patient database is built by the seed
-script server-side. [INFERRED] that split is deliberate rather than accidental —
-worth confirming.
+script server-side. Why there are two is under Decisions.
 
 ## What I built
 
@@ -136,12 +135,58 @@ It's deployed on Render via `render.yaml`.
 
 ## Decisions
 
-TODO — yours. The one I'd most want to read is 3NF against a star schema, given that
-reporting is half the point of the thing. Others visible in the schema: modelling
-encounter-to-diagnosis as a bridge table with an `IS_PRIMARY` flag rather than a
-primary-diagnosis column on the encounter; making the one-to-ones `UNIQUE` foreign
-keys rather than shared primary keys; and shipping a small sample database to the
-browser instead of proxying the real one.
+### 3NF over a star schema
+
+Reporting was half the point of this system, which is the usual argument for a star
+schema — denormalise, accept the redundancy, make the reads fast.
+
+I went with 3NF anyway, because the other half of the point was that the reports had
+to agree with each other. In a star schema the same fact can be stored in more than one
+place, and once that's true, two reports can both be correct and still disagree. That's
+exactly the failure this system existed to eliminate.
+
+3NF means every fact lives in one table and every relationship is a foreign key. Nine
+foreign keys, `PRAGMA foreign_keys = ON`, all three one-to-one relations enforced by
+`UNIQUE` rather than convention, status fields constrained by `CHECK`, and money
+constrained to be non-negative on invoices and strictly positive on payments. A report
+that disagrees with another report is a query bug, not a data bug, and query bugs are
+findable.
+
+That's also why there's a live SQL viewer tracing each dashboard metric back to its
+source table. If someone questions a number, the answer is the query, not an
+explanation.
+
+The tradeoff is joins. Provider productivity crosses appointment, encounter, and
+provider; billing crosses encounter, invoice, and payment. At 5,000 patients and
+12,000 appointments that's not a problem. At a real clinic's volume I'd expect to add a
+reporting layer on top rather than denormalise underneath.
+
+{/*
+  [CHECK] — the live SQL viewer is on the resume. I've framed it as flowing from the
+  3NF decision, which is a reasonable reading but a reading. Confirm.
+*/}
+
+### The sql.js split
+
+The demo runs SQL in the browser through sql.js, and the database file it loads has
+eight patients in it. The real one has five thousand.
+
+sql.js loads the entire database into browser memory as a single file, so committing
+the full seed would mean a multi-megabyte binary in the repository that every visitor
+downloads before the page is usable — to run queries whose answers a dashboard already
+displays. The eight-patient file proves the viewer works and the queries are real. The
+5,000-row database is built server-side by the seed script, which is where the
+query-performance claims come from.
+
+So there are two databases doing two jobs: one to demonstrate that metrics trace back
+to source tables, one to validate that the schema holds up at scale.
+
+{/*
+  [CHECK] — I've written this as deliberate. If the 8-patient file is just what
+  happened to get committed, say so instead; "the committed sample is small because it
+  was convenient, and the real seed runs server-side" is a fine sentence and a true
+  one.
+*/}
 
 ## Results
 

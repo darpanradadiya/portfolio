@@ -77,16 +77,26 @@ shown to me before it renders, and the identity step will not let me skip it.
 
 ## The problem
 
-[INFERRED] Cutting a character reel by hand means watching a film, finding the
-scenes one person carries, checking a song's drop lands where the dialogue stops, and
-then cutting the montage to the beat. It's hours of work per character, and a film has
-forty of them. [INFERRED — confirm or replace: the code tells me what the system does,
-not what made you start it.]
+Carbon Record is a marketing tool. If you're promoting a song, a film, or a person,
+the format that works is short vertical clips built around one recognisable face — and
+producing those means someone sitting with the footage, finding every scene a given
+character appears in, and cutting them together. For a feature with forty speaking
+parts that's forty passes through the same film.
 
-What the code is unambiguously built to handle is a harder problem than "cut a reel":
-identities aren't known in advance, the film is long enough that the same person
-clusters several times over, and every stage is slow enough that a failure at hour
-three cannot mean starting over.
+The work is mechanical but it isn't simple. It needs three things at once: knowing who
+is on screen, knowing where scenes start and end, and knowing which moments are worth
+keeping. Each is a different model, and none of them is reliable enough on its own to
+trust unsupervised.
+
+The second problem is that a pipeline doing all three runs for hours over
+feature-length input. A multi-hour job that restarts from zero on any failure isn't
+automation, it's a chore with extra steps. Most of the engineering here went into
+surviving failure rather than into the models.
+
+{/*
+  [CHECK] — "forty speaking parts" comes from the reference film's 42 characters in
+  your own docs. If that's not representative, say a number that is.
+*/}
 
 ## Constraints
 
@@ -167,12 +177,98 @@ pipeline.
 
 ## Decisions
 
-TODO — yours. Three to five forks in the road, each with the option you rejected and
-why. The source shows what you chose; it can't tell me what you were choosing between,
-and I'm not going to invent the alternative. Candidates visible in the code, if useful:
-HDBSCAN over k-means; a review gate over a confidence threshold; deferring the
-pipeline/format split rather than doing it; deleting `warm_purity` rather than tuning
-it; deriving work time from a heartbeat rather than from CPU.
+### Absorbing scene extraction instead of maintaining a bridge
+
+The first version wasn't one system. Scene extraction was a separate Gemini-based
+cutter, and a third repository orchestrated the two — copy the film into the cutter's
+input directory, run it, discover the clip-and-sidecar pairs it produced, then hand
+each one to the reel engine. It worked, and it was three hundred lines of glue with
+both sibling repositories' absolute paths hardcoded, which meant it ran on exactly one
+machine.
+
+I pulled the extraction into the pipeline instead. Shot detection now runs inside the
+same process as everything downstream, which means it shares the checkpoint system,
+the cache, and the failure handling rather than needing its own. The bridge function
+still exists as a CLI entry point — `make_scene_reel()` is reachable, and its docstring
+still describes a tool the pipeline no longer needs — but nothing in the main path
+calls it.
+
+The tradeoff is that the pipeline is now bigger and owns a problem it used to
+delegate. That was worth it: a stage that lives outside the checkpoint system is a
+stage that can't resume, and resumption is the property the whole system is built
+around.
+
+### 1. HDBSCAN over k-means
+
+Cast identification is the stage everything downstream depends on, and there's no
+answer key — identities have to be discovered from the footage.
+
+k-means needs to be told how many clusters to find, and the number of people in a film
+is exactly the thing I don't know going in. It also assigns every point to a cluster,
+which means a background extra who appears in two frames gets absorbed into whichever
+lead they're nearest in embedding space.
+
+HDBSCAN infers cluster count from density and labels sparse points as noise rather
+than forcing them somewhere. With `min_cluster_size=4` and `min_samples=2`, a face has
+to recur before it becomes an identity at all. On the reference film that produced 459
+face groups resolving to 42 characters — the gap between those numbers is mostly the
+same person under different lighting, which is the failure mode I'd rather have than
+the reverse.
+
+The cost is that HDBSCAN gives me no control over how many identities come out, and
+it's slower on large embedding sets. Both are acceptable when the alternative is
+confidently wrong casting.
+
+### 2. A human review gate over a confidence threshold
+
+Every identity downstream depends on clustering being right, and clustering is the
+least certain stage in the pipeline.
+
+The obvious answer is a confidence threshold — accept clusters above some score,
+discard the rest. I don't think a threshold is a decision, though. It's a guess about
+where a model stops being trustworthy, and it's wrong in both directions: it accepts
+confident mistakes and discards correct low-confidence output. Whichever number I
+picked would be defensible and unfalsifiable at the same time.
+
+So low-confidence clusters are held for a person to name. It's the only manual step in
+the pipeline and it's manual on purpose. Every other stage can fail and retry; this one
+can be wrong in a way retrying doesn't fix, so it's the one place a person is worth the
+interruption.
+
+It doesn't scale. One decision per job is fine for one film and a bottleneck for a
+hundred. That's a real limitation, not a phase.
+
+### 3. Deleting a stage rather than tuning it
+
+There was a caching stage meant to make repeat runs cheaper, and a purity scan meant
+to catch mixed clusters.
+
+I measured both against what they were supposed to save. The caching stage cost 312.7
+minutes to save 4.5 — off by a factor of twelve from the estimate that justified
+building it. The purity scan was out by 3.4×. The instinct in both cases was to tune:
+adjust the batch size, narrow the scan, make it cheaper.
+
+I deleted them instead. A stage that costs more than it saves is not a tuning problem,
+it's a stage that shouldn't exist, and tuning it would have meant spending more time
+defending the decision to build it. Removing them made the pipeline smaller and faster
+in the same commit.
+
+{/*
+  [CHECK] — I've written this as "measured, then deleted." If you deleted first and
+  measured after, or the numbers came from a different run, correct it.
+*/}
+
+### 4. Bounded retries over unbounded resilience
+
+Every LLM call in the pipeline goes through one module: three attempts, a 180-second
+timeout, and the same behaviour everywhere. Five extraction clients import those
+constants rather than defining their own.
+
+The alternative is per-call tuning — longer timeouts on the expensive calls, more
+retries where failure is costlier. I didn't do that, because with hundreds of calls per
+job, per-call tuning means hundreds of independent decisions nobody will revisit and no
+way to reason about worst-case runtime. One shared policy means a hung provider
+degrades one call instead of stalling a job, and the ceiling is knowable.
 
 ## Results
 

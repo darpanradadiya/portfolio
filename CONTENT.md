@@ -94,7 +94,12 @@ and `summary` as well. Noted below only where a file differs.
 
 ### 1. `carbon-record-automation.mdx` — featured, flagship
 
-Start here. It carries more weight than anything else on the site.
+**Written: Context, The problem, Constraints, What I built, Decisions (five),
+Results.** Two `[CHECK]` review comments are in the file — the "forty speaking parts"
+figure, and whether the deleted stage was measured before or after deletion.
+
+Still outstanding: **Limitations** (partly drafted in your notes — the review gate
+doesn't scale, checkpoints assume local disk), `timeframe`, and a screenshot.
 
 - `role` is set: _Architecture, ML pipeline, and test suite_
 - Verified facts, safe to use: 273 non-test modules, 65,193 lines of tracked
@@ -115,6 +120,16 @@ Start here. It carries more weight than anything else on the site.
   per-stage checkpoints over re-running; retry logic on LLM calls
 
 ### 2. `healthcare-clinic-erp.mdx` — featured
+
+**Written: Context, The problem, Constraints, What I built, Decisions (two).** The ERD
+is rendered from the schema. Two `[CHECK]` review comments are in the file — whether
+the SQL viewer flows from the 3NF decision, and whether the 8-patient sample was
+deliberate or just convenient.
+
+Still outstanding: **Results** (row counts are measured, query timings are not — say
+so if you don't have them), **Limitations** (one line on what a real clinic would need
+that this doesn't), `timeframe`, and a screenshot. The problem statement still carries
+an `[INFERRED]` marker.
 
 - `role` is set: _Schema design, reporting layer, and REST API_
 - `dataNote` is written and confirmed: the 5,000 patients and 12,000 appointments
@@ -166,6 +181,15 @@ Start here. It carries more weight than anything else on the site.
   three featured studies are written — a short body is a fine answer.
 
 ---
+
+## The shortest path to finished
+
+1. **Limitations** for both featured projects. Carbon Record's are half-written in
+   your own notes; the clinic needs one line.
+2. **Results** for the clinic — or the sentence saying the timings don't exist.
+3. **Four `[CHECK]` markers** confirmed or corrected.
+4. **The three secondary projects** — `outcomeTitle`, `seoTitle`, `summary`, bodies.
+5. **`timeframe` on all six.** Not one is filled.
 
 ## Not copy, but still outstanding
 
