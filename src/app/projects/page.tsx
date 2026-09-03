@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Section } from '@/components/Section';
 import { ProjectList } from '@/components/ProjectList';
-import { displayTitle, getAllDomains, getAllProjects } from '@/lib/projects';
+import { getAllDomains, getAllProjects, toProjectCard } from '@/lib/projects';
 import { absoluteUrl } from '@/lib/site';
 
 export const metadata: Metadata = {
@@ -12,10 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default function ProjectsPage() {
-  const projects = getAllProjects().map((project) => ({
-    ...project,
-    heading: displayTitle(project),
-  }));
+  const projects = getAllProjects().map(toProjectCard);
 
   return (
     <Section marker="Work">

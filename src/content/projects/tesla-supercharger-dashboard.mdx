@@ -8,8 +8,8 @@ summary: >-
   expansion.
 featured: true
 order: 3
-role: null
-timeframe: null
+role: Sole author, covering data generation, analysis and dashboard
+timeframe: May 2025
 stack:
   - Python
   - Streamlit
@@ -21,7 +21,7 @@ repoNote: null
 demo: null
 screenshot: null
 dataNote: >-
-  The dataset is synthetic — a generated three-year dataset, not observed
+  The dataset is synthetic: a generated three-year dataset, not observed
   Supercharger usage. Everything below describes analysis of generated data, and
   none of it is evidence about real stations.
 ---
@@ -44,37 +44,59 @@ dataNote: >-
 
 ## Context
 
-TODO — two sentences.
+A Streamlit dashboard over a Supercharger network: 50 stations and 25,000 charging
+sessions drawn from every hour between January 2022 and December 2024. Five tabs, each
+built around one operational question. About 310 lines of Python, of which 96 are the
+generator that produced the data.
+
+Built May 2025.
 
 ## The problem
 
-TODO — frame it as the operator's question, not the dataset's. "Where should the
-next Supercharger go, and what would it cost us to get that wrong?"
+A charging network fails in two directions at once. Under-provision a site and drivers
+queue; over-provision it and ports sit idle against a fixed operating cost. Both are
+invisible in a monthly total and only show up per station, per hour.
+
+So the question the dashboard exists to answer is where the next port should go: which
+sites are congested, which are carrying cost without volume, and which expansion buys
+the most reduction in waiting.
 
 ## Constraints
 
-TODO — the honest constraint here is that there is no real usage data. Say what
-you did about that: what did you assume, and how sensitive are the conclusions to
-those assumptions?
+**There is no real data, and there was never going to be.** Charging session data
+isn't public, so the dataset is generated: `synthetic_data.py` builds 50 stations and
+then samples 25,000 sessions from a three-year hourly range, with weather, events and
+traffic volume attached. Everything downstream is therefore a demonstration of the
+analysis, not a finding about Tesla.
+
+**The consequence is that the patterns are the ones I put there.** A generator that
+draws sessions from a distribution will show the distribution back. So the dashboard
+can prove that the questions are answerable and the charts are readable; it cannot
+discover anything.
 
 ## What I built
 
-TODO — the dashboard, with a screenshot.
+Five tabs, one per question. A utilisation map plotting session counts and average wait
+per station geographically. A wait-time series with a 7-day rolling average, anomalies
+flagged beyond two standard deviations, and event markers. A ranking of the ten busiest
+stations. Revenue against operating cost per station, side by side, which is the
+profitability view. And boxplots of queue length and idle ports, which is where the
+over- and under-provisioned sites separate.
 
-## Decisions
-
-TODO — three to five. How you modelled profitability, how you ranked expansion
-priority, what you chose not to show.
-
-## Results
-
-TODO — this section must not claim real-world outcomes from synthetic data. State
-what the analysis produces, and stop there.
+Streamlit, pandas and numpy for the reshaping, Plotly for the charts, Folium and pydeck
+for the maps.
 
 ## Limitations
 
-TODO — lead with the dataset. Then: what would you need to make this real?
+The dataset is generated, which is the whole story: no conclusion here transfers to a
+real network, and the correlations between weather, events and demand are the ones the
+generator was written to produce.
+
+Beyond that, it's a read-only view over static parquet files. There's no ingestion, no
+scheduled refresh, and no test suite. The expansion ranking is a chart to read rather
+than a model that recommends, so a planner still supplies the judgement.
 
 ## Stack and links
 
-TODO — repository URL.
+Python, Streamlit, pandas, numpy, Plotly, Folium, pydeck, Faker. Repository linked
+above, with screenshots of each tab.

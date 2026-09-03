@@ -9,7 +9,7 @@ summary: >-
 featured: true
 order: 1
 role: Architecture, ML pipeline, and test suite
-timeframe: null
+timeframe: May 2026 – September 2026
 stack:
   - Python
   - FastAPI
@@ -37,7 +37,8 @@ metrics:
     label: test files
 repo: null
 repoNote: >-
-  Private repository — I can walk through it or grant read access on request.
+  Private repository. I can walk through it or grant read access on
+  request.
 demo: null
 screenshot: null
 dataNote: null
@@ -67,8 +68,8 @@ dataNote: null
 
 Carbon Records is a cast reel engine. You give it a film; it works out who is in it,
 and cuts a reel for each person. A reel is one whole conversation from the film, then
-the song's drop landing exactly where the conversation ends, then a montage of the
-character who was speaking — captioned, graded, vertical, under 90 seconds. That
+the song's drop landing exactly where the conversation ends, then a montage of the character who was speaking. Captioned, graded, vertical,
+under 90 seconds. That
 three-part shape is the product, and most of the engineering exists to protect it.
 
 It's 273 Python modules and about 65,000 lines, plus a FastAPI studio you drive it
@@ -78,8 +79,7 @@ shown to me before it renders, and the identity step will not let me skip it.
 ## The problem
 
 Carbon Record is a marketing tool. If you're promoting a song, a film, or a person,
-the format that works is short vertical clips built around one recognisable face — and
-producing those means someone sitting with the footage, finding every scene a given
+the format that works is short vertical clips built around one recognisable face, and producing those means someone sitting with the footage, finding every scene a given
 character appears in, and cutting them together. For a feature with forty speaking
 parts that's forty passes through the same film.
 
@@ -103,8 +103,7 @@ surviving failure rather than into the models.
 Everything here is a number from the source, not an estimate.
 
 **No labelled cast.** Identities have to be discovered. Faces are detected and
-embedded, then clustered with HDBSCAN at `min_cluster_size=4` and `min_samples=2` —
-chosen because HDBSCAN infers how many clusters there are and marks outliers as noise
+embedded, then clustered with HDBSCAN at `min_cluster_size=4` and `min_samples=2`, chosen because HDBSCAN infers how many clusters there are and marks outliers as noise
 rather than forcing every extra into a lead.
 
 **Fragmentation is emergent over feature length.** One person shot across two and a
@@ -115,16 +114,14 @@ The Dark Knight's 194 proposals collapsed to 96 groups, with the Joker's single 
 covering 19 clusters and 551 faces. No short source reproduces this, which is why some
 of the review UI can only be tested on a full film.
 
-**Stages run for hours, so the run has to survive the machine.** On the reference
-film — Game of Thrones S05, 7,863 shots, 42 characters, 459 accepted face groups —
-clustering took 2.24 hours, aura 7.8 hours, and bold_hooks 13.2 hours wall against
+**Stages run for hours, so the run has to survive the machine.** The reference film is Game of Thrones S05: 7,863 shots, 42
+characters, 459 accepted face groups. On it, clustering took 2.24 hours, aura 7.8 hours, and bold_hooks 13.2 hours wall against
 about 2.6 hours of actual work, the difference being 122 sleep events. A heartbeat
 samples `(t, cpu, power)` every 15 seconds and work time is derived from the gaps,
 because a frozen machine freezes the sampler too, so the gap *is* the sleep.
 
 **Power state changes the numbers by more than the code does.** Measured 3.7
-minutes per character on AC against 321 minutes per character on battery for the same
-stage — 87×. macOS also schedules onto efficiency cores when unplugged, so a
+minutes per character on AC against 321 minutes per character on battery for the same stage, which is 87 times slower. macOS also schedules onto efficiency cores when unplugged, so a
 CPU-second buys about half the work. CPU-seconds are comparable within a power state
 and not across one.
 
@@ -140,27 +137,23 @@ film's size while uploading.
 
 The diagram above is the extraction path. Underneath it:
 
-`carbon/engine/cast/` holds the pipeline and the format in one namespace — 20 modules
-and 6,921 lines taking a film to a labelled clip library, and 13 modules and 7,741
+`carbon/engine/cast/` holds the pipeline and the format in one namespace: 20 modules and 6,921 lines taking a film to a labelled clip library, and 13 modules and 7,741
 lines taking that library to a reel. Splitting them properly rewrites 151 relative
 imports across 24 files, including the two largest modules in the repo, so it's
 scheduled after the launch rehearsal rather than before it. The retired trailer format
-is parked in its own package instead — 6 modules with no live importer, which is why
+is parked in its own package instead: 6 modules with no live importer, which is why
 moving it couldn't break a render.
 
 The model stack is InsightFace ArcFace on the `buffalo_l` pack for face embeddings,
 served through ONNX Runtime; YOLO for person detection and tracking; PySceneDetect for
-shot boundaries; Whisper for speech; and Gemini for the things that need judgement —
-scene registers, song sections, track moods, and labelling the clusters.
+shot boundaries; Whisper for speech; and Gemini for the things that need judgement: scene registers, song sections, track moods, and labelling the clusters.
 
-The studio is FastAPI and uvicorn on port 8099. It supervises the render worker —
-spawning it, restarting it if it dies, holding a lock so two app processes can't each
-spawn one — but it does not start Redis. Without Redis, renders fall back to running
+The studio is FastAPI and uvicorn on port 8099. It supervises the render worker, spawning it, restarting it if it dies, and
+holding a lock so two app processes can't each spawn one. It does not start Redis. Without Redis, renders fall back to running
 inside the web process: they work, they block requests, cancel stops working, and a
 restart loses them. The studio says that on screen rather than degrading quietly.
 
-`./start` runs six checks that used to be a human's job — the interpreter, the three
-requirement files, ffmpeg and ffprobe, Redis, and whether the Gemini key is a real key
+`./start` runs six checks that used to be a human's job: the interpreter, the three requirement files, ffmpeg and ffprobe, Redis, and whether the Gemini key is a real key
 rather than the placeholder. The key is checked at submit, so a missing one fails in a
 second instead of at stage six, two hours in.
 
@@ -171,8 +164,7 @@ naming the interpreter.
 Correctness is gated by 185 pytest functions across 21 test files, run by a pre-commit
 hook that refuses the commit on failure. Tiers 1 to 3 run in about 6 seconds; the slow
 tier adds a real render and a 30-minute parity gate. `tests/COVERAGE.md` is a list of
-what the suite does *not* reach, which is the more useful half — the identity review
-is the least-covered thing in the repository, and it's the one human gate in the
+what the suite does *not* reach, which is the more useful half. The identity review is the least-covered thing in the repository, and it's the one human gate in the
 pipeline.
 
 ## Decisions
@@ -180,7 +172,7 @@ pipeline.
 ### Absorbing scene extraction instead of maintaining a bridge
 
 The first version wasn't one system. Scene extraction was a separate Gemini-based
-cutter, and a third repository orchestrated the two — copy the film into the cutter's
+cutter, and a third repository orchestrated the two: copy the film into the cutter's
 input directory, run it, discover the clip-and-sidecar pairs it produced, then hand
 each one to the reel engine. It worked, and it was three hundred lines of glue with
 both sibling repositories' absolute paths hardcoded, which meant it ran on exactly one
@@ -189,9 +181,9 @@ machine.
 I pulled the extraction into the pipeline instead. Shot detection now runs inside the
 same process as everything downstream, which means it shares the checkpoint system,
 the cache, and the failure handling rather than needing its own. The bridge function
-still exists as a CLI entry point — `make_scene_reel()` is reachable, and its docstring
-still describes a tool the pipeline no longer needs — but nothing in the main path
-calls it.
+still exists as a CLI entry point. `make_scene_reel()` is reachable, and its
+docstring still describes a tool the pipeline no longer needs, but nothing in the
+main path calls it.
 
 The tradeoff is that the pipeline is now bigger and owns a problem it used to
 delegate. That was worth it: a stage that lives outside the checkpoint system is a
@@ -200,8 +192,7 @@ around.
 
 ### 1. HDBSCAN over k-means
 
-Cast identification is the stage everything downstream depends on, and there's no
-answer key — identities have to be discovered from the footage.
+Cast identification is the stage everything downstream depends on, and there's no answer key. Identities have to be discovered from the footage.
 
 k-means needs to be told how many clusters to find, and the number of people in a film
 is exactly the thing I don't know going in. It also assigns every point to a cluster,
@@ -210,8 +201,7 @@ lead they're nearest in embedding space.
 
 HDBSCAN infers cluster count from density and labels sparse points as noise rather
 than forcing them somewhere. With `min_cluster_size=4` and `min_samples=2`, a face has
-to recur before it becomes an identity at all. On the reference film that produced 459
-face groups resolving to 42 characters — the gap between those numbers is mostly the
+to recur before it becomes an identity at all. On the reference film that produced 459 face groups resolving to 42 characters. The gap between those numbers is mostly the
 same person under different lighting, which is the failure mode I'd rather have than
 the reverse.
 
@@ -224,8 +214,7 @@ confidently wrong casting.
 Every identity downstream depends on clustering being right, and clustering is the
 least certain stage in the pipeline.
 
-The obvious answer is a confidence threshold — accept clusters above some score,
-discard the rest. I don't think a threshold is a decision, though. It's a guess about
+The obvious answer is a confidence threshold: accept clusters above some score, discard the rest. I don't think a threshold is a decision, though. It's a guess about
 where a model stops being trustworthy, and it's wrong in both directions: it accepts
 confident mistakes and discards correct low-confidence output. Whichever number I
 picked would be defensible and unfalsifiable at the same time.
@@ -243,8 +232,7 @@ hundred. That's a real limitation, not a phase.
 There was a caching stage meant to make repeat runs cheaper, and a purity scan meant
 to catch mixed clusters.
 
-I measured both against what they were supposed to save. The caching stage cost 312.7
-minutes to save 4.5 — off by a factor of twelve from the estimate that justified
+I measured both against what they were supposed to save. The caching stage cost 312.7 minutes to save 4.5, off by a factor of twelve from the estimate that justified
 building it. The purity scan was out by 3.4×. The instinct in both cases was to tune:
 adjust the batch size, narrow the scan, make it cheaper.
 
@@ -264,7 +252,7 @@ Every LLM call in the pipeline goes through one module: three attempts, a 180-se
 timeout, and the same behaviour everywhere. Five extraction clients import those
 constants rather than defining their own.
 
-The alternative is per-call tuning — longer timeouts on the expensive calls, more
+The alternative is per-call tuning: longer timeouts on the expensive calls, more
 retries where failure is costlier. I didn't do that, because with hundreds of calls per
 job, per-call tuning means hundreds of independent decisions nobody will revisit and no
 way to reason about worst-case runtime. One shared policy means a hung provider
@@ -276,14 +264,14 @@ I'm not going to give you a throughput number, and the reason is the interesting
 
 This project measures itself, and measuring itself is how it found out that three
 figures it had been quoting were wrong. Aura's call budget was quoted at about 405
-calls; it was 4,725 — out by 11.7×. A caching stage was justified by an estimated 26
+calls; it was 4,725, out by 11.7×. A caching stage was justified by an estimated 26
 minutes of cost against 17 minutes saved; measured, it cost 312.7 minutes and saved
 4.5, so it paid five hours to save four minutes and I deleted it. A purity scan quoted
 at 919.7 seconds of a render was 273. Each of those was honest when it was written and
 each kept being quoted after the code underneath it changed.
 
 There's a worse one. The identity-resolution stage reports 22.28 hours on the
-reference film. That number is permanently wrong — the span contains an interruption,
+reference film. That number is permanently wrong. The span contains an interruption,
 an overnight sleep and a kill, all inside a single run with no process change, so no
 structural test can catch it. It's labelled `unverified_span` and it must not be
 scaled down or fed to anything that averages, because a row that quietly reports a
@@ -291,13 +279,11 @@ smaller number is the same failure in the other direction.
 
 What I did instead of fixing the number was make the next one measurable: a heartbeat
 samples every 15 seconds and work time is derived from the gaps, so a frozen machine
-freezes the sampler and the gap *is* the sleep. CPU alone can't do this — one stage
-runs at 0.04 cores while working perfectly, so any threshold on cores calls it idle.
+freezes the sampler and the gap *is* the sleep. CPU alone can't do this. One stage runs at 0.04 cores while working perfectly, so any threshold on cores calls it idle.
 
 So the honest results are the shape of the thing, not its speed. One film has
 completed under current code. Anything measured on the two earlier films was produced
-by code that no longer exists. On battery, every timing above is meaningless — 3.7
-minutes per character on AC against 321 on battery for the same stage.
+by code that no longer exists. On battery, every timing above is meaningless: 3.7 minutes per character on AC against 321 on battery for the same stage.
 
 The repository's own `STATE.md` is the list of which numbers can't be trusted, and it
 exists because I got this wrong three times. Publishing a tidy figure here would be
@@ -313,7 +299,7 @@ it isn't a phase I'm planning my way out of.
 
 **A job resumes on the machine it failed on.** Checkpoints live in an
 `_extraction_checkpoints` directory under the film's export root, and the shot
-embedding cache is a `.npz` file beside it — both local paths. So resumption works,
+embedding cache is a `.npz` file beside it. Both are local paths. So resumption works,
 but only here. Moving a half-finished film to another machine means copying the
 checkpoint tree with it, and nothing in the code does that for you.
 
@@ -330,15 +316,14 @@ restart loses them. The studio says so on screen rather than degrading quietly, 
 is the right behaviour and not a fix.
 
 **There is no rate limiting on model calls at all.** Each call gets three attempts and
-a 180-second timeout, and that's the whole policy — the calls are issued sequentially
+a 180-second timeout, and that's the whole policy. The calls are issued sequentially
 inside each stage, and the only coordination anywhere is a thread lock inside one
 process and a file lock on the history file. Two jobs on one machine don't throttle
 each other, and two app processes on different machines don't know about each other.
 One film at a time hides this completely.
 
 **One layering rule is broken on purpose and written down.**
-`cast/film_index.py:46` imports a hashing helper from the web layer — the engine
-reaching upward, once. Nine web modules import the engine and the engine imports the
+`cast/film_index.py:46` imports a hashing helper from the web layer: the engine reaching upward, once. Nine web modules import the engine and the engine imports the
 web layer exactly there. Naming it was cheaper than moving hashing, and leaving it
 unnamed is how it would have spread.
 
@@ -346,8 +331,7 @@ unnamed is how it would have spread.
 review is the least-covered thing in the repository and it's the one human gate;
 exercising it needs a real multi-hour extraction sitting at `awaiting_review`, not a
 fixture. The multi-cluster fan-out and the split control have never run end to end,
-because fragmentation is emergent over feature length — a 150-second trailer produced
-4 proposals in 4 groups, so no source cheap enough to test on can reproduce the case
+because fragmentation is emergent over feature length. A 150-second trailer produced 4 proposals in 4 groups, so no source cheap enough to test on can reproduce the case
 that matters.
 
 **One track of 43 in the music library crashes analysis.**
@@ -357,8 +341,7 @@ that can't be analysed drops silently out of the qualifying set instead of surfa
 as a skip.
 
 **What breaks at ten times the load** is the gate first, then the disk. Ten films is
-ten review sessions and roughly 100 GB of clip libraries, and the pipeline has no
-concept of a queue across films — one at a time, on one machine, with a person waiting
+ten review sessions and roughly 100 GB of clip libraries, and the pipeline has no concept of a queue across films: one at a time, on one machine, with a person waiting
 in the middle of each.
 
 ## Stack and links

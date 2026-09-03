@@ -6,8 +6,8 @@ summary: >-
   An R Shiny dashboard over 50,000 credit card transactions, cohorting spend by tier, age and category to say which customers a rewards programme should aim at.
 featured: false
 order: 4
-role: Sole author — app, analysis and dashboard
-timeframe: null
+role: Sole author, covering app, analysis and dashboard
+timeframe: March 2025
 stack:
   - R
   - Shiny
@@ -19,8 +19,7 @@ repoNote: null
 demo: null
 screenshot: null
 dataNote: >-
-  The dataset is a 50,000-row transaction file committed to the repository. Its
-  provenance is unconfirmed — the columns look generated rather than real, and no
+  The dataset is a 50,000-row transaction file committed to the repository. Its provenance is unconfirmed: the columns look generated rather than real, and no
   source is recorded.
 ---
 
@@ -51,20 +50,19 @@ visualisation stack, next to a portfolio that is otherwise Python and TypeScript
 ## The problem
 
 A rewards programme costs money per customer and pays back unevenly. The question the
-dashboard exists to answer is which cohorts are worth paying for — who spends enough
-to matter, in which categories, and when.
+dashboard exists to answer is which cohorts are worth paying for: who spends enough to matter, in which
+categories, and when.
 
 ## Constraints
 
 **"Segmentation" here is cohorting, not clustering.** There's no k-means, no
-hierarchical clustering, no PCA anywhere in the app — I checked, and it's worth being
-straight about because the project title implies a model. Customers are grouped by
+hierarchical clustering, no PCA anywhere in the app. I checked, and it's worth being straight about because the project title implies a model. Customers are grouped by
 rules I chose: spending tier, age band, gender, category. That's a defensible choice
 for a dashboard someone has to read and act on, and it is not an unsupervised method.
 
 **Everything recomputes on every filter change.** Five interacting filters over 50,000
-rows, with each tab's plots derived from the filtered frame — fine at this size,
-and the thing that would need rethinking first at ten times the data.
+rows, with each tab's plots derived from the filtered frame. Fine at this size, and the thing that would
+need rethinking first at ten times the data.
 
 ## What I built
 
@@ -78,18 +76,13 @@ actions the rest of the dashboard supports.
 Built with shinydashboard and shinydashboardPlus, dplyr for the reshaping, ggplot2 and
 plotly for the charts, DT for the tables.
 
-## Results
-
-TODO — yours. The dashboard produces recommendations; whether any of them were acted
-on, and what they were worth, is the only result worth reporting and I don't have it.
-
 ## Limitations
 
 The dataset's provenance isn't recorded, which matters more than it would on a
 technical project: the conclusions are about customer behaviour, and I can't say whose.
 The cohorts are rules rather than discovered structure, so they'd need revisiting for
-a different customer base rather than re-fitting. And there's no test of whether the
-tiers are the right cut points — they're a judgement, applied consistently.
+a different customer base rather than re-fitting. And there's no test of whether the tiers are the right cut points. They're a judgement, applied
+consistently.
 
 ## Stack and links
 

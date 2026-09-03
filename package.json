@@ -16,12 +16,13 @@
     "lint:mono": "tsx scripts/check-mono-subset.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "verify": "npm run typecheck && npm run lint && npm run lint:css && npm run lint:mono && npm run lint:fonts && npm run format:check && npm run test",
+    "verify": "npm run typecheck && npm run lint && npm run lint:css && npm run lint:mono && npm run lint:fonts && npm run format:check && npm run test && npm run build && npm run lint:todo",
     "lint:fonts": "python3 scripts/check-fonts.py",
     "test": "vitest run",
     "test:watch": "vitest",
     "fetch-stats": "tsx scripts/fetch-stats.ts",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "lint:todo": "node scripts/check-no-todo.mjs"
   },
   "dependencies": {
     "gray-matter": "4.0.3",

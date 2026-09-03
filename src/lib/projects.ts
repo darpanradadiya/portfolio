@@ -155,7 +155,7 @@ export const projectFrontmatterSchema = baseProjectFrontmatterSchema.superRefine
           `is required: outcomeTitle is ${value.outcomeTitle.length} characters, which ` +
           `would render a document title of ${value.outcomeTitle.length + TITLE_SUFFIX.length}. ` +
           `Add a seoTitle of ${MAX_SEO_TITLE} characters or fewer. The outcomeTitle stays ` +
-          'as it is — it is the on-page heading, where length is not a constraint.',
+          'as it is: it is the on-page heading, where length is not a constraint.',
       });
     }
   },
@@ -220,6 +220,31 @@ export function getProjectNeighbours(slug: string): {
   const index = all.findIndex((project) => project.slug === slug);
   if (index === -1) return { previous: undefined, next: undefined };
   return { previous: all[index - 1], next: all[index + 1] };
+}
+
+/**
+ * The subset of a project a card needs.
+ *
+ * Exists so a client component never receives `body`. See ProjectList.
+ */
+export type ProjectCard = {
+  slug: string;
+  heading: string;
+  summary: string | null;
+  stack: readonly string[];
+  domains: readonly string[];
+  metrics: readonly { value: string; label: string }[];
+};
+
+export function toProjectCard(project: Project): ProjectCard {
+  return {
+    slug: project.slug,
+    heading: displayTitle(project),
+    summary: project.summary,
+    stack: project.stack,
+    domains: project.domains,
+    metrics: project.metrics,
+  };
 }
 
 /** Every domain in use, for the /projects filter. */
