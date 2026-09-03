@@ -53,7 +53,14 @@
   --text-2xl--line-height: 1.2;
   --text-3xl: 2.75rem;
   --text-3xl--line-height: 1.15;
-  --text-display: clamp(2.5rem, 9vw, 4.5rem);
+
+  /*
+   * The proof strip only. Sized for a two-column strip: the widest value is
+   * "100K+", five monospace characters at roughly 0.6em each, so 6rem needs about
+   * 288px of the ~382px a column gets at the page's full width. Four columns would
+   * cap this at 3.9rem, which is why the strip is two-up.
+   */
+  --text-display: clamp(3.25rem, 14vw, 6rem);
   --text-display--line-height: 1;
 
   /* ---- structure ------------------------------------------------------ */
