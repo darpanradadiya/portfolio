@@ -97,14 +97,15 @@ and `summary` as well. Noted below only where a file differs.
 Start here. It carries more weight than anything else on the site.
 
 - `role` is set: _Architecture, ML pipeline, and test suite_
-- Verified facts, safe to use: 270 modules, 95K lines of Python; ingests
+- Verified facts, safe to use: 273 non-test modules, 65,193 lines of tracked
+  Python; ingests
   feature-length video and produces per-character vertical reels; FastAPI service
   with Redis + RQ workers under APScheduler; Whisper speech-to-text, PySceneDetect
   shot segmentation, InsightFace ArcFace embeddings via ONNX Runtime, HDBSCAN
   clustering; human review gate for low-confidence output; multi-model LLM calls
   with configurable timeouts and three-attempt retries; on-disk embedding cache
   with per-stage checkpoints so multi-hour jobs resume; 185 pytest functions across
-  24 test files behind a pre-commit gate
+  21 test files behind a pre-commit gate
 - The architecture diagram is **built and on the page** — five stages, checkpoint
   markers, and the review gate drawn as a gate. The "What I built" section needs
   the prose around it, not a diagram.

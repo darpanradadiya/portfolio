@@ -100,7 +100,7 @@ export const profile = {
   howIWork: [
     {
       heading: "1. Tests are how I find out I'm wrong",
-      body: "I don't trust my own code, and I don't think anyone should trust code that hasn't told them what it does when things go badly. Carbon Record has 185 pytest functions across 24 test files, sitting behind a pre-commit gate. The number isn't the point. The point is that in a 65,000-line system across 270 modules, I find out I've broken something in seconds instead of finding out from whoever is using it.",
+      body: "I don't trust my own code, and I don't think anyone should trust code that hasn't told them what it does when things go badly. Carbon Record has 185 pytest functions across 21 test files, sitting behind a pre-commit gate. The number isn't the point. The point is that in a 65,000-line system across 270 modules, I find out I've broken something in seconds instead of finding out from whoever is using it.",
     },
     {
       heading: '2. Bad data is cheaper to stop than to explain',
@@ -191,7 +191,7 @@ export const profile = {
       value: '270',
       label: 'modules',
       // TODO(darpan): confirm whether these group into 24 subsystems. The resume
-      // documents 270 modules, 95K lines, and 24 *test files* — "24 subsystems" is
+      // documents 270 modules, 65K lines, and 21 *test files* — "24 subsystems" is
       // not evidenced anywhere, so it is left off rather than guessed.
       provenance: 'Carbon Record — 65K lines',
     },

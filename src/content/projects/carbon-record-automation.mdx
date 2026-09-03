@@ -36,6 +36,8 @@ metrics:
   - value: '21'
     label: test files
 repo: null
+repoNote: >-
+  Private repository — I can walk through it or grant read access on request.
 demo: null
 screenshot: null
 dataNote: null
@@ -46,7 +48,7 @@ dataNote: null
   anything on the site. Write it as an argument, not a timeline.
 
   Facts already verified from your resume, safe to use:
-    - 270 modules, 95K lines of Python
+    - 273 non-test modules, 65,193 lines of tracked Python (measured 2026-09-03)
     - Ingests feature-length video, produces per-character vertical short-form reels
     - FastAPI service, Redis + RQ workers, APScheduler orchestration
     - Whisper speech-to-text, PySceneDetect shot segmentation,
@@ -55,7 +57,7 @@ dataNote: null
     - Multi-model LLM calls for cluster labelling and scene scoring, configurable
       timeouts, three-attempt retry logic
     - On-disk embedding cache with per-stage checkpoints so multi-hour jobs resume
-    - 185 pytest functions across 24 test files behind a pre-commit gate
+    - 185 pytest functions across 21 test files behind a pre-commit gate
 
   Still needed from you: outcomeTitle, summary, the repo URL, one architecture
   diagram, one screenshot, and the Decisions section.
@@ -174,11 +176,36 @@ it; deriving work time from a heartbeat rather than from CPU.
 
 ## Results
 
-TODO — yours, and be careful here. `STATE.md` already says the resolving stage's
-22.28-hour figure is permanently wrong and must not be scaled down or averaged, and
-that three measurements which justified designs were out by 11.7×, 12.0× and 3.4×
-because they were quoted after the code beneath them changed. Your own rule — that a
-number in the interface is a promise to re-measure it — applies to this page too.
+I'm not going to give you a throughput number, and the reason is the interesting part.
+
+This project measures itself, and measuring itself is how it found out that three
+figures it had been quoting were wrong. Aura's call budget was quoted at about 405
+calls; it was 4,725 — out by 11.7×. A caching stage was justified by an estimated 26
+minutes of cost against 17 minutes saved; measured, it cost 312.7 minutes and saved
+4.5, so it paid five hours to save four minutes and I deleted it. A purity scan quoted
+at 919.7 seconds of a render was 273. Each of those was honest when it was written and
+each kept being quoted after the code underneath it changed.
+
+There's a worse one. The identity-resolution stage reports 22.28 hours on the
+reference film. That number is permanently wrong — the span contains an interruption,
+an overnight sleep and a kill, all inside a single run with no process change, so no
+structural test can catch it. It's labelled `unverified_span` and it must not be
+scaled down or fed to anything that averages, because a row that quietly reports a
+smaller number is the same failure in the other direction.
+
+What I did instead of fixing the number was make the next one measurable: a heartbeat
+samples every 15 seconds and work time is derived from the gaps, so a frozen machine
+freezes the sampler and the gap *is* the sleep. CPU alone can't do this — one stage
+runs at 0.04 cores while working perfectly, so any threshold on cores calls it idle.
+
+So the honest results are the shape of the thing, not its speed. One film has
+completed under current code. Anything measured on the two earlier films was produced
+by code that no longer exists. On battery, every timing above is meaningless — 3.7
+minutes per character on AC against 321 on battery for the same stage.
+
+The repository's own `STATE.md` is the list of which numbers can't be trusted, and it
+exists because I got this wrong three times. Publishing a tidy figure here would be
+the fourth.
 
 ## Limitations
 
@@ -188,5 +215,8 @@ choosing which ones a reader needs.
 
 ## Stack and links
 
-TODO — the repository is private, so there's no link on the page yet. See the question
-list.
+Python 3.14, FastAPI, Redis and RQ, APScheduler, PyTorch, ONNX Runtime, InsightFace,
+Ultralytics YOLO, PySceneDetect, Whisper, scikit-learn, librosa, ffmpeg, and Gemini
+2.5 Flash. Tests are pytest behind a pre-commit hook.
+
+The repository is private. I can walk through it or grant read access on request.

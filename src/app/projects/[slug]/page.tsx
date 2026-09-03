@@ -132,6 +132,14 @@ export default async function ProjectPage({
             )}
           </ul>
         )}
+
+        {/*
+          No repository to link. Say so rather than leaving a gap where a link
+          would be — but never render a link that 404s.
+        */}
+        {project.repo === null && project.repoNote !== null && (
+          <p className="text-ink-muted mt-6 text-xs">{project.repoNote}</p>
+        )}
       </header>
 
       <div className="measure mt-12">{content}</div>

@@ -102,6 +102,14 @@ const baseProjectFrontmatterSchema = z.object({
     .min(1),
   metrics: z.array(metricSchema),
   repo: z.string().url().nullable(),
+  /**
+   * What to say where a repository link would be, when there is no link to give.
+   *
+   * A private repository must never be linked — every visitor would get a 404 —
+   * but silence reads as an omission. This is the third option: state the situation
+   * and offer the way round it.
+   */
+  repoNote: z.string().min(1).nullable(),
   demo: z.string().url().nullable(),
   screenshot: screenshotSchema.nullable(),
   /**
