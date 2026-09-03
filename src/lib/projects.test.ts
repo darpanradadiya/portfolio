@@ -25,6 +25,7 @@ const BASE = {
   domains: ['ML pipelines'],
   metrics: [],
   repo: null,
+  repoNote: null,
   demo: null,
   screenshot: null,
   dataNote: null,
