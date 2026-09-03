@@ -242,3 +242,95 @@ export function ReviewGate({
     </g>
   );
 }
+
+/* ------------------------------------------------------------ entity diagrams -- */
+
+/**
+ * Geometry for an entity-relationship diagram.
+ *
+ * Same vertical discipline as the pipeline: one column of boxes at a readable width,
+ * with the relationship arcs bowing out into a left gutter so a foreign key between
+ * two non-adjacent tables can still be drawn without crossing a box.
+ */
+export const ERD = {
+  width: 340,
+  gutter: 72,
+  boxX: 78,
+  boxWidth: 256,
+  boxHeight: 32,
+  gap: 14,
+} as const;
+
+export const entityTop = (index: number): number =>
+  10 + index * (ERD.boxHeight + ERD.gap);
+
+export const erdHeight = (count: number): number =>
+  entityTop(count - 1) + ERD.boxHeight + 10;
+
+export function EntityBox({
+  index,
+  name,
+  tone,
+}: {
+  index: number;
+  name: string;
+  tone: StageTone;
+}) {
+  const y = entityTop(index);
+  return (
+    <g>
+      <rect
+        x={ERD.boxX}
+        y={y}
+        width={ERD.boxWidth}
+        height={ERD.boxHeight}
+        className="diagram-box"
+      />
+      <rect
+        x={ERD.boxX}
+        y={y}
+        width={DIAGRAM.accentWidth}
+        height={ERD.boxHeight}
+        className={TONE_FILL[tone]}
+      />
+      <text x={ERD.boxX + 14} y={y + ERD.boxHeight / 2 + 4} className="diagram-entity">
+        {name}
+      </text>
+    </g>
+  );
+}
+
+/**
+ * One foreign key, drawn as an arc from the child table to the parent.
+ *
+ * A one-to-one is solid and a many-to-one is dashed, which is reinforcement rather
+ * than information: the legend lists every relationship and its cardinality in text,
+ * because a line style is no more readable than a colour to someone who cannot
+ * distinguish them.
+ */
+export function RelationshipArc({
+  childIndex,
+  parentIndex,
+  oneToOne,
+  tone,
+}: {
+  childIndex: number;
+  parentIndex: number;
+  oneToOne: boolean;
+  tone: StageTone;
+}) {
+  const childY = entityTop(childIndex) + ERD.boxHeight / 2;
+  const parentY = entityTop(parentIndex) + ERD.boxHeight / 2;
+  // Bow further out the further apart the two tables are, so arcs nest instead of
+  // overlapping. Clamped so the widest still fits the gutter.
+  const spread = Math.min(Math.abs(childIndex - parentIndex), 4);
+  const reach = ERD.boxX - 12 - spread * 13;
+
+  return (
+    <path
+      d={`M ${ERD.boxX} ${childY} C ${reach} ${childY}, ${reach} ${parentY}, ${ERD.boxX} ${parentY}`}
+      fill="none"
+      className={`${oneToOne ? 'erd-arc-one' : 'erd-arc-many'} ${TONE_STROKE[tone]}`}
+    />
+  );
+}

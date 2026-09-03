@@ -178,6 +178,20 @@
   fill: var(--color-ink-muted);
 }
 
+.diagram-entity {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.erd-arc-one {
+  stroke-width: 1.5;
+}
+
+.erd-arc-many {
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
 .diagram-flow {
   stroke: var(--color-rule-strong);
   stroke-width: 1;
