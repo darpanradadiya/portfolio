@@ -43,3 +43,6 @@ BRIEF.private.md
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# generated on demand by scripts/subset-fonts.py --plain-zero, for comparison only
+public/fonts/plex-mono-measured-plain-zero.woff2
