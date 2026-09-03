@@ -100,7 +100,7 @@ export const profile = {
   howIWork: [
     {
       heading: "1. Tests are how I find out I'm wrong",
-      body: "I don't trust my own code, and I don't think anyone should trust code that hasn't told them what it does when things go badly. Carbon Record has 185 pytest functions across 24 test files, which expand to 494 passing cases, sitting behind a pre-commit gate. The number isn't the point. The point is that in a 95,000-line system across 270 modules, I find out I've broken something in seconds instead of finding out from whoever is using it.",
+      body: "I don't trust my own code, and I don't think anyone should trust code that hasn't told them what it does when things go badly. Carbon Record has 185 pytest functions across 24 test files, sitting behind a pre-commit gate. The number isn't the point. The point is that in a 95,000-line system across 270 modules, I find out I've broken something in seconds instead of finding out from whoever is using it.",
     },
     {
       heading: '2. Bad data is cheaper to stop than to explain',

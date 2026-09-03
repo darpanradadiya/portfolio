@@ -82,11 +82,6 @@ An unused alternative was supplied for the hero intro — the shorter "Data and
 analytics engineer in Boston…" version. The longer one is live; say the word to
 swap.
 
-**Outstanding confirmation.** The first "How I work" principle states _185 pytest
-functions across 24 test files, which expand to 494 passing cases_. 185 and 24 are
-documented in the résumé; **494 is not documented anywhere** and was supplied
-marked for confirmation. It is live on the site now.
-
 ## `src/content/projects/` — six case studies
 
 **Done for the three featured projects:** `outcomeTitle`, `seoTitle`, `summary`.
