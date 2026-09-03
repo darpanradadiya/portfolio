@@ -24,14 +24,22 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-14 md:gap-20">
-      {/* Hero. First paint is content: no preloader, no entrance animation. */}
-      <Section marker="Now">
+      {/*
+        Hero. First paint is content: no preloader, no entrance animation.
+        No rail marker: the other markers name a section ("Work", "Method",
+        "Contact") and this one has an h1 immediately beside it, so a label here
+        would be decoration rather than navigation.
+      */}
+      <Section>
         <h1 className="text-3xl">{profile.name}</h1>
-        {/* The label a recruiter needs in the first second, then the line that lands. */}
-        <p className="text-ink-muted mt-2 text-xs">{profile.role}</p>
 
+        {/*
+          No category label above the headline. "Data / analytics engineer with
+          applied ML depth" blunted the line it sat on top of; the meta row below
+          carries the role, and profile.role still feeds the JSON-LD jobTitle.
+        */}
         {profile.headline !== null && (
-          <p className="measure mt-6 text-2xl">{profile.headline}</p>
+          <p className="measure mt-5 text-2xl">{profile.headline}</p>
         )}
 
         {profile.intro !== null && <p className="measure mt-5">{profile.intro}</p>}
