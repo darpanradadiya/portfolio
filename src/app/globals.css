@@ -18,6 +18,11 @@
   /*
    * Subset to the 20 glyphs in src/lib/mono-subset.ts. This file cannot render
    * letters, which is the point — monospace here means "measured value".
+   *
+   * The zero is plain. IBM Plex Mono draws a marked zero and exposes no OpenType
+   * feature to switch it off, so the mark is removed at the subsetting step; at the
+   * proof strip's 96px it read as "code editor", and a strip of pure numerals has
+   * no letter O to disambiguate from. check-fonts.py fails the build if it returns.
    */
   font-family: 'Plex Mono Measured';
   font-style: normal;

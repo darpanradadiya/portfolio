@@ -44,5 +44,6 @@ BRIEF.private.md
 /blob-report/
 /playwright/.cache/
 
-# generated on demand by scripts/subset-fonts.py --plain-zero, for comparison only
-public/fonts/plex-mono-measured-plain-zero.woff2
+# The shipped monospace has a plain zero. This is the marked variant, generated on
+# demand by `scripts/subset-fonts.py --dotted-zero` for comparison only.
+public/fonts/plex-mono-measured-dotted-zero.woff2

@@ -72,7 +72,13 @@ is the house font of the platform this deploys to, and over Inter because it is 
 default everything already reaches for; Instrument Sans is a compact grotesk with a
 high x-height that stays legible at the 13px provenance size.
 
-**IBM Plex Mono** for measured values, and nothing else. Chosen over JetBrains Mono,
+**IBM Plex Mono** for measured values, and nothing else, with two corrections made
+at the subsetting step. Its comma, period and colon are narrowed from the full
+600-unit monospace cell to their own ink plus even sidebearings — correct for a
+monospace face, wrong for one that only ever sets numerals, where "5,000" rendered
+as "5 , 000". Digits keep the full cell so numerals still align. And the zero ships
+plain: Plex draws a marked zero with no OpenType feature to disable it, and at 96px
+the mark reads as a code editor. Both are asserted by `npm run lint:fonts`. Chosen over JetBrains Mono,
 which is common enough in developer tooling that it reads as "screenshot of an
 editor"; Plex Mono comes from a technical-documentation lineage, which is closer to
 "instrument readout".

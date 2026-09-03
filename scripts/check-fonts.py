@@ -11,6 +11,9 @@ for reasons that have nothing to do with correctness. What matters is coverage:
      acute accents in "Resume" and the dash, quote, and ellipsis families.
   3. Narrow punctuation in the monospace font has a proportional advance, not the
      full monospace cell, and digits still share one advance so numerals align.
+  4. The zero is plain. IBM Plex Mono draws a marked zero and offers no OpenType
+     feature to turn it off, so the mark is removed by editing the outline -- which
+     means a regeneration could silently restore it. This is the guard.
 
 Run locally with `npm run lint:fonts`; CI runs the same script.
 """
@@ -90,6 +93,25 @@ if MONO.exists():
             "will not align in a column"
         )
     digit_advance = next(iter(digit_advances)) if digit_advances else 0
+
+    # The zero is drawn with three contours -- bowl, counter, mark -- and ships with
+    # the mark dropped, leaving two. Three means the mark is back.
+    PLAIN_ZERO_CONTOURS = 2
+    if ord("0") in mono_cmap:
+        zero = glyf[mono_cmap[ord("0")]]
+        zero.expand(glyf)
+        if zero.isComposite():
+            failures.append("'zero' is composite; expected a simple outline")
+        elif zero.numberOfContours != PLAIN_ZERO_CONTOURS:
+            failures.append(
+                f"'zero' has {zero.numberOfContours} contours, expected "
+                f"{PLAIN_ZERO_CONTOURS}. The mark is back: at 96px it reads as a code "
+                "editor, which this design avoids, and a strip of pure numerals has no "
+                "letter O to disambiguate from. Re-run scripts/subset-fonts.py "
+                "(the plain zero is the default; --dotted-zero is comparison only)."
+            )
+        else:
+            print(f"  zero: {zero.numberOfContours} contours (plain, mark removed)")
 
     for char, glyph_name in NARROW_PUNCTUATION.items():
         code = ord(char)

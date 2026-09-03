@@ -13,6 +13,14 @@ IBM Plex Mono carries measured numeric values and NOTHING else. It is subset to 
 glyph set in src/lib/mono-subset.ts, so the file physically cannot render prose --
 see DESIGN.md, "The monospace face is subset to numeric glyphs". `npm run lint:mono`
 enforces the same set at build time.
+
+The zero ships PLAIN. IBM Plex Mono draws a marked zero and exposes no `zero`
+OpenType feature, so the mark is removed here by dropping the glyph's smallest
+contour. At the proof strip's 96px the mark reads as "code editor", which is an
+association this design avoids, and a strip of pure numerals has no letter O to
+disambiguate from. This is the default rather than an opt-in so that regenerating
+the fonts cannot quietly restore it; check-fonts.py fails the build if it comes
+back. `--dotted-zero` emits the marked variant for comparison only.
 """
 
 from __future__ import annotations
@@ -132,12 +140,13 @@ def narrow_advance(font, glyph_name: str, sidebearing: int = SIDEBEARING) -> tup
 
 def strip_inner_mark(font, glyph_name: str = "zero") -> bool:
     """
-    Remove the dot from a dotted zero by dropping its smallest contour.
+    Remove the mark from the zero by dropping its smallest contour.
 
-    IBM Plex Mono has no `zero` OpenType feature and ships no plain-zero alternate,
-    so a plain zero can only be produced by editing the outline. The zero has three
-    contours -- the bowl, its counter, and the mark -- against two for a capital O,
-    and the mark is the smallest of the three.
+    IBM Plex Mono has no `zero` OpenType feature and ships no plain-zero alternate
+    (only `zero.numr` and `zero.dnom`, which are fraction forms), so a plain zero
+    can only be produced by editing the outline. The zero has three contours -- the
+    bowl, its counter, and the mark -- against two for a capital O, and the mark is
+    the smallest of the three.
     """
     glyf = font["glyf"]
     glyph = glyf[glyph_name]
@@ -224,7 +233,7 @@ def report(path: pathlib.Path) -> None:
     print(f"  {path.name:38} {path.stat().st_size / 1024:7.1f} KB  {len(cmap):4d} glyphs")
 
 
-def main(plain_zero: bool = False) -> None:
+def main(dotted_zero: bool = False) -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     tmp = ROOT / ".fonts-tmp"
     tmp.mkdir(exist_ok=True)
@@ -269,13 +278,17 @@ def main(plain_zero: bool = False) -> None:
             before, after = narrow_advance(font, glyph_name)
             print(f"    narrowed {glyph_name:8} advance {before} -> {after}")
 
-    if plain_zero:
-        if strip_inner_mark(font):
-            print("    removed the inner mark from 'zero' (plain zero variant)")
-        else:
-            print("    could not remove the inner mark; leaving the zero as drawn")
+    if dotted_zero:
+        print("    keeping the mark on 'zero' (comparison variant)")
+    elif strip_inner_mark(font):
+        print("    removed the mark from 'zero' -- the plain zero is what ships")
+    else:
+        sys.exit(
+            "could not remove the mark from 'zero'. The shipped font must have a "
+            "plain zero; refusing to write a marked one silently."
+        )
 
-    dest = OUT / ("plex-mono-measured-plain-zero.woff2" if plain_zero else "plex-mono-measured.woff2")
+    dest = OUT / ("plex-mono-measured-dotted-zero.woff2" if dotted_zero else "plex-mono-measured.woff2")
     font.flavor = "woff2"
     font.save(dest)
     report(dest)
@@ -288,13 +301,11 @@ def main(plain_zero: bool = False) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--plain-zero",
+        "--dotted-zero",
         action="store_true",
         help=(
-            "Also emit a variant with the dot removed from the zero. IBM Plex Mono "
-            "has no `zero` OpenType feature and ships no plain-zero alternate, so "
-            "this edits the outline. Written to a separate file; it does not replace "
-            "the live font."
+            "Emit the marked-zero variant to a separate file, for comparison. The "
+            "shipped font has a plain zero; this does not replace it."
         ),
     )
-    main(plain_zero=parser.parse_args().plain_zero)
+    main(dotted_zero=parser.parse_args().dotted_zero)
