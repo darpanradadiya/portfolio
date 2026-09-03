@@ -1,8 +1,8 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { Measured } from '@/components/Measured';
 import { Limitation } from '@/components/Limitation';
 import { StackList } from '@/components/StackList';
+import { ScreenshotSlot } from '@/components/ScreenshotSlot';
 import { displayTitle, type Project } from '@/lib/projects';
 
 /**
@@ -56,16 +56,11 @@ export function WorkRow({
           )}
         </div>
 
-        {project.screenshot !== null && (
-          <Image
-            src={project.screenshot.src}
-            alt={project.screenshot.alt}
-            width={project.screenshot.width}
-            height={project.screenshot.height}
-            className="rounded-image border-rule w-full border md:w-56"
-            sizes="(min-width: 768px) 14rem, 100vw"
-          />
-        )}
+        <ScreenshotSlot
+          screenshot={project.screenshot}
+          label={heading.toLowerCase()}
+          className="w-full md:w-56 md:shrink-0"
+        />
       </div>
     </article>
   );
