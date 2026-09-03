@@ -26,11 +26,21 @@ back. `--dotted-zero` emits the marked variant for comparison only.
 from __future__ import annotations
 
 import argparse
+import os
 import pathlib
 import re
 import subprocess
 import sys
 import urllib.request
+
+# Make the output byte-reproducible.
+#
+# fontTools stamps head.modified with the current time, so regenerating identical
+# fonts still produced a diff and left `git status` dirty for no reason. fontTools
+# honours SOURCE_DATE_EPOCH, the standard reproducible-builds variable, so pinning
+# it means a regeneration that changes nothing writes nothing. Respects an existing
+# value if the caller sets one.
+os.environ.setdefault("SOURCE_DATE_EPOCH", "1767225600")  # 2026-01-01T00:00:00Z
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
