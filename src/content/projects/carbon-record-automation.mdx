@@ -1,8 +1,11 @@
 ---
 title: Carbon Record Automation
-outcomeTitle: null
-seoTitle: null
-summary: null
+outcomeTitle: "Turning feature-length video into per-character reels, unattended"
+seoTitle: "Automating per-character video reels"
+summary: >-
+  A 270-module Python pipeline that ingests feature-length video and produces
+  per-character vertical reels, with checkpoints so multi-hour jobs resume instead
+  of restarting.
 featured: true
 order: 1
 role: Architecture, ML pipeline, and test suite
@@ -77,8 +80,11 @@ about which constraints drove which decisions.
 
 ## What I built
 
-TODO — the architecture, with one real diagram. Ingest, segmentation, embedding,
-clustering, review gate, render. Show where the checkpoints are.
+<CarbonRecordPipeline />
+
+TODO — the prose around the diagram. The five stages, the checkpoints, and the
+review gate are drawn above; what is missing is why the pipeline is shaped that way
+rather than as one long script.
 
 ## Decisions
 

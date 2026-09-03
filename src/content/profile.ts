@@ -76,6 +76,12 @@ export type GeeksforGeeksStats = {
   readonly instituteRank: number;
 };
 
+/** A "How I work" principle: a short claim, then the paragraph that backs it. */
+export type WorkPrinciple = {
+  readonly heading: string;
+  readonly body: string;
+};
+
 export type SkillGroup = {
   readonly category: string;
   readonly items: readonly string[];
@@ -87,28 +93,36 @@ export const profile = {
   location: 'Boston, MA',
   availability: 'Graduating December 2026',
 
-  /**
-   * TODO(darpan): the hero headline and sub-paragraph. These must be in your own
-   * voice — a first screen written by a language model is the single most
-   * recognisable tell on a portfolio, and this page's whole argument is that the
-   * claims on it are real.
-   *
-   * The headline has one job: land "he builds data and ML systems that are actually
-   * tested, and he can prove it."
-   */
-  headline: null as string | null,
-  intro: null as string | null,
+  headline: "Most ML pipelines break quietly. I build the ones that don't.",
+  intro:
+    "I'm a data and analytics engineer finishing an MPS in Analytics at Northeastern in December 2026. My last project was a 270-module Python system that takes a feature film, works out who's in it, and cuts a reel for each character — six models in sequence, no labelled cast, and multi-hour runtimes. Most of the engineering went into making it survive failure rather than making it clever. That's the part of this work I'm actually interested in.",
 
-  /**
-   * TODO(darpan): "How I work" — three or four short paragraphs on testing, data
-   * quality, and tradeoffs. Prose, not bullets, not icons. This is the section that
-   * separates you from the other 199 applicants, and it is the one section that
-   * cannot be written for you.
-   */
-  howIWork: [] as readonly string[],
+  howIWork: [
+    {
+      heading: "1. Tests are how I find out I'm wrong",
+      body: "I don't trust my own code, and I don't think anyone should trust code that hasn't told them what it does when things go badly. Carbon Record has 185 pytest functions across 24 test files, which expand to 494 passing cases, sitting behind a pre-commit gate. The number isn't the point. The point is that in a 95,000-line system across 270 modules, I find out I've broken something in seconds instead of finding out from whoever is using it.",
+    },
+    {
+      heading: '2. Bad data is cheaper to stop than to explain',
+      body: "Almost everything that goes wrong downstream started as a bad record upstream. At Clomotech I wrote preprocessing and validation rules that ran before anything reached a model, which cut manual data-wrangling by around 40% — not because the rules were clever, but because catching a malformed row costs seconds and debugging a model trained on it costs days. I'd rather fail loudly at ingestion than quietly at inference.",
+    },
+    {
+      heading: '3. Anything that runs for hours will be interrupted',
+      body: 'Carbon Record runs six models in sequence over feature-length input, so I designed for interruption from the start rather than bolting recovery on later. Embeddings are cached on disk and flushed in batches, each stage writes a marker when it completes, and Gemini calls get three bounded attempts with an explicit timeout. A job that dies at hour three resumes at hour three. That single decision is what made the system usable rather than merely working.',
+    },
+    {
+      heading: "4. When a model isn't sure, it should say so",
+      body: "Cast identification is the stage everything downstream depends on, and there's no labelled answer key — identities have to be discovered from the footage. I clustered face embeddings with HDBSCAN rather than k-means specifically because it infers the number of clusters and labels outliers as noise instead of forcing every extra into a lead's identity. Then I put a human naming step in front of low-confidence clusters. It's the only manual step in the pipeline and it's manual on purpose: a threshold is a guess about where a model stops being trustworthy, and it's wrong in both directions.",
+    },
+  ] satisfies readonly WorkPrinciple[],
 
-  /** TODO(darpan): first-person narrative for /about. */
-  about: [] as readonly string[],
+  about: [
+    "I'm Darpan. I'm finishing an MPS in Analytics at Northeastern in Boston, graduating December 2026, after a B.Tech in Information and Communication Technology from Dhirubhai Ambani University in Gujarat.",
+    "I got here through the unglamorous route. Nine months at PepCoding on data structures and full-stack web development, mentoring at my university's CINS club, a summer research internship. Then a data analyst internship at Clomotech building ETL on AWS Glue, Lambda, and S3 that processed over 100,000 operational records a day and replaced a legacy ingestion process that was holding up everything downstream. Most recently at Wisaxis, building reproducible Python and SQL workflows over a 100,000-record daily dataset that had no scalable process at all.",
+    "Outside coursework I build things that are larger than they need to be, because that's where the interesting failures live. Carbon Record is 270 modules and six models deep. The clinic ERP is a ten-table 3NF schema with a live SQL viewer that traces every dashboard metric back to its source table, because I wanted to know whether the numbers on the dashboard were the numbers in the database.",
+    "Alongside that I've solved around 950 algorithm problems across GeeksforGeeks and LeetCode, weighted toward medium and hard. Not the interesting part of my work, but the reason the interesting part goes faster.",
+    "What I'm looking for: analytics or data engineering work where the pipeline is the product — somewhere the correctness of the data matters as much as the model on top of it.",
+  ] as readonly string[],
 
   contact: {
     email: 'radadiya.d@northeastern.edu',

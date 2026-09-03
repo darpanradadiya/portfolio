@@ -70,25 +70,32 @@ it runs long. If you forget, the build tells you, with both numbers.
 Outside that the build logs a note and carries on — prose length never fails a
 build.
 
-## `src/content/profile.ts`
+## `src/content/profile.ts` — done
 
-| Field                     | What it is                                | Notes                                                                                                                                    |
-| ------------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `headline`                | The hero headline                         | One job: land _he builds data and ML systems that are actually tested, and he can prove it_.                                             |
-| `intro`                   | Two-line sub-paragraph under the headline | Currently the hero shows a placeholder note instead.                                                                                     |
-| `howIWork`                | **Four paragraphs**, array of strings     | Testing, data quality, tradeoffs. Prose, not bullets, not icons. The section that separates you from the other 199 applicants.           |
-| `about`                   | `/about` narrative, array of paragraphs   | First person. How you got from an ICT degree to building tested ML pipelines, and what you want next.                                    |
-| `links.geeksforgeeks.url` | Profile URL                               | Display name is "Darpan"; the slug is unknown. Left `null` rather than guessed — a wrong `sameAs` asserts an identity that is not yours. |
+Inserted verbatim on 2026-09-03: `headline`, `intro`, four `howIWork` principles,
+and the five-paragraph `about` narrative.
 
-Everything else in this file is populated and verified: education, both internships
-with all bullets, six skill groups, the proof strip, and the GeeksforGeeks figures.
+One field remains: **`links.geeksforgeeks.url`**. The display name is "Darpan" but
+the slug is unknown, so it is `null` rather than guessed.
 
----
+An unused alternative was supplied for the hero intro — the shorter "Data and
+analytics engineer in Boston…" version. The longer one is live; say the word to
+swap.
+
+**Outstanding confirmation.** The first "How I work" principle states _185 pytest
+functions across 24 test files, which expand to 494 passing cases_. 185 and 24 are
+documented in the résumé; **494 is not documented anywhere** and was supplied
+marked for confirmation. It is live on the site now.
 
 ## `src/content/projects/` — six case studies
 
-Common to all six: `outcomeTitle`, `summary`, `timeframe`, `repo`, `screenshot`,
-and the eight body sections. Noted below only where a file differs.
+**Done for the three featured projects:** `outcomeTitle`, `seoTitle`, `summary`.
+Titles land at 48–54 characters; two summaries are 170–171 against the 130–160
+preference, which warns and ships.
+
+**Still outstanding for all six:** `timeframe`, `repo`, `screenshot`, and the eight
+body sections. The three secondary projects still need `outcomeTitle`, `seoTitle`
+and `summary` as well. Noted below only where a file differs.
 
 ### 1. `carbon-record-automation.mdx` — featured, flagship
 
@@ -103,8 +110,10 @@ Start here. It carries more weight than anything else on the site.
   with configurable timeouts and three-attempt retries; on-disk embedding cache
   with per-stage checkpoints so multi-hour jobs resume; 185 pytest functions across
   24 test files behind a pre-commit gate
-- Needed beyond the eight sections: the repo URL, one architecture diagram, one
-  screenshot
+- The architecture diagram is **built and on the page** — five stages, checkpoint
+  markers, and the review gate drawn as a gate. The "What I built" section needs
+  the prose around it, not a diagram.
+- Needed beyond the eight sections: the repo URL and one screenshot
 - Decisions section candidates: ONNX Runtime over serving PyTorch directly;
   HDBSCAN over k-means; the human review gate over a confidence threshold alone;
   per-stage checkpoints over re-running; retry logic on LLM calls
@@ -119,6 +128,8 @@ Start here. It carries more weight than anything else on the site.
   provider-productivity, billing and clinical-diagnosis reporting; KPI dashboards
   with a live SQL viewer tracing metrics to source tables; full CRUD REST API to a
   React front end with CSV export
+- The ERD **slot is in place** and awaits your schema; it will be drawn with the
+  same component as the pipeline rather than pasted in as an image
 - The ERD is the centrepiece diagram here, not an aid
 - Decisions candidates: 3NF over a star schema given that reporting is a goal; the
   encounter-to-diagnosis cardinality; why the live SQL viewer exists

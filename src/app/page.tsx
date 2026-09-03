@@ -27,12 +27,17 @@ export default function Home() {
       {/* Hero. First paint is content: no preloader, no entrance animation. */}
       <Section marker="Now">
         <h1 className="text-3xl">{profile.name}</h1>
-        <p className="mt-3 text-lg">{profile.role}</p>
+        {/* The label a recruiter needs in the first second, then the line that lands. */}
+        <p className="text-ink-muted mt-2 text-xs">{profile.role}</p>
 
-        {profile.intro !== null && <p className="measure mt-4">{profile.intro}</p>}
+        {profile.headline !== null && (
+          <p className="measure mt-6 text-2xl">{profile.headline}</p>
+        )}
+
+        {profile.intro !== null && <p className="measure mt-5">{profile.intro}</p>}
 
         <MetaList
-          className="text-ink-muted mt-5 text-xs"
+          className="text-ink-muted mt-6 text-xs"
           items={[
             profile.location,
             `${education.credentialShort}, ${education.institution}`,
@@ -53,20 +58,18 @@ export default function Home() {
             <a href="/Darpan_Radadiya_Resume.pdf">Résumé (PDF)</a>
           </li>
         </ul>
-
-        {profile.headline === null && (
-          <Limitation className="measure mt-6">
-            The introduction here is still being written in Darpan&rsquo;s own words
-            rather than filled with placeholder copy.
-          </Limitation>
-        )}
       </Section>
 
-      {/* Proof strip — the one place this page raises its voice. */}
-      <Section marker="Measured">
-        <h2 className="sr-only">Selected figures</h2>
+      {/*
+        Proof strip — the one place this page raises its voice, and the one block
+        that breaks out of the 66ch measure to do it.
+      */}
+      <section aria-labelledby="figures" className="border-rule-strong border-y">
+        <h2 id="figures" className="sr-only">
+          Selected figures
+        </h2>
         <ProofStrip />
-      </Section>
+      </section>
 
       <Section marker="Work" divided>
         <h2 className="text-xl">Selected work</h2>
@@ -83,17 +86,17 @@ export default function Home() {
       <Section marker="Method" divided>
         <h2 className="text-xl">How I work</h2>
         {profile.howIWork.length > 0 ? (
-          <div className="measure mt-6 flex flex-col gap-4">
-            {profile.howIWork.map((paragraph) => (
-              <p key={paragraph.slice(0, 32)}>{paragraph}</p>
+          <div className="mt-8 flex flex-col gap-8">
+            {profile.howIWork.map((principle) => (
+              <div key={principle.heading}>
+                <h3 className="text-lg">{principle.heading}</h3>
+                <p className="measure mt-3">{principle.body}</p>
+              </div>
             ))}
           </div>
         ) : (
           <Limitation className="measure mt-6">
             Three or four paragraphs on testing, data quality, and tradeoffs belong here.
-            They are deliberately empty rather than generated — this is the section a
-            hiring engineer reads most closely, and it has to be Darpan&rsquo;s own
-            account of how he works.
           </Limitation>
         )}
       </Section>
