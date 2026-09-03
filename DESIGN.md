@@ -36,6 +36,33 @@ paper-tinted off-white rather than pure white, to avoid halation on the near-bla
 
 **There are no shadows in this system.** Separation is hairlines and whitespace.
 
+### The data scale
+
+Four categorical colours, and a single-hue ramp for ordered magnitudes. Both are
+reserved to **the drawing area of a diagram or a chart** — never a button, border,
+heading, link, or any other chrome. Colour here means "this is a category of data",
+in the same way monospace means "this is a measured value".
+
+| Token      | Light     | Dark      | Role                       | Contrast        |
+| ---------- | --------- | --------- | -------------------------- | --------------- |
+| `--data-1` | `#2D5F8A` | `#6FA8D4` | Ingestion / input stages   | 6.51:1 / 7.23:1 |
+| `--data-2` | `#1F6F5C` | `#4FB99B` | Model / inference stages   | 5.81:1 / 7.69:1 |
+| `--data-3` | `#8A6A2D` | `#D4B26F` | Orchestration / storage    | 4.85:1 / 9.14:1 |
+| `--data-4` | `#7A3B52` | `#C98BA0` | Human-in-the-loop / review | 7.87:1 / 6.76:1 |
+
+`--data-2` is deliberately the same value as `--signal`: "the model produced a
+verified value" is the same semantic in both places.
+
+**Colour is never the carrier.** Simulated against deuteranopia, `--data-1` and
+`--data-2` collapse to 1.01:1 — indistinguishable. So every diagram stage and every
+chart series also carries a text label, and every diagram ships an HTML list of its
+stages alongside the drawing. The scale is reinforcement (WCAG 1.4.1).
+
+The ramp is derived from `--data-1`'s hue at 3.2, 4.6, 6.6 and 9.4 against paper, so
+even the lightest step clears the 3:1 SC 1.4.11 asks of a graphical object. Adjacent
+steps are only about 1.4:1 apart, so charts draw a hairline in the page ground
+between segments rather than relying on the ramp alone.
+
 ## Type
 
 Two families, both self-hosted, subset, `font-display: swap`.
@@ -83,6 +110,22 @@ viewport and `backdrop-filter` is a real paint cost. The footer repeats every ro
 and case studies carry their own back and prev/next links.
 
 Border radius is **0**, except 2px on images.
+
+## Diagrams
+
+Diagrams are inline SVG, never image files: they stay themeable, they respond to
+`prefers-color-scheme`, and they can be described to a screen reader. Each one is
+`role="img"` with a `<title>` and `<desc>`, and is accompanied by a real HTML list
+of its stages — that list is the primary text, not a fallback.
+
+Layout is vertical at every width. Five stages laid out horizontally would give each
+about 64px at 320px. The SVG's `max-width` equals its `viewBox` width so the drawing
+never scales above 1:1; at 320px the floor is 0.82, which renders a 14px label at
+11.5px.
+
+A review gate is drawn as a gate — two bars on posts leaving a narrow opening, with
+the flow passing through and a branch leading aside. A review step is a constriction
+in a pipeline, not a stage of it, and it should not look like another box.
 
 ## Motion
 
