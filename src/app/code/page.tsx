@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import { Section } from '@/components/Section';
 import { Measured } from '@/components/Measured';
-import { MetaList } from '@/components/MetaList';
 import { StackList } from '@/components/StackList';
-import { DifficultyTiers } from '@/components/DifficultyTiers';
+import { DifficultyBar } from '@/components/DifficultyBar';
 import { profile } from '@/content/profile';
 import { stats } from '@/lib/stats-snapshot';
 import { formatDate } from '@/lib/format';
@@ -43,21 +42,16 @@ export default function CodePage() {
         </div>
 
         <div className="mt-6">
-          <DifficultyTiers
+          <DifficultyBar
             tiers={[
-              { label: 'hard', count: gfg.hard, emphasis: true },
-              { label: 'medium', count: gfg.medium, emphasis: true },
-              { label: 'easy', count: gfg.easy },
               { label: 'basic', count: gfg.basic },
-              { label: 'school', count: gfg.school },
+              { label: 'easy', count: gfg.easy },
+              { label: 'medium', count: gfg.medium },
+              { label: 'hard', count: gfg.hard },
             ]}
+            note={`Basic through hard, ${gfg.basic + gfg.easy + gfg.medium + gfg.hard} problems. The one "school" problem is left off the bar — a single item is not a tier worth drawing — so the total across all levels is ${gfg.total}.`}
           />
         </div>
-
-        <MetaList
-          className="text-ink-muted mt-6 text-xs"
-          items={[`${gfg.total} problems solved in total`]}
-        />
 
         <dl className="mt-6 flex flex-col gap-2 text-xs">
           <div className="flex gap-3">
@@ -97,19 +91,15 @@ export default function CodePage() {
           </div>
 
           <div className="mt-6">
-            <DifficultyTiers
+            <DifficultyBar
               tiers={[
-                { label: 'hard', count: leetcode.data.hard, emphasis: true },
-                { label: 'medium', count: leetcode.data.medium, emphasis: true },
                 { label: 'easy', count: leetcode.data.easy },
+                { label: 'medium', count: leetcode.data.medium },
+                { label: 'hard', count: leetcode.data.hard },
               ]}
+              note={`${leetcode.data.total} problems in total. The bar is proportional within LeetCode only — the two platforms grade difficulty on their own scales, so the widths are not comparable between sections.`}
             />
           </div>
-
-          <MetaList
-            className="text-ink-muted mt-6 text-xs"
-            items={[`${leetcode.data.total} problems solved in total`]}
-          />
           <p className="text-ink-muted text-2xs mt-4">
             Fetched in CI and committed as a static snapshot, so this page never waits on
             LeetCode and never renders an empty figure.
