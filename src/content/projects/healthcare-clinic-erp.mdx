@@ -24,7 +24,7 @@ metrics:
     label: patients loaded
   - value: '12,000'
     label: appointments loaded
-repo: null
+repo: https://github.com/darpanradadiya/healthcare-clinic-erp
 demo: null
 screenshot: null
 dataNote: >-
@@ -55,46 +55,105 @@ dataNote: >-
 
 ## Context
 
-TODO — two sentences.
+A clinic administration system built for ITC 6000, Database Management Systems, at
+Northeastern. Ten tables in third normal form, a REST API over them, and a React front
+end that runs the whole clinic workflow: registry, scheduling, encounters, ICD-10
+diagnoses, invoices and payments.
+
+The data is generated. `server/seed.js` builds 5,000 patients with portal accounts for
+about 60% of them, then 12,000 appointments and the encounter, invoice and payment
+records that hang off those — using Faker, not a real patient record anywhere. It's
+there to make query performance and the constraints mean something at a size a
+hand-typed fixture can't reach.
 
 ## The problem
 
-TODO — open with the business question. Something in the shape of: which reports
-disagreed with each other, and why did the schema make that inevitable?
+[INFERRED] A schema is easy to draw and hard to trust. The interesting question isn't
+whether the tables exist, it's whether a number on a dashboard is the same number the
+database holds — and with billing split across invoices and payments, and diagnoses
+joined through a bridge table, there are several places for those to drift apart.
+[INFERRED — confirm or replace: the assignment brief would say what you were actually
+asked to solve.]
+
+What the code is built to answer is that question directly: every page can show the
+exact SQL that produced what you're looking at.
 
 ## Constraints
 
-TODO — what made this hard. ICD-10 as a real coding system, billing that has to
-reconcile, query performance at 12,000 appointments.
+**Foreign keys are enforced, not decorative.** `PRAGMA foreign_keys = ON` at the top of
+the schema, and every relationship is declared. SQLite doesn't do this by default, so
+without that line the constraints are documentation.
+
+**The interesting cardinalities are one-to-one, and they're enforced by UNIQUE, not by
+convention.** A portal account belongs to exactly one patient; an encounter belongs to
+exactly one appointment; an invoice belongs to exactly one encounter. Each is a
+`NOT NULL UNIQUE` foreign key, so the database refuses a second one rather than
+trusting the API not to write it.
+
+**Status fields are constrained to their real domains.** Appointments are checked
+against `Scheduled / Checked In / Completed / Cancelled / No-Show`, encounters against
+`Open / Signed`, invoices against `Open / Partial / Paid`, payments against
+`Card / Cash / Check / Insurance`. Money is checked too: totals and amounts paid must
+be non-negative, and a payment must be strictly positive.
+
+**A diagnosis can only be attached to an encounter once.** `UNIQUE (FK_ENCOUNTER_ID,
+FK_DIAGNOSIS_ID)` on the bridge table, with `IS_PRIMARY` as a flag rather than a
+separate table.
+
+**The browser gets its own database.** The SQL viewer runs SQLite in WebAssembly via
+sql.js against an 8-patient sample committed to `public/`, so the viewer works on a
+static deploy with no server. The full 5,000-patient database is built by the seed
+script server-side. [INFERRED] that split is deliberate rather than accidental —
+worth confirming.
 
 ## What I built
 
-<ErdDiagram />
+Ten tables, and the ERD above.
 
-TODO — the schema. This is the one case study where the diagram is the centrepiece
-rather than an aid, so the prose can be short: what the ten tables are, and which
-relationships were the awkward ones.
+The API is Express over better-sqlite3 — 41 routes. Full CRUD on patients, providers,
+locations, appointments, encounters and invoices; nested reads for a patient's
+appointments, encounters and invoices; payment recording against an invoice;
+diagnosis attach and detach on an encounter; and a global search across patients and
+providers.
+
+Four of those routes exist only to serve the dashboard, and they're the ones doing
+real SQL rather than row lookups: KPI totals, revenue by provider, appointment status
+distribution, and a twelve-month revenue trend. Two more (`/api/meta/schema` and
+`/api/meta/queries`) exist to feed the schema view and the SQL viewer — the
+introspection that makes the traceability claim checkable rather than asserted.
+
+The front end is React on Vite, with Recharts for the charts, shadcn and Radix for the
+components, and a `Cmd+K` command palette over the search endpoint. Provider
+productivity is computed as signed visits, gross billed, collected, and collection
+rate. Billing shows an invoice ledger filterable by status with a payment workflow
+behind it. CSV export takes a column selection, a scope of current page or all
+matching rows, and the active filters.
+
+It's deployed on Render via `render.yaml`.
 
 ## Decisions
 
-TODO — three to five. Candidates:
-
-1. 3NF rather than a star schema — a real tradeoff worth defending, since
-   reporting is one of the stated goals.
-2. How you modelled encounters against diagnoses — the cardinality choice.
-3. The live SQL viewer tracing metrics to source tables. This is unusual and good;
-   explain what problem it solved for whoever read the dashboards.
+TODO — yours. The one I'd most want to read is 3NF against a star schema, given that
+reporting is half the point of the thing. Others visible in the schema: modelling
+encounter-to-diagnosis as a bridge table with an `IS_PRIMARY` flag rather than a
+primary-diagnosis column on the encounter; making the one-to-ones `UNIQUE` foreign
+keys rather than shared primary keys; and shipping a small sample database to the
+browser instead of proxying the real one.
 
 ## Results
 
-TODO — measured. The table count and row counts are measured. Query timings would
-be strong here if you have them.
+TODO — yours, and measured. The row counts are facts: 10 tables, 5,000 patients,
+12,000 appointments, 41 routes. Query timings would be the strong result here and I
+don't have any — nothing in the repository records them.
 
 ## Limitations
 
-TODO — what breaks at ten times the data, and what a real clinic would need that
-this does not have.
+TODO — yours. Two that are visible from the code, if you want them: passwords are
+stored as a hash column that the seed fills with Faker output, so the portal accounts
+aren't real auth; and there's no test suite in this repository at all, which is worth
+saying out loud on a site whose other case study is about testing.
 
 ## Stack and links
 
-TODO — repository URL.
+The repository link is in the frontmatter. TODO — a live demo URL if the Render
+deploy is public.

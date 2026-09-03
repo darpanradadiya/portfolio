@@ -29,11 +29,11 @@ domains:
 metrics:
   - value: '270'
     label: Python modules
-  - value: 95K
+  - value: 65K
     label: lines of Python
   - value: '185'
     label: pytest functions
-  - value: '24'
+  - value: '21'
     label: test files
 repo: null
 demo: null
@@ -63,57 +63,130 @@ dataNote: null
 
 ## Context
 
-TODO — two sentences. What it is, when you built it, whether solo or with others,
-and what your role was.
+Carbon Records is a cast reel engine. You give it a film; it works out who is in it,
+and cuts a reel for each person. A reel is one whole conversation from the film, then
+the song's drop landing exactly where the conversation ends, then a montage of the
+character who was speaking — captioned, graded, vertical, under 90 seconds. That
+three-part shape is the product, and most of the engineering exists to protect it.
+
+It's 273 Python modules and about 65,000 lines, plus a FastAPI studio you drive it
+from. I built it solo. Nothing it produces is posted automatically: every reel is
+shown to me before it renders, and the identity step will not let me skip it.
 
 ## The problem
 
-TODO — the actual failure mode this solves. Open with the problem, never with the
-stack. What was happening before this existed, and why was it a problem worth
-270 modules of code?
+[INFERRED] Cutting a character reel by hand means watching a film, finding the
+scenes one person carries, checking a song's drop lands where the dialogue stops, and
+then cutting the montage to the beat. It's hours of work per character, and a film has
+forty of them. [INFERRED — confirm or replace: the code tells me what the system does,
+not what made you start it.]
+
+What the code is unambiguously built to handle is a harder problem than "cut a reel":
+identities aren't known in advance, the film is long enough that the same person
+clusters several times over, and every stage is slow enough that a failure at hour
+three cannot mean starting over.
 
 ## Constraints
 
-TODO — what made this hard. Multi-hour jobs, no labelled cast data, model
-confidence that cannot be trusted blindly, cost of GPU inference. Be specific
-about which constraints drove which decisions.
+Everything here is a number from the source, not an estimate.
+
+**No labelled cast.** Identities have to be discovered. Faces are detected and
+embedded, then clustered with HDBSCAN at `min_cluster_size=4` and `min_samples=2` —
+chosen because HDBSCAN infers how many clusters there are and marks outliers as noise
+rather than forcing every extra into a lead.
+
+**Fragmentation is emergent over feature length.** One person shot across two and a
+half hours, in different scenes and lighting, splits into many clusters; in a short
+clip they appear once and cluster once. Measured: a 150-second trailer gave 4 proposals
+in 4 groups and a 12-minute excerpt gave 15 in 15, both with zero multi-cluster groups.
+The Dark Knight's 194 proposals collapsed to 96 groups, with the Joker's single card
+covering 19 clusters and 551 faces. No short source reproduces this, which is why some
+of the review UI can only be tested on a full film.
+
+**Stages run for hours, so the run has to survive the machine.** On the reference
+film — Game of Thrones S05, 7,863 shots, 42 characters, 459 accepted face groups —
+clustering took 2.24 hours, aura 7.8 hours, and bold_hooks 13.2 hours wall against
+about 2.6 hours of actual work, the difference being 122 sleep events. A heartbeat
+samples `(t, cpu, power)` every 15 seconds and work time is derived from the gaps,
+because a frozen machine freezes the sampler too, so the gap *is* the sleep.
+
+**Power state changes the numbers by more than the code does.** Measured 3.7
+minutes per character on AC against 321 minutes per character on battery for the same
+stage — 87×. macOS also schedules onto efficiency cores when unplugged, so a
+CPU-second buys about half the work. CPU-seconds are comparable within a power state
+and not across one.
+
+**Every model call needs a bound.** Gemini clients get a 180-second timeout and three
+attempts. All five extraction-path clients import that timeout from one module rather
+than restating it. The retry earned itself immediately: 22 connection resets in one
+restarted run, every one recovered.
+
+**Roughly 10 GB of disk per film**, for the extracted clip library plus twice the
+film's size while uploading.
 
 ## What I built
 
-<CarbonRecordPipeline />
+The diagram above is the extraction path. Underneath it:
 
-TODO — the prose around the diagram. The five stages, the checkpoints, and the
-review gate are drawn above; what is missing is why the pipeline is shaped that way
-rather than as one long script.
+`carbon/engine/cast/` holds the pipeline and the format in one namespace — 20 modules
+and 6,921 lines taking a film to a labelled clip library, and 13 modules and 7,741
+lines taking that library to a reel. Splitting them properly rewrites 151 relative
+imports across 24 files, including the two largest modules in the repo, so it's
+scheduled after the launch rehearsal rather than before it. The retired trailer format
+is parked in its own package instead — 6 modules with no live importer, which is why
+moving it couldn't break a render.
+
+The model stack is InsightFace ArcFace on the `buffalo_l` pack for face embeddings,
+served through ONNX Runtime; YOLO for person detection and tracking; PySceneDetect for
+shot boundaries; Whisper for speech; and Gemini for the things that need judgement —
+scene registers, song sections, track moods, and labelling the clusters.
+
+The studio is FastAPI and uvicorn on port 8099. It supervises the render worker —
+spawning it, restarting it if it dies, holding a lock so two app processes can't each
+spawn one — but it does not start Redis. Without Redis, renders fall back to running
+inside the web process: they work, they block requests, cancel stops working, and a
+restart loses them. The studio says that on screen rather than degrading quietly.
+
+`./start` runs six checks that used to be a human's job — the interpreter, the three
+requirement files, ffmpeg and ffprobe, Redis, and whether the Gemini key is a real key
+rather than the placeholder. The key is checked at submit, so a missing one fails in a
+second instead of at stage six, two hours in.
+
+The interpreter is pinned to Python 3.14, because `audioop-lts` needs 3.13 or newer and
+a 3.12 venv fails with an error that names a package nobody has heard of instead of
+naming the interpreter.
+
+Correctness is gated by 185 pytest functions across 21 test files, run by a pre-commit
+hook that refuses the commit on failure. Tiers 1 to 3 run in about 6 seconds; the slow
+tier adds a real render and a 30-minute parity gate. `tests/COVERAGE.md` is a list of
+what the suite does *not* reach, which is the more useful half — the identity review
+is the least-covered thing in the repository, and it's the one human gate in the
+pipeline.
 
 ## Decisions
 
-TODO — THE MOST IMPORTANT SECTION. Three to five forks in the road, each with the
-alternative you rejected and why. Candidates from what you have already described:
-
-1. ONNX Runtime for ArcFace inference rather than serving PyTorch directly — why?
-2. HDBSCAN rather than k-means for cast identity — presumably because the number of
-   characters is not known in advance. Say so, and say what it cost you.
-3. A human review gate rather than a confidence threshold alone — what did you see
-   that made this necessary?
-4. Per-stage checkpoints and an on-disk embedding cache rather than re-running —
-   what was the failure that taught you this?
-5. Three-attempt retry with configurable timeouts on LLM calls — what breaks
-   without it?
+TODO — yours. Three to five forks in the road, each with the option you rejected and
+why. The source shows what you chose; it can't tell me what you were choosing between,
+and I'm not going to invent the alternative. Candidates visible in the code, if useful:
+HDBSCAN over k-means; a review gate over a confidence threshold; deferring the
+pipeline/format split rather than doing it; deleting `warm_purity` rather than tuning
+it; deriving work time from a heartbeat rather than from CPU.
 
 ## Results
 
-TODO — measured, with units. If something was not measured, say that plainly rather
-than reaching for a number. The 185 pytest functions and 24 test files are
-measured; job throughput and accuracy are not, unless you have figures.
+TODO — yours, and be careful here. `STATE.md` already says the resolving stage's
+22.28-hour figure is permanently wrong and must not be scaled down or averaged, and
+that three measurements which justified designs were out by 11.7×, 12.0× and 3.4×
+because they were quoted after the code beneath them changed. Your own rule — that a
+number in the interface is a promise to re-measure it — applies to this page too.
 
 ## Limitations
 
-TODO — what it does not do, and what breaks at ten times the load. Honest
-limitations read as senior. Candidates: single-machine assumptions, cast
-resolution on crowd scenes, cost per hour of video, no live/streaming path.
+TODO — yours. `COVERAGE.md` and `STATE.md` between them already name more real
+limitations than most case studies admit to; this section is mostly a matter of
+choosing which ones a reader needs.
 
 ## Stack and links
 
-TODO — add the repository URL to the frontmatter. The link on your resume PDF
-currently points at github.com rather than the repo.
+TODO — the repository is private, so there's no link on the page yet. See the question
+list.
