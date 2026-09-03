@@ -1,11 +1,12 @@
 ---
 title: Customer Segmentation Analysis
-outcomeTitle: null
-seoTitle: null
-summary: null
+outcomeTitle: "What 50,000 card transactions say about who to market to"
+seoTitle: "Credit card spending segmentation in R"
+summary: >-
+  An R Shiny dashboard over 50,000 credit card transactions, cohorting spend by tier, age and category to say which customers a rewards programme should aim at.
 featured: false
 order: 4
-role: null
+role: Sole author — app, analysis and dashboard
 timeframe: null
 stack:
   - R
@@ -17,7 +18,10 @@ repo: https://github.com/darpanradadiya/Credit_card_Rshiny_app
 repoNote: null
 demo: null
 screenshot: null
-dataNote: null
+dataNote: >-
+  The dataset is a 50,000-row transaction file committed to the repository. Its
+  provenance is unconfirmed — the columns look generated rather than real, and no
+  source is recorded.
 ---
 
 {/*
@@ -37,33 +41,57 @@ dataNote: null
 
 ## Context
 
-TODO — two sentences.
+An R Shiny dashboard that segments credit card customers by how they spend. One
+`app.R` of about 730 lines, five tabs, over a 50,000-transaction file with customer,
+merchant, category, amount and date columns. Built March 2025.
+
+Its job on this site is narrow and I'd rather say so: it's the R and second
+visualisation stack, next to a portfolio that is otherwise Python and TypeScript.
 
 ## The problem
 
-TODO — the business question. Who needed the segments, and for what?
+A rewards programme costs money per customer and pays back unevenly. The question the
+dashboard exists to answer is which cohorts are worth paying for — who spends enough
+to matter, in which categories, and when.
 
 ## Constraints
 
-TODO.
+**"Segmentation" here is cohorting, not clustering.** There's no k-means, no
+hierarchical clustering, no PCA anywhere in the app — I checked, and it's worth being
+straight about because the project title implies a model. Customers are grouped by
+rules I chose: spending tier, age band, gender, category. That's a defensible choice
+for a dashboard someone has to read and act on, and it is not an unsupervised method.
+
+**Everything recomputes on every filter change.** Five interacting filters over 50,000
+rows, with each tab's plots derived from the filtered frame — fine at this size,
+and the thing that would need rethinking first at ten times the data.
 
 ## What I built
 
-TODO.
+Five tabs, each answering a different question. Overview gives category dominance and
+the demographic split. Demographics breaks spend into histograms and tiers with
+transaction size and frequency. Trends covers monthly spending with peaks marked and
+day-of-week patterns. Key Customers and Merchants ranks both, including the top
+merchants for high spenders in Travel specifically. Recommendations states the
+actions the rest of the dashboard supports.
 
-## Decisions
-
-TODO — the interesting one here is almost certainly how you chose the number of
-segments, and how you validated that they mean anything.
+Built with shinydashboard and shinydashboardPlus, dplyr for the reshaping, ggplot2 and
+plotly for the charts, DT for the tables.
 
 ## Results
 
-TODO — measured, or explicitly not measured.
+TODO — yours. The dashboard produces recommendations; whether any of them were acted
+on, and what they were worth, is the only result worth reporting and I don't have it.
 
 ## Limitations
 
-TODO.
+The dataset's provenance isn't recorded, which matters more than it would on a
+technical project: the conclusions are about customer behaviour, and I can't say whose.
+The cohorts are rules rather than discovered structure, so they'd need revisiting for
+a different customer base rather than re-fitting. And there's no test of whether the
+tiers are the right cut points — they're a judgement, applied consistently.
 
 ## Stack and links
 
-TODO — repository URL.
+R, Shiny, shinydashboard, shinydashboardPlus, dplyr, ggplot2, plotly, DT, lubridate.
+Repository linked above; it includes screenshots of each tab.

@@ -305,9 +305,61 @@ the fourth.
 
 ## Limitations
 
-TODO — yours. `COVERAGE.md` and `STATE.md` between them already name more real
-limitations than most case studies admit to; this section is mostly a matter of
-choosing which ones a reader needs.
+**The review gate doesn't scale, and that's structural.** One human decision per job
+is fine for one film and a bottleneck at a hundred. Nothing is exported until the
+faces are named, and there is no batch mode, no delegation, and no way to approve a
+run without looking at it. That's the cost of choosing a person over a threshold, and
+it isn't a phase I'm planning my way out of.
+
+**A job resumes on the machine it failed on.** Checkpoints live in an
+`_extraction_checkpoints` directory under the film's export root, and the shot
+embedding cache is a `.npz` file beside it — both local paths. So resumption works,
+but only here. Moving a half-finished film to another machine means copying the
+checkpoint tree with it, and nothing in the code does that for you.
+
+**Clustering assumes the face is there to be seen.** Detections are filtered through a
+quality gate on box area and detector confidence before they reach HDBSCAN, so a
+character shot from behind, in heavy shadow, or under costume either fragments across
+clusters or lands in noise and never becomes an identity. The reference film's 459
+accepted face groups resolving to 42 characters is the visible half of that; the
+invisible half is whoever never cleared the gate.
+
+**Without Redis the studio still works, and works worse.** Renders fall back to
+running inside the web process: they block requests, cancel stops working, and a
+restart loses them. The studio says so on screen rather than degrading quietly, which
+is the right behaviour and not a fix.
+
+**There is no rate limiting on model calls at all.** Each call gets three attempts and
+a 180-second timeout, and that's the whole policy — the calls are issued sequentially
+inside each stage, and the only coordination anywhere is a thread lock inside one
+process and a file lock on the history file. Two jobs on one machine don't throttle
+each other, and two app processes on different machines don't know about each other.
+One film at a time hides this completely.
+
+**One layering rule is broken on purpose and written down.**
+`cast/film_index.py:46` imports a hashing helper from the web layer — the engine
+reaching upward, once. Nine web modules import the engine and the engine imports the
+web layer exactly there. Naming it was cheaper than moving hashing, and leaving it
+unnamed is how it would have spread.
+
+**The suite's own coverage document is a list of what it can't reach.** The identity
+review is the least-covered thing in the repository and it's the one human gate;
+exercising it needs a real multi-hour extraction sitting at `awaiting_review`, not a
+fixture. The multi-cluster fan-out and the split control have never run end to end,
+because fragmentation is emergent over feature length — a 150-second trailer produced
+4 proposals in 4 groups, so no source cheap enough to test on can reproduce the case
+that matters.
+
+**One track of 43 in the music library crashes analysis.**
+`music_structure.best_windows` raises an `IndexError` on it. It's tracked as an
+expected failure rather than folklore, and it's honest about the real problem: a track
+that can't be analysed drops silently out of the qualifying set instead of surfacing
+as a skip.
+
+**What breaks at ten times the load** is the gate first, then the disk. Ten films is
+ten review sessions and roughly 100 GB of clip libraries, and the pipeline has no
+concept of a queue across films — one at a time, on one machine, with a person waiting
+in the middle of each.
 
 ## Stack and links
 

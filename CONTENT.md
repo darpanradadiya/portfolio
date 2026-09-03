@@ -184,12 +184,15 @@ an `[INFERRED]` marker.
 
 ## The shortest path to finished
 
-1. **Limitations** for both featured projects. Carbon Record's are half-written in
-   your own notes; the clinic needs one line.
-2. **Results** for the clinic — or the sentence saying the timings don't exist.
-3. **Four `[CHECK]` markers** confirmed or corrected.
-4. **The three secondary projects** — `outcomeTitle`, `seoTitle`, `summary`, bodies.
-5. **`timeframe` on all six.** Not one is filled.
+1. **Five `[CHECK]` markers** confirmed or corrected — two in Carbon Record, two in
+   the clinic, one in Bank Term Deposit about whether it was group coursework.
+2. **`timeframe` on all six.** Not one is filled.
+3. **Results for Customer Segmentation** — the only section left TODO in the two
+   secondary write-ups, because whether any recommendation was acted on is not
+   something the code can say.
+4. **Site Intelligence** — verify or remove.
+5. **Screenshots.** Customer Segmentation's repository already has seven committed
+   under `screenshots/`, so that one is a copy job rather than a capture job.
 
 ## Not copy, but still outstanding
 

@@ -1,8 +1,9 @@
 ---
 title: Bank Term Deposit Prediction
-outcomeTitle: null
-seoTitle: null
-summary: null
+outcomeTitle: "A 90% accurate model that finds a third of its targets"
+seoTitle: "Bank term deposit prediction"
+summary: >-
+  Three classifiers over the UCI bank marketing set, and the reason 90% accuracy means almost nothing when 88.3% of the answers are no.
 featured: false
 order: 5
 role: null
@@ -13,15 +14,18 @@ stack:
 domains:
   - ML pipelines
 metrics:
-  - value: 45K
+  - value: '45,211'
     label: records
-  - value: 90.15%
-    label: accuracy
+  - value: 37.58%
+    label: recall, best model
 repo: https://github.com/darpanradadiya/Bank_Term_Deposit_Prediction
 repoNote: null
 demo: null
 screenshot: null
-dataNote: null
+dataNote: >-
+  The UCI bank marketing dataset — 45,211 phone-campaign records from a Portuguese
+  bank. A well-known public dataset, said so plainly because it is recognisable on
+  sight.
 ---
 
 {/*
@@ -49,34 +53,74 @@ dataNote: null
 
 ## Context
 
-TODO — two sentences.
+A classification project on the UCI bank marketing dataset: 45,211 records of phone
+calls from a Portuguese bank's deposit campaigns, 17 attributes, predicting whether a
+client subscribed. Logistic regression, a decision tree and a random forest, each with
+and without hyperparameter tuning.
+
+Coursework, and the dataset is one a reader will recognise immediately, so the
+interesting part isn't the models.
 
 ## The problem
 
-TODO.
+The bank wants to know who to call. A campaign has a fixed budget of calls and most
+people say no, so the value of a model here is entirely in finding the people who
+would say yes.
 
 ## Constraints
 
-TODO.
+**88.3% of the labels are "no".** That single fact governs everything. A model that
+predicts "no" for every client is 88.3% accurate and completely useless, so accuracy
+on this dataset carries almost no information — it is the metric the dataset is
+designed to make look good.
+
+**Nothing was done about the imbalance.** No resampling, no SMOTE, no class weights —
+I checked the notebook and there's none. The models were trained on the distribution
+as it comes, which is why the results look the way they do below.
 
 ## What I built
 
-TODO.
-
-## Decisions
-
-TODO — if you write only one thing here, write why accuracy is the wrong metric
-for this dataset and what you looked at instead.
+Outlier treatment by IQR, one-hot encoding for the ten categorical attributes,
+standardisation of the seven numerical ones, then the three classifiers with
+`RandomizedSearchCV` for tuning. Accuracy, precision, recall and F1 computed for
+every model both tuned and untuned — which is the part I'd defend, because it's what
+makes the next section possible.
 
 ## Results
 
-TODO — 90.15% accuracy is measured. Pair it with precision, recall, or AUC, or
-explain why you are reporting accuracy alone.
+The random forest was the best of the three: **90.15% accuracy, 66.13% precision,
+37.58% recall, 47.93% F1.**
+
+Read those in order and the project turns into an argument against its own headline.
+The accuracy is 1.85 points above the do-nothing baseline of predicting "no" every
+time. The recall says the model finds 37.58% of the people who actually subscribed —
+it misses nearly two thirds of the entire reason the bank commissioned a model. The
+precision says that when it does flag someone, it's right about two times in three,
+which is genuinely useful and is the only figure here I'd put in front of a
+stakeholder.
+
+Tuning barely moved anything, which I'd now read as a sign that the ceiling was set by
+the class balance rather than by the hyperparameters.
+
+If I redid this, the target would be recall at a fixed call budget — "of the 1,000
+calls we can make, how many subscribers do we reach" — because that's the question,
+and accuracy was never a proxy for it.
 
 ## Limitations
 
-TODO.
+Beyond the imbalance: the committed notebook doesn't run as-is — it imports a shared
+module that isn't in the repository, so the first cell errors and the reported figures
+come from the README rather than from committed output. The dataset is public and
+heavily used, so nothing here generalises to a bank that isn't this one in this decade.
+And there's no cost model — a false negative and a false positive are treated as
+equally bad, when a missed subscriber and a wasted call plainly aren't.
 
 ## Stack and links
 
-TODO — repository URL.
+Python, pandas, scikit-learn, matplotlib. Repository linked above.
+
+{/*
+  [CHECK] — the README lists "Contributors: Darpan Radadiya" but the notebook imports
+  a module called `capstone_group7`, which suggests this was group coursework. `role`
+  is left null rather than claiming solo. Tell me which it was.
+*/}
