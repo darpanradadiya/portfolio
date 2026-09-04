@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Section } from '@/components/Section';
 import { ProjectList } from '@/components/ProjectList';
+import { RepositoryList } from '@/components/RepositoryList';
 import { getAllDomains, getAllProjects, toProjectCard } from '@/lib/projects';
 import { absoluteUrl } from '@/lib/site';
 
@@ -27,6 +28,22 @@ export default function ProjectsPage() {
       </p>
       <div className="mt-10">
         <ProjectList projects={projects} domains={getAllDomains()} />
+      </div>
+
+      {/*
+        The rest of the account. Five projects have case studies; these are the
+        other public repositories that show work, one line each, so the list is
+        scannable rather than readable. What is left out and why is documented in
+        src/content/repositories.ts, because the omissions are the harder half of
+        the decision.
+      */}
+      <div className="border-rule mt-16 border-t pt-10">
+        <h2 className="text-xl">Other repositories</h2>
+        <p className="measure text-ink-muted mt-3 text-xs">
+          Smaller work, written up in a line each. Coursework and personal projects,
+          linked rather than summarised.
+        </p>
+        <RepositoryList />
       </div>
     </Section>
   );
