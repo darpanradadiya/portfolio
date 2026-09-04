@@ -11,7 +11,7 @@ describe('outOfSubset', () => {
 
   it('accepts the numeric forms the site actually uses', () => {
     for (const value of [
-      '270',
+      '273',
       '185',
       '950+',
       '100K+',

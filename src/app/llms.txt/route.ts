@@ -21,7 +21,7 @@ export function GET(): Response {
     `> ${profile.role}. Based in ${profile.location}. ${profile.availability} from ${education.institution} (${education.credentialShort}, ${education.result}).`,
     '',
     'Darpan builds data and ML systems that are tested end to end rather than',
-    'demonstrated in notebooks. The flagship project is a 270-module, 65K-line',
+    'demonstrated in notebooks. The flagship project is a 273-module, 65K-line',
     'Python pipeline with 185 pytest functions across 21 test files behind a',
     'pre-commit gate. He has also solved 950+ data-structures and algorithms',
     'problems across GeeksforGeeks and LeetCode.',

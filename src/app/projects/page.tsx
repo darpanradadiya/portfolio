@@ -7,7 +7,7 @@ import { absoluteUrl } from '@/lib/site';
 export const metadata: Metadata = {
   title: 'Work',
   description:
-    'Six data and ML projects, from a 270-module video pipeline with a 185-function test suite to a 10-table clinical schema in third normal form.',
+    'Six data and ML projects, from a 273-module video pipeline with a 185-function test suite to a 10-table clinical schema in third normal form.',
   alternates: { canonical: absoluteUrl('/projects') },
 };
 

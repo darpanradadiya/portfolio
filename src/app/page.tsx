@@ -14,7 +14,7 @@ import { absoluteUrl } from '@/lib/site';
 export const metadata: Metadata = {
   title: `${profile.name}, data and analytics engineer in Boston`,
   description:
-    'Data and analytics engineer with applied ML depth. Ships tested systems: a 270-module ML pipeline behind 185 pytest functions. Graduating December 2026.',
+    'Data and analytics engineer with applied ML depth. Ships tested systems: a 273-module ML pipeline behind 185 pytest functions. Graduating December 2026.',
   alternates: { canonical: absoluteUrl('/') },
 };
 

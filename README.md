@@ -9,7 +9,8 @@ has to hold up to the same reading. That constraint drives most of what follows.
 - **Live:** https://portfolio-black-five-67.vercel.app
 - **Design system:** [DESIGN.md](DESIGN.md) — tokens, the two rules enforced by
   tooling, and why the diagrams are SVG
-- **Outstanding copy:** [CONTENT.md](CONTENT.md) — every string still missing
+- **Outstanding copy:** [CONTENT.md](CONTENT.md), every string still missing
+- **Before launch:** [docs/LAUNCH.md](docs/LAUNCH.md), the checklist to work through
 
 ## Stack
 

@@ -95,12 +95,12 @@ export const profile = {
 
   headline: "Most ML pipelines break quietly. I build the ones that don't.",
   intro:
-    "I'm a data and analytics engineer finishing an MPS in Analytics at Northeastern in December 2026. My last project was a 270-module Python system that takes a feature film, works out who's in it, and cuts a reel for each character. Six models in sequence, no labelled cast, and multi-hour runtimes. Most of the engineering went into making it survive failure rather than making it clever. That's the part of this work I'm actually interested in.",
+    "I'm a data and analytics engineer finishing an MPS in Analytics at Northeastern in December 2026. My last project was a 273-module Python system that takes a feature film, works out who's in it, and cuts a reel for each character. Six models in sequence, no labelled cast, and multi-hour runtimes. Most of the engineering went into making it survive failure rather than making it clever. That's the part of this work I'm actually interested in.",
 
   howIWork: [
     {
       heading: "1. Tests are how I find out I'm wrong",
-      body: "I don't trust my own code, and I don't think anyone should trust code that hasn't told them what it does when things go badly. Carbon Record has 185 pytest functions across 21 test files, sitting behind a pre-commit gate. The number isn't the point. The point is that in a 65,000-line system across 270 modules, I find out I've broken something in seconds instead of finding out from whoever is using it.",
+      body: "I don't trust my own code, and I don't think anyone should trust code that hasn't told them what it does when things go badly. Carbon Record has 185 pytest functions across 21 test files, sitting behind a pre-commit gate. The number isn't the point. The point is that in a 65,000-line system across 273 modules, I find out I've broken something in seconds instead of finding out from whoever is using it.",
     },
     {
       heading: '2. Bad data is cheaper to stop than to explain',
@@ -119,7 +119,7 @@ export const profile = {
   about: [
     "I'm Darpan. I'm finishing an MPS in Analytics at Northeastern in Boston, graduating December 2026, after a B.Tech in Information and Communication Technology from Dhirubhai Ambani University in Gujarat.",
     "I got here through the unglamorous route. Nine months at PepCoding on data structures and full-stack web development, mentoring at my university's CINS club, a summer research internship. Then a data analyst internship at Clomotech building ETL on AWS Glue, Lambda, and S3 that processed over 100,000 operational records a day and replaced a legacy ingestion process that was holding up everything downstream. Most recently at Wisaxis, building reproducible Python and SQL workflows over a 100,000-record daily dataset that had no scalable process at all.",
-    "Outside coursework I build things that are larger than they need to be, because that's where the interesting failures live. Carbon Record is 270 modules and six models deep. The clinic ERP is a ten-table 3NF schema with a live SQL viewer that traces every dashboard metric back to its source table, because I wanted to know whether the numbers on the dashboard were the numbers in the database.",
+    "Outside coursework I build things that are larger than they need to be, because that's where the interesting failures live. Carbon Record is 273 modules and six models deep. The clinic ERP is a ten-table 3NF schema with a live SQL viewer that traces every dashboard metric back to its source table, because I wanted to know whether the numbers on the dashboard were the numbers in the database.",
     "Alongside that I've solved around 950 algorithm problems across GeeksforGeeks and LeetCode, weighted toward medium and hard. Not the interesting part of my work, but the reason the interesting part goes faster.",
     "What I'm looking for: analytics or data engineering work where the pipeline is the product, somewhere the correctness of the data matters as much as the model on top of it.",
   ] as readonly string[],
@@ -188,10 +188,10 @@ export const profile = {
    */
   proof: [
     {
-      value: '270',
+      value: '273',
       label: 'modules',
       // TODO(darpan): confirm whether these group into 24 subsystems. The resume
-      // documents 270 modules, 65K lines, and 21 *test files* — "24 subsystems" is
+      // documents 273 non-test modules, 65K lines, and 21 *test files* — "24 subsystems" is
       // not evidenced anywhere, so it is left off rather than guessed.
       provenance: 'Carbon Record, 65K lines',
     },
