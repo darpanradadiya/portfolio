@@ -16,7 +16,6 @@ export const PAGE_ROUTES = [
   ...PROJECT_ROUTES,
   '/about',
   '/resume',
-  '/code',
   '/contact',
 ] as const;
 

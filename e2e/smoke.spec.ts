@@ -67,10 +67,9 @@ test('no statistic renders as an empty value', async ({ page }) => {
    * mono class marks measured values, so every one of them is inspected.
    *
    * Every page is scanned rather than a hardcoded pair. /code used to be the
-   * second entry and now renders no figure at all, which would have made this
-   * test fail for the opposite of the reason it exists. A page with no measured
-   * values is fine; a page with a broken one is not, and the site as a whole must
-   * still be rendering some.
+   * second entry, then stopped rendering any figure at all, then stopped
+   * existing. A page with no measured values is fine; a page with a broken one
+   * is not, and the site as a whole must still be rendering some.
    */
   let total = 0;
   for (const route of PAGE_ROUTES) {

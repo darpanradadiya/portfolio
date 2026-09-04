@@ -6,7 +6,6 @@
  */
 export const ROUTES = [
   { href: '/projects', label: 'Work' },
-  { href: '/code', label: 'Foundations' },
   { href: '/about', label: 'About' },
   { href: '/resume', label: 'Résumé' },
   { href: '/contact', label: 'Contact' },

@@ -5,6 +5,14 @@ import { StackList } from '@/components/StackList';
 import { profile } from '@/content/profile';
 import { absoluteUrl } from '@/lib/site';
 
+/**
+ * Coding profiles, in display order. Codeforces is deliberately absent: it stays
+ * in the JSON-LD sameAs for entity resolution and is not offered as a link.
+ */
+const PROFILE_LINKS = [profile.links.leetcode, profile.links.geeksforgeeks].filter(
+  (link) => link.url !== null,
+);
+
 export const metadata: Metadata = {
   title: 'About',
   description:
@@ -95,6 +103,26 @@ export default function AboutPage() {
             </li>
           ))}
         </ol>
+      </Section>
+
+      <Section marker="Profiles" divided>
+        <h2 className="text-xl">Profiles</h2>
+        {/*
+          What is left of the old /code page. It carried problem counts,
+          difficulty bars, a coding score and an institute rank; all of that came
+          off the site, and two links do not justify a route.
+
+          Rendered from the links that have a URL, so GeeksforGeeks appears the
+          day its profile slug is known and not before. This site does not render
+          a link that 404s.
+        */}
+        <ul className="mt-5 flex list-none flex-col gap-2 p-0 text-xs">
+          {PROFILE_LINKS.map((link) => (
+            <li key={link.label}>
+              <a href={link.url ?? undefined}>{link.label}</a>
+            </li>
+          ))}
+        </ul>
       </Section>
 
       <Section marker="Skills" divided>

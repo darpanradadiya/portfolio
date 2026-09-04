@@ -51,8 +51,11 @@ export function GET(): Response {
     '## Contact',
     '',
     `- Email: ${profile.contact.email}`,
+    // Codeforces is omitted. It stays in the JSON-LD sameAs, where its job is
+    // entity resolution, but it is not offered here as somewhere to go: the
+    // contest profile says nothing the case studies do not say better.
     ...Object.values(profile.links)
-      .filter((link) => link.url !== null)
+      .filter((link) => link.url !== null && link.label !== 'Codeforces')
       .map((link) => `- ${link.label}: ${link.url}`),
     '',
   ];
