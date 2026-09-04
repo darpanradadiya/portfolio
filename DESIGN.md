@@ -11,30 +11,92 @@ and it is why the type system carries the argument rather than decorating it.
 
 ## Colour
 
-Six roles. Nothing outside this table is a colour decision that can be made ad hoc.
+Nothing outside these tables is a colour decision that can be made ad hoc.
 
-| Token           | Light     | Dark      | Role                                   | Contrast          |
-| --------------- | --------- | --------- | -------------------------------------- | ----------------- |
-| `--paper`       | `#FBFBF9` | `#121416` | Page ground                            | —                 |
-| `--ink`         | `#161A1D` | `#E7E9E5` | Body text                              | 16.90:1 / 15.11:1 |
-| `--ink-muted`   | `#5B6570` | `#9BA4AD` | Provenance lines, captions             | 5.73:1 / 7.30:1   |
-| `--rule`        | `#DFE1DC` | `#262A2E` | Decorative hairlines only              | 1.27:1 / 1.28:1   |
-| `--rule-strong` | `#848981` | `#5E656B` | Hairlines bounding interactive rows    | 3.45:1 / 3.12:1   |
-| `--signal`      | `#1F6F5C` | `#4FB99B` | **Reserved** — verified data only      | 5.81:1 / 7.69:1   |
-| `--warn`        | `#A6522C` | `#D98A5E` | **Reserved** — limitations, stale data | 5.24:1 / 6.81:1   |
+Two hues do all the work: a teal and an amber. Every ground below is mixed from one
+of them, so the palette has one family and no exceptions.
 
-Ratios are measured, not estimated. Every text pair clears WCAG 2.2 AA.
+### Grounds
 
-`--rule-strong` exists because `--rule` measures 1.27:1 — correct for decoration, but
-below the 3:1 that SC 1.4.11 requires of a hairline that is the _sole_ boundary of an
-interactive row. Decorative hairlines keep `--rule`.
+| Token         | Light     | Dark      | Role                     | Depth vs page                  |
+| ------------- | --------- | --------- | ------------------------ | ------------------------------ |
+| `--surface`   | `#FAFAF7` | `#10141C` | Page ground              | —                              |
+| `--band-cool` | `#CCE0DB` | `#183034` | Section zone, teal       | 1.32:1 / 1.33:1                |
+| `--band-warm` | `#ECD8C7` | `#342B1D` | Section zone, amber      | 1.32:1 / 1.33:1                |
+| `--card`      | `#FAFCFC` | `#1B3A3C` | A featured row on a band | 1.34:1 / 1.14:1 above the band |
+| `--footer`    | `#095049` | `#143D38` | The end of the page      | 8.90:1 / 1.54:1                |
+
+The bands were 1.07:1 from the page once, which is a difference you can measure and
+cannot see. They are 1.32:1 now, and they are mixed **from** the accent hues rather
+than being neutral near-whites with a hint of tint, so a zone differs in saturation
+as well as in lightness.
+
+Cool and warm are still equal in luminance to each other (1.00:1). A band is a tint
+shift and not a lightness step: they are told apart by hue, which survives red-green
+colour blindness, and by the hairline at every edge.
+
+The footer is deliberately asymmetric. "Darker in dark mode" taken literally gave a
+value 1.04:1 from the dark page ground, which is a block of colour nobody can see.
+In a dark theme depth has to come from saturation, so the dark footer sits _above_
+its ground and the light one far below.
+
+### Ink, chrome and hairlines
+
+Measured against all four grounds. The number is the worst of the four.
+
+| Token           | Light     | Dark      | Role                         | Worst case    | Needs |
+| --------------- | --------- | --------- | ---------------------------- | ------------- | ----- |
+| `--ink`         | `#161A1D` | `#E7E9E5` | Body text                    | 12.68 / 10.01 | 4.5   |
+| `--ink-muted`   | `#545D68` | `#9BA4AD` | Provenance lines, captions   | 4.84 / 4.84   | 4.5   |
+| `--accent`      | `#0C685E` | `#3FBFAE` | Links, active state, chrome  | 4.82 / 5.40   | 4.5   |
+| `--accent-2`    | `#964508` | `#F5A524` | Hover and focus              | 4.83 / 5.99   | 4.5   |
+| `--rule`        | `#C4C5C1` | `#414548` | Decorative hairlines only    | 1.26 / 1.26   | —     |
+| `--rule-strong` | `#777B74` | `#7B8186` | Hairlines bounding a row     | 3.12 / 3.10   | 3.0   |
+| `--signal`      | `#1D6856` | `#4FB99B` | **Reserved** — verified data | 4.80 / 5.09   | 4.5   |
+| `--warn`        | `#914827` | `#DB9167` | **Reserved** — limitations   | 4.81 / 4.81   | 4.5   |
+
+The footer carries its own three, because none of the above clears AA on a ground
+that dark in light mode: `--footer-ink` 7.56 / 8.49, `--footer-muted` 4.81 / 4.81,
+`--footer-accent` 4.99 / 5.29.
+
+Ratios are measured, not estimated, and measured twice: once from the token values
+and once by walking every rendered text element in the browser and computing it
+against the background actually painted behind it. The second pass is the one that
+counts, because it is the only one that knows what ended up on top of what.
+
+**The light-theme values are a step stronger than they were, and that step was
+forced.** On the old 1.07:1 bands, `--accent` measured 5.13:1 and `--accent-2`
+measured exactly 4.50:1. On a real band the same values fall to about 4.3:1 and
+3.6:1, so a link on a band would have failed. The choice was to lighten the band
+back to invisibility or to make the ink carry the ground it now sits on. No hue
+changed. `--accent-2` now clears AA everywhere, where before it passed on a band by
+nothing at all and had to be kept off small text there.
+
+`--rule-strong` exists because `--rule` is decorative and sits below the 3:1 that SC
+1.4.11 requires of a hairline that is the _sole_ boundary of an interactive row.
+Both are sized against the ground they are least visible on rather than against the
+page: at their old values they measured 1.05:1 on a deepened band, which is a
+hairline that is not there.
 
 Dark mode is CSS-only, via `color-scheme: light dark` and `light-dark()`. There is no
 JavaScript theme toggle: `prefers-color-scheme` is respected, which means no
 hydration flash and no theme script in the critical path. `--ink` in dark mode is a
 paper-tinted off-white rather than pure white, to avoid halation on the near-black.
 
-**There are no shadows in this system.** Separation is hairlines and whitespace.
+**There are no shadows in this system.** Separation is colour, hairlines and
+whitespace.
+
+### Where the accent is allowed to be
+
+Colour marks structure and state, never decoration. The accent appears on links,
+the active navigation item, the submit button, the active filter chip, the 2px
+leading edge of a featured work row, and the stroke around a diagram box. That last
+one is why the diagram boxes are filled with `--card` rather than left as outlines:
+the drawing is a surface, like the rows are.
+
+`--signal` and `--warn` are not part of that list and never will be. They mean
+"verified" and "limitation", and a token that means something cannot also be used
+because it looks good.
 
 ### The data scale
 

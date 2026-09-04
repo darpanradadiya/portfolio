@@ -31,8 +31,20 @@
  */
 
 :root {
-  --signal: light-dark(#1f6f5c, #4fb99b);
-  --warn: light-dark(#a6522c, #d98a5e);
+  /*
+   * Stepped with the accents when the bands were deepened, for the same reason
+   * and by the same amount. On a 1.32:1 band the old values measured 4.37:1 and
+   * 3.95:1, so a limitation note placed inside a banded section would have failed
+   * AA. Nothing renders one there today, which is exactly why it was worth fixing:
+   * the failure was latent, not visible, and the next composition change would
+   * have shipped it. The dark --warn is a step lighter so it clears the card.
+   *
+   * Worst case across page, both bands and the card:
+   *   light  signal 4.80  warn 4.81
+   *   dark   signal 5.09  warn 4.81
+   */
+  --signal: light-dark(#1d6856, #4fb99b);
+  --warn: light-dark(#914827, #db9167);
 
   /*
    * Categorical scale for diagram stages. All eight values clear AA against their
@@ -41,7 +53,7 @@
    * value" is the same semantic in both places.
    */
   --data-1: light-dark(#2d5f8a, #6fa8d4); /* ingestion / input */
-  --data-2: light-dark(#1f6f5c, #4fb99b); /* model / inference */
+  --data-2: light-dark(#1d6856, #4fb99b); /* model / inference; == --signal */
   --data-3: light-dark(#8a6a2d, #d4b26f); /* orchestration / storage */
   --data-4: light-dark(#7a3b52, #c98ba0); /* human-in-the-loop / review */
 
@@ -70,9 +82,14 @@
 }
 
 /*
- * Diagram and chart paint. Consumed only by Diagram.tsx and DifficultyBar.tsx,
- * which expose semantic props instead of these class names — so no other component
- * can reach a data colour even indirectly.
+ * Diagram paint. Consumed only by Diagram.tsx, which exposes semantic props
+ * instead of these class names, so no other component can reach a data colour
+ * even indirectly.
+ *
+ * The .ramp-* classes below currently have no consumer: DifficultyBar.tsx was
+ * deleted with the difficulty splits. They stay reserved rather than being
+ * removed, because the scale is a documented part of the system and a reserved
+ * token with no consumer costs nothing, while re-deriving one costs a session.
  */
 
 .data-fill-1 {
@@ -125,8 +142,7 @@
 
 /*
  * Background variants of the ramp, for the stacked bar. Consumed only by
- * DifficultyBar.tsx, which maps a difficulty tier to a step rather than exposing
- * these names.
+ * a stacked bar, which no component draws at present. See the note above.
  */
 
 .ramp-bg-1 {

@@ -49,10 +49,14 @@ export function ProjectList({ projects, domains }: ProjectListProps) {
                   aria-pressed={isActive}
                   onClick={() => setActive(domain)}
                   className={[
-                    'text-2xs cursor-pointer border px-2.5 py-1',
+                    'text-2xs cursor-pointer border px-2.5 py-1 transition-colors',
+                    // Accent, not ink. An active filter is a state the visitor
+                    // put the page into, which is what the accent is for; a black
+                    // chip read as a disabled control. accent against --surface
+                    // measures 6.36:1 light and 8.14:1 dark.
                     isActive
-                      ? 'border-ink bg-ink text-paper'
-                      : 'border-rule-strong text-ink bg-transparent',
+                      ? 'border-accent bg-accent text-surface'
+                      : 'border-rule-strong text-ink hover:border-accent bg-transparent',
                   ].join(' ')}
                 >
                   {domain ?? 'All'}

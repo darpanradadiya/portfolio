@@ -117,9 +117,10 @@
 }
 
 /* ---- section bands --------------------------------------------------
- * A band is a tint shift, not a lightness step: measured 1.07:1 against the
- * ground and 1.00:1 against each other. So the hairline is what makes the edge
- * legible, and the tint is what makes the zone feel different.
+ * 1.32:1 against the ground, and still 1.00:1 against each other. The depth is
+ * what makes a zone a zone; the hue is what tells cool from warm, which is a
+ * distinction that survives red-green colour blindness. The hairline stays,
+ * because two bands of equal luminance meeting still need an edge.
  */
 
 .band-cool {
@@ -133,16 +134,25 @@
 }
 
 /* ---- hero ------------------------------------------------------------
- * Two stops, ground into the cool band, fading out before the text starts.
- * Kept to the top 60% so it reads as the page lifting rather than as a panel.
+ * The cool band, held for the top eighth and then released into the ground.
+ *
+ * Two stops over 60% used to be the whole wash, and against a band that was
+ * 1.07:1 from the page it amounted to nothing: a gradient nobody could see, which
+ * is the exact thing the brief bans gradients for. The band is 1.32:1 now, so the
+ * same construction reads. Holding the first stop is what stops it looking like a
+ * gradient for its own sake: the top of the page is a surface, and then it ends.
+ *
+ * A hairline at the bottom, for the same reason every band has one.
  */
 
 .hero-wash {
   background-image: linear-gradient(
     to bottom,
     var(--color-band-cool) 0%,
-    var(--color-surface) 60%
+    var(--color-band-cool) 12%,
+    var(--color-surface) 78%
   );
+  border-bottom: 1px solid var(--color-rule);
 }
 
 /* ---- links -----------------------------------------------------------
@@ -185,12 +195,19 @@
 
 .card {
   /*
-   * The page ground, not a band. Cards sit inside banded sections, and a card
-   * tinted the same as the band it stands on is invisible: the two were measured
-   * 1.00:1 apart. Ground-on-band is what makes it read as a panel.
+   * --card, not the page ground. A card tinted the same as the band it stands on
+   * is invisible; that was measured at 1.00:1 and shipped once. This is lighter
+   * than the band in both themes, 1.34:1 in light and 1.14:1 in dark, so the row
+   * reads as a panel lifted off the zone rather than a rectangle drawn on it.
+   *
+   * The leading edge is 2px of accent. It is the only structural use of colour on
+   * the page: it marks where a row starts, it points along the reading direction,
+   * and it is logical rather than physical, so it moves to the right in a
+   * right-to-left locale instead of ending up on the wrong side.
    */
-  background-color: var(--color-surface);
+  background-color: var(--color-card);
   border: 1px solid var(--color-rule-strong);
+  border-inline-start: 2px solid var(--color-accent);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -225,32 +242,29 @@
 }
 
 /*
- * The starting opacity is a contrast constraint, not a taste decision.
+ * TRANSFORM ONLY. The opacity keyframe is gone, and the arithmetic is why.
  *
- * `opacity` on the section composites the whole subtree over the page ground, so
- * every text colour inside it is a blend on the way in. Below-fold sections sit at
- * this keyframe until they are scrolled to, which is where axe samples them: a
- * desktop Lighthouse run scored accessibility 96 on the home page, reading the
- * hero ink as #bfc1bf and the muted text as #d1d4d4 against the band. Both are
- * real, composited values. The tokens were fine; their intermediates were not.
+ * `opacity` on a section composites the whole subtree over the page ground, so
+ * every colour inside it is a blend on the way in, and a scroll-driven animation
+ * sits at its starting keyframe for as long as the section is unread. That is what
+ * scored this page 96 on accessibility once: axe read composited intermediates,
+ * not tokens.
  *
- * Solved for: the tightest pair is a link (--accent, 5.13:1 on a band in light)
- * carrying 4.5:1 at alpha 0.935. Ink needs only 0.615 and muted 0.925, and every
- * dark-scheme pair clears by 0.78, so the link sets the floor. 0.94 is the first
- * value above it.
+ * The fix then was to start at 0.94, solved from a link holding 4.5:1 on a 1.07:1
+ * band. Deepening the bands to 1.32:1 moved that floor to 0.966 in light and 0.942
+ * in dark, and a 0.966-to-1 fade is not a fade. So the honest version of the same
+ * decision is to keep the 10px rise, which cannot fail a contrast check because it
+ * does not touch colour, and stop pretending the opacity ramp is doing work.
  *
- * That leaves a 0.94 to 1 fade, which is imperceptible: in practice the reveal is
- * now the 10px rise. Kept as opacity rather than deleted because the number is the
- * evidence, and anyone lowering it will read this first.
+ * The reveal itself is one of three deliberate overrides recorded in the brief and
+ * is not being reverted here. It is the same motion; it is one property lighter.
  */
 @keyframes reveal-in {
   from {
-    opacity: 0.94;
     transform: translateY(10px);
   }
 
   to {
-    opacity: 1;
     transform: none;
   }
 }
@@ -329,9 +343,19 @@
   fill: var(--color-ink);
 }
 
+/*
+ * The box is a surface now, not an outline on the page. Filling it with --card and
+ * stroking it with the accent is the same move as the work rows: colour marking
+ * structure. The stage fills inside it are still the reserved data scale, reached
+ * only through Diagram.tsx, and every stage still carries a text label because
+ * --data-1 and --data-2 collapse to 1.01:1 under deuteranopia.
+ *
+ * accent on --card measures 6.46:1 light and 5.40:1 dark, well past the 3:1 that
+ * SC 1.4.11 asks of a graphical object.
+ */
 .diagram-box {
-  fill: none;
-  stroke: var(--color-rule-strong);
+  fill: var(--color-card);
+  stroke: var(--color-accent);
   stroke-width: 1;
 }
 
@@ -459,4 +483,45 @@
   padding: 0.5rem 0.75rem;
   background-color: var(--color-paper);
   outline: 2px solid var(--color-ink);
+}
+
+/* ---- footer ----------------------------------------------------------
+ * The one large block of saturated colour on the page.
+ *
+ * It has its own ink, muted and link tokens because none of the page's text
+ * colours clear AA on a ground this dark in light mode. Everything inside it is
+ * scoped here rather than passed down as classes, so a link added to the footer
+ * later cannot arrive in the page's accent and fail against the teal.
+ */
+
+.site-footer {
+  background-color: var(--color-footer);
+  color: var(--color-footer-ink);
+
+  /*
+   * A hairline, for the same reason every band has one. In light mode the footer
+   * is 8.90:1 from the page and 6.76:1 from a band, so the edge is obvious without
+   * it; in dark mode it is only 1.16:1 from an adjacent cool band, which is the
+   * invisible-boundary problem again. The footer's own link teal reads from the
+   * footer side in both themes: 4.99:1 light, 5.29:1 dark.
+   */
+  border-top: 1px solid var(--color-footer-accent);
+}
+
+.site-footer a {
+  color: var(--color-footer-accent);
+}
+
+.site-footer a:hover,
+.site-footer a:focus-visible {
+  /* The page's hover amber is unreadable on teal. Hover brightens instead. */
+  color: var(--color-footer-ink);
+}
+
+.site-footer :focus-visible {
+  outline-color: var(--color-footer-accent);
+}
+
+.site-footer .footer-muted {
+  color: var(--color-footer-muted);
 }
