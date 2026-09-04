@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Measured } from '@/components/Measured';
 import { StackList } from '@/components/StackList';
 import type { ProjectCard } from '@/lib/projects';
 
@@ -22,6 +21,10 @@ type ProjectListProps = {
  * filter narrows what is already there. Without JavaScript the full list still
  * shows, which is the behaviour that matters — the list is the content, the filter
  * is a convenience.
+ *
+ * A row is a title, one line and a stack. The index exists to get a visitor to the
+ * right case study, and metrics repeated here are a second copy of a number whose
+ * evidence is on the other page.
  */
 export function ProjectList({ projects, domains }: ProjectListProps) {
   const [active, setActive] = useState<string | null>(null);
@@ -73,16 +76,6 @@ export function ProjectList({ projects, domains }: ProjectListProps) {
               <p className="measure mt-2">{project.summary}</p>
             )}
             <StackList className="text-2xs text-ink-muted mt-3" items={project.stack} />
-            {project.metrics.length > 0 && (
-              <ul className="text-2xs text-ink-muted mt-3 flex list-none flex-wrap gap-x-5 p-0">
-                {project.metrics.map((metric) => (
-                  <li key={metric.label}>
-                    <Measured className="text-ink">{metric.value}</Measured>{' '}
-                    {metric.label}
-                  </li>
-                ))}
-              </ul>
-            )}
           </li>
         ))}
       </ol>

@@ -1,13 +1,17 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Measured } from '@/components/Measured';
-import { Limitation } from '@/components/Limitation';
 import { StackList } from '@/components/StackList';
 import { displayTitle, type Project } from '@/lib/projects';
 
 /**
  * A featured project. Full width, so the title can be a sentence about an outcome
  * rather than the few words a narrow card would force.
+ *
+ * Title, one line, stack. Nothing else. The metrics and the data disclosure used
+ * to render here too, which made every row fourteen lines deep and put three of
+ * them between the visitor and the rest of the page. Both still render on the case
+ * study, at the top of the page they belong to, where the numbers sit next to the
+ * evidence for them instead of standing alone.
  *
  * The surface is tinted with a hairline and lifts 2px on hover, with the border
  * moving to the accent. Still no box-shadow anywhere in the system: the lift is a
@@ -24,30 +28,15 @@ export function WorkRow({ project }: { project: Project }) {
             <Link href={`/projects/${project.slug}`}>{heading}</Link>
           </h3>
 
-          {project.summary === null ? (
-            <p className="text-ink-muted mt-3 text-xs">
-              Case study in progress. The problem statement is being written.
-            </p>
-          ) : (
-            <p className="mt-3 text-lg">{project.summary}</p>
-          )}
-
-          {project.metrics.length > 0 && (
-            <ul className="mt-4 flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
-              {project.metrics.map((metric) => (
-                <li key={metric.label} className="text-2xs text-ink-muted">
-                  <Measured className="text-ink text-base">{metric.value}</Measured>{' '}
-                  {metric.label}
-                </li>
-              ))}
-            </ul>
-          )}
+          {/*
+            No summary, no paragraph. Same reasoning as the missing screenshot
+            below: a row without one reads as a title and a stack, and a row
+            saying the summary is unwritten reads as unfinished. The site does
+            not tell a reader about its own build status.
+          */}
+          {project.summary !== null && <p className="mt-3 text-lg">{project.summary}</p>}
 
           <StackList className="text-2xs text-ink-muted mt-4" items={project.stack} />
-
-          {project.dataNote !== null && (
-            <Limitation className="mt-4 max-w-prose">{project.dataNote}</Limitation>
-          )}
         </div>
 
         {/*

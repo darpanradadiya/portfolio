@@ -226,6 +226,11 @@ export function getProjectNeighbours(slug: string): {
  * The subset of a project a card needs.
  *
  * Exists so a client component never receives `body`. See ProjectList.
+ *
+ * `metrics` is deliberately absent. The index renders a title, one line and a
+ * stack, so carrying the metrics would put numbers in the RSC payload that no
+ * element reads. This type is the contract for what the list is allowed to show,
+ * and the cheapest way to keep it honest is to not hand over the rest.
  */
 export type ProjectCard = {
   slug: string;
@@ -233,7 +238,6 @@ export type ProjectCard = {
   summary: string | null;
   stack: readonly string[];
   domains: readonly string[];
-  metrics: readonly { value: string; label: string }[];
 };
 
 export function toProjectCard(project: Project): ProjectCard {
@@ -243,7 +247,6 @@ export function toProjectCard(project: Project): ProjectCard {
     summary: project.summary,
     stack: project.stack,
     domains: project.domains,
-    metrics: project.metrics,
   };
 }
 
