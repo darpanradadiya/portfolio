@@ -40,8 +40,16 @@
 
 import { sameAsUrls } from '../src/content/profile';
 import { REPOSITORIES } from '../src/content/repositories';
+import { getAllProjects } from '../src/lib/projects';
 
+/*
+ * Two timeouts, because a free-tier host that has gone to sleep is not a dead
+ * link. The launch audit found the clinic's demo timing out at 15s and answering
+ * in 0.2s once awake: the first request pays for the cold start. HEAD gets the
+ * short budget, and the GET that decides the verdict gets a long one.
+ */
 const TIMEOUT_MS = 15_000;
+const PATIENT_TIMEOUT_MS = 75_000;
 const USER_AGENT =
   'darpanradadiya-portfolio-linkcheck/1.0 (+https://github.com/darpanradadiya/portfolio)';
 
@@ -75,7 +83,8 @@ async function resolve(url: string): Promise<{ state: State; detail: string }> {
 
   for (const method of ['HEAD', 'GET'] as const) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+    const budget = method === 'GET' ? PATIENT_TIMEOUT_MS : TIMEOUT_MS;
+    const timer = setTimeout(() => controller.abort(), budget);
     try {
       const response = await fetch(url, {
         method,
@@ -98,12 +107,27 @@ async function resolve(url: string): Promise<{ state: State; detail: string }> {
 }
 
 async function main(): Promise<void> {
+  /*
+   * Every URL a visitor can click, not just the ones in the entity graph. The
+   * case-study repository and demo links were the gap the launch audit found: a
+   * demo is the single most likely link on the site to rot, because it is the only
+   * one that depends on something staying deployed.
+   */
+  const projects = getAllProjects();
   const targets: Target[] = [
     ...sameAsUrls().map((url) => ({ label: 'sameAs', url })),
     ...REPOSITORIES.map((repository) => ({
       label: 'repository',
       url: repository.url,
     })),
+    ...projects.flatMap((project) => [
+      ...(project.repo === null
+        ? []
+        : [{ label: `repo:${project.slug.slice(0, 12)}`, url: project.repo }]),
+      ...(project.demo === null
+        ? []
+        : [{ label: `demo:${project.slug.slice(0, 12)}`, url: project.demo }]),
+    ]),
   ];
 
   console.log(`Checking ${targets.length} outbound URLs\n`);
@@ -121,7 +145,7 @@ async function main(): Promise<void> {
 
   for (const result of results) {
     console.log(
-      `  ${MARKS[result.state]} ${result.label.padEnd(10)} ${result.url}  (${result.detail})`,
+      `  ${MARKS[result.state]} ${result.label.padEnd(19)} ${result.url}  (${result.detail})`,
     );
   }
 

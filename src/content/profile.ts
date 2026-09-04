@@ -13,8 +13,9 @@
  *   3. The phone number in the PDF is deliberately not represented here. The site
  *      has no use for it, and modelling it would make it possible to render.
  *
- * TODO markers below are content Darpan still owes; they are typed so the compiler
- * points at every consumer if the shape changes.
+ * One TODO remains below, for the GeeksforGeeks profile slug. It is typed so the
+ * compiler points at every consumer if the shape changes, and it is the only thing
+ * keeping that profile out of both the /about link list and the JSON-LD sameAs.
  */
 
 export type ExternalProfile = {
@@ -206,9 +207,16 @@ export const profile = {
     {
       value: '273',
       label: 'modules',
-      // TODO(darpan): confirm whether these group into 24 subsystems. The resume
-      // documents 273 non-test modules, 65K lines, and 21 *test files* — "24 subsystems" is
-      // not evidenced anywhere, so it is left off rather than guessed.
+      /*
+       * Re-verified against the repository on 2026-09-04, from a fresh clone:
+       * 273 .py files outside tests/, 65,193 lines across all .py, 21 test files
+       * in tests/ and 185 pytest functions in them. The definition of "module"
+       * matters and is therefore written down: every .py file except the ones
+       * under tests/. Ten more test files live under scratch/ and are not
+       * counted, which makes the 21 conservative rather than generous.
+       *
+       * "24 subsystems" was never evidenced and is not claimed anywhere.
+       */
       provenance: 'Carbon Record, 65K lines',
     },
     {

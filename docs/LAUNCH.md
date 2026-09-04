@@ -1,11 +1,14 @@
 # Launch checklist
 
 Everything standing between the site as it is and announcing the URL. Audited
-2026-09-03 against the deployed build.
+2026-09-04 against the deployed build, end to end.
 
-Nothing here is a bug. The site is green on every gate and clears the quality floor
-on all ten routes. These are the items that need a decision, a credential, or a file
-only you have.
+Nothing here is a bug. The site is green on every gate, and every route scores 100
+on accessibility, best practices and SEO on both mobile and desktop. These are the
+items that need a decision, a credential, or a file only you have.
+
+Two of the seven are done and are marked as such rather than deleted, so the list
+stays comparable with the one you have been working through.
 
 ---
 
@@ -63,33 +66,41 @@ search engines at a dev server.
 
 ## 3. Re-export the résumé PDF
 
-The served PDF is out of date in four ways. It is the one place the résumé and the
-site now contradict each other.
+**Status: outstanding.** The text of the published PDF was extracted and compared to
+the site on 2026-09-04. Five discrepancies, all in the résumé's favour to fix
+because the site's numbers are the measured ones.
 
-| Fix                        | Currently says         | Should say                    |
-| -------------------------- | ---------------------- | ----------------------------- |
-| Degree                     | "MS in Analytics"      | **MPS in Analytics**          |
-| DSA figure                 | "600+ problems solved" | **950+**                      |
-| Line count                 | (not stated)           | 65K lines, if you cite it     |
-| Test files                 | (not stated)           | 21 test files, if you cite it |
-| Site Intelligence Platform | listed                 | **remove it**                 |
+| Fix              | PDF currently says                                                                           | Should say                                                                                                                                                              |
+| ---------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Modules          | "a 270-module, 95K-line Python system"                                                       | **273-module, 65K-line** (measured: 273 .py outside `tests/`, 65,193 lines)                                                                                             |
+| Test files       | "185 pytest functions across 24 test files"                                                  | **21 test files** (measured: 21 in `tests/`; 185 functions is correct)                                                                                                  |
+| DSA figure       | "600+ problems solved"                                                                       | **delete the parenthetical.** The claim is retired from the site entirely, so replacing it with a bigger number reintroduces something the site no longer stands behind |
+| Degree           | Summary says "MS in Analytics"; Education says "Master of Professional Studies in Analytics" | **MPS in Analytics** in both. The PDF currently disagrees with itself                                                                                                   |
+| Northeastern GPA | not shown in the education block                                                             | **GPA 3.96/4.0**, which the site states                                                                                                                                 |
 
-The last one matters most. It was deleted from the site because no repository exists
-for it and no PySpark appears anywhere in the GitHub account, so nothing about it
-could be checked. Leaving it on the résumé reintroduces exactly the unverifiable
-claim the site was cleaned of.
+**Site Intelligence Platform is already gone from the PDF.** Verified: no occurrence
+of the name. That item is closed.
 
-Two things were already fixed in the served copy by `scripts/redact-resume.py`: the
-phone number is removed, and the graduation date reads December 2026. Re-run that
-script against the new export so both survive:
+Confirmed still correct in the PDF, so do not disturb them: no phone number,
+December 2026, the 10-table 3NF schema with 5,000 patients and 12,000 appointments,
+and 185 pytest functions.
+
+After re-exporting, run the redaction step again, because it is what keeps the phone
+number out and it operates on the file you replace:
 
 ```bash
-python3 scripts/redact-resume.py path/to/new-export.pdf
+python3 scripts/redact-resume.py
 ```
 
-It refuses to write if the phone survives or the graduation line is lost.
+## 4. Answer the review markers
 
-## 4. Answer the five review markers
+**Status: outstanding.** Six questions and seven author notes, all inside MDX
+comments. None renders: the build guard scans the compiled output for `TODO` and for
+`[CHECK]`, `[INFERRED]`, `[TBD]`, `[FIXME]` and `[XXX]`, and it is green.
+
+Five `[CHECK]` questions, one `[INFERRED]` note on the clinic problem statement, and
+seven `TODO(darpan)` notes that record why a section is the length it is. Answering
+the six unblocks prose; the seven are context, not debts.
 
 All live in MDX comments and none renders. `npm run lint:todo` fails the build if one
 ever reaches a page.
@@ -101,14 +112,17 @@ ever reaches a page.
 | `healthcare-clinic-erp.mdx`        | Does the live SQL viewer follow from the 3NF decision, or was it separate?                                                    |
 | `healthcare-clinic-erp.mdx`        | Was the 8-patient sample deliberate, or just what got committed?                                                              |
 | `bank-term-deposit-prediction.mdx` | Solo or group coursework? The README credits you alone; the notebook imports `capstone_group7`. `role` is null until you say. |
+| `healthcare-clinic-erp.mdx`        | `[INFERRED]`: the problem statement is read from the code rather than from anything you wrote. Confirm or replace it.         |
 
 One `[INFERRED]` also remains, on the clinic's problem statement: it is read from the
 code rather than from you, and the assignment brief would settle it.
 
 ## 5. Screenshots
 
-Three featured projects have none. `screenshot` is null, so nothing renders and
-nothing is promised.
+**Status: outstanding, and the largest visual gap on the site.** All five projects
+have `screenshot: null`, so nothing renders and nothing is promised, but a case
+study about a dashboard with no picture of the dashboard is the thing a hiring
+engineer will notice first.
 
 **Customer Segmentation is a copy job, not a capture job.** Its repository already
 has seven committed under `screenshots/`.
@@ -129,40 +143,123 @@ screenshot:
 
 ## 6. Fill the GeeksforGeeks profile URL
 
-The only `sameAs` entry still null. It is left null rather than guessed, because a
-wrong `sameAs` asserts an identity that is not yours. Set `links.geeksforgeeks.url`
-in `src/content/profile.ts`; the `/code` page and the JSON-LD both pick it up.
+**Status: outstanding, and now blocking two things.** It is the only `sameAs` entry
+still null, so the JSON-LD ships three profiles instead of four, and it is why the
+Profiles list at the foot of `/about` shows LeetCode alone. Both render from the
+links that have a URL, so both fill in the moment you set one.
+
+Left null rather than guessed, because a wrong `sameAs` asserts an identity that is
+not yours. Set `links.geeksforgeeks.url` in `src/content/profile.ts`. Note that
+`/code` no longer exists: it was folded into `/about` and redirects there.
 
 ## 7. Fix your GitHub display name
 
-`github.com/darpanradadiya` shows **"VADIL"**. A recruiter following the link from a
+**Status: outstanding.** `github.com/darpanradadiya` shows **"VADIL"**. A recruiter following the link from a
 page about Darpan Radadiya lands on a profile with a different name on it.
 
 ---
 
 ## Where things stand
 
-|                |                                                                                                                                                 |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| CI             | Green. Typecheck, ESLint, stylelint, monospace guard, font coverage, Prettier, 71 unit tests, build, output guard, 64 e2e at desktop and 320px. |
-| Deploys        | Automatic. Vercel is connected to GitHub; pushing to `main` deploys. Do not run `vercel deploy`.                                                |
-| Lighthouse     | All ten routes ≥96 on all four categories, mobile. CLS 0 everywhere.                                                                            |
-| Outbound links | No coding-profile figure renders anywhere. `check-links` resolves every `sameAs` URL and repository row daily; only a 404 or 410 fails it.      |
-| Claims         | Every figure on the site matches the source it came from.                                                                                       |
+Measured on 2026-09-04 against the deployed build, not asserted.
+
+|                 |                                                                                                                                                                                                                                            |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| CI              | Green. Typecheck, ESLint, stylelint, monospace guard, font coverage, Prettier, 60 unit tests, build, output guard, 66 e2e at desktop and 320px.                                                                                            |
+| Deploys         | Automatic. Vercel is connected to GitHub; pushing to `main` deploys. Do not run `vercel deploy`.                                                                                                                                           |
+| Lighthouse      | All ten routes, both presets, two runs each: **100 on accessibility, best practices and SEO everywhere**. Performance 100 on desktop, 97-100 on mobile. Nothing under 95.                                                                  |
+| CLS             | 0.000 on every route and preset, with one 0.010 sample on the Tesla page.                                                                                                                                                                  |
+| LCP             | 0.35-0.46s desktop, 1.37-2.22s mobile.                                                                                                                                                                                                     |
+| Contrast        | Every rendered text element walked in the browser and measured against the background actually painted behind it: **883 elements, seven routes, both themes, none below AA.** Tightest margin 4.81 against 4.5.                            |
+| Responsive      | **500 checks**: 25 widths from 320 to 2560, ten routes, both themes. Nothing past the viewport, no monospace cell clipped inside its own column.                                                                                           |
+| Outbound links  | 15 URLs monitored daily: every `sameAs` entry, every repository row, and every case-study repo and demo link. 12 confirmed alive, 3 refused by hosts that do not serve robots, **0 dead**.                                                 |
+| Claims          | Re-verified from source. Carbon Record's 273 modules, 65,193 lines, 185 pytest functions and 21 test files all reproduce from a fresh clone. The clinic's 10 tables and 9 foreign keys match `server/schema.sql` exactly, table for table. |
+| Rendered output | No `TODO`, review marker, em-dash, placeholder or build-status narration on any route. Enforced by a build gate, not by reading.                                                                                                           |
+
+## The honest list
+
+Everything a hiring engineer could find if they went looking. None of it is a
+blocker. All of it is true, and it is better to know before they do.
+
+**No screenshots anywhere.** Five case studies about dashboards and pipelines, and
+not one image. This is the first thing anyone will notice, and it is item 5.
+
+**Two case studies are visibly thinner than the other three.** Tesla is 534 words
+across six sections and Customer Segmentation is 494 across six, against Carbon
+Record's 3,022 across eight. The missing sections were deleted for lack of evidence
+rather than placeheld, which is the right call and still reads as thin.
+
+**Two case studies render no figures at all.** Tesla and Customer Segmentation have
+empty `metrics` arrays, so the one page element that says "this is measured" is
+absent on the two pages that most need it.
+
+**Three of five projects disclose generated or synthetic data.** Tesla, Customer
+Segmentation and Bank Term Deposit all carry a `dataNote`. Honest, and it means the
+majority of the portfolio is not built on data anyone paid for.
+
+**The flagship project cannot be inspected.** Carbon Record is private. The page
+says so where the link would be, but every number about it is unverifiable by a
+reader, which is an awkward position for a site whose argument is checkability.
+
+**The repository is still moving under the claims.** Carbon Record's last commit was
+2026-09-03. The 273 / 65,193 / 185 / 21 figures reproduce today; they are a snapshot
+of a repository still being worked on, and the definition of "module" (every `.py`
+outside `tests/`) is a choice, written down in `profile.ts` so it can be checked.
+
+**The JSON-LD `jobTitle` says something the site does not.** It is "Data / analytics
+engineer with applied ML depth", a tagline cut from the hero. Structured data rather
+than page copy, and kept because `sameAs` and `jobTitle` are what an entity graph
+reads, but a reader viewing source will find a claim the page never makes.
+
+**`sameAs` ships three profiles, not four.** GeeksforGeeks is missing because its URL
+is unknown. Item 6.
+
+**The one live demo is on a free tier that sleeps.** The clinic ERP answers in about
+0.2s once awake and timed out at 15s from cold during this audit. A visitor arriving
+first can wait 30 to 60 seconds. The monitor now allows 75s for exactly this reason,
+which means it will not catch the demo actually dying quickly.
+
+**Two proof-strip figures cannot be checked by a reader at all.** "100K+ records a
+day" is from the Clomotech internship and exists only on the résumé. "273 modules"
+is in a private repository. Two of the four are verifiable by clicking; two are
+taken on trust.
+
+**Two summaries overrun the meta-description range.** Carbon Record at 171
+characters and Tesla at 170, against 130-160. The build reports them as notes rather
+than failing, deliberately, and search engines will truncate them.
+
+**The `--ramp-*` colour scale has no consumer.** It was reserved for the difficulty
+bars, which were deleted with the coding-profile figures. Four tokens and eight
+classes that nothing paints, kept on the argument that re-deriving a scale is more
+expensive than leaving one parked.
+
+**`VerifiedValue.tsx` has no importers.** It predates the current pages and stays
+only because the ESLint reserved-token rule names it as the owner of two classes.
+
+**Nothing on the site is dated.** No published dates, no "last updated". Deliberate,
+since the alternative is a page that ages visibly, but a reader cannot tell whether
+they are looking at something from last week or last year.
+
+**The contact form is not connected.** It returns 503 and says so honestly rather
+than pretending to send. Item 1.
 
 ## Known and accepted
 
-**LCP sits at 2.0-2.2s** across routes against a 2.0s target. The cause is not
-loading: every request completes by ~134ms and main-thread work is ~370ms.
-Lighthouse attributes ~1.9s of "render delay" to the hero paragraph under simulated
-throttling. The lever is a shorter hero paragraph, not less motion, and it is worth
-0.1-0.2s. Measured, not guessed: disabling the gradient, the proof-strip animation
-and the scroll reveal moves it by 0.0s, 0.0s and 0.1s respectively.
+**LCP on mobile sits at 1.4-2.2s** against a 2.0s target, and it is not loading.
+Every request completes by ~134ms and main-thread work is ~370ms; Lighthouse
+attributes the rest to "render delay" on the hero paragraph under simulated
+throttling. Measured, not guessed: disabling the gradient, the proof-strip animation
+and the scroll reveal moves it by 0.0s, 0.0s and 0.1s. The lever is a shorter hero
+paragraph, and the hero is already at a 40-word budget.
 
-**Three sections are deliberately absent.** Tesla and Customer Segmentation have no
-Decisions or Results; Bank Term Deposit has no Decisions. They were deleted rather
-than placeheld because the source cannot support them. Five real sections beat eight
-where three are apologies.
+**Three case-study sections are deliberately absent.** Tesla and Customer
+Segmentation have no Decisions or Results; Bank Term Deposit has no Decisions. They
+were deleted rather than placeheld because the source cannot support them. Five real
+sections beat eight where three are apologies.
 
 **Carbon Record has no repository link.** It is private, and the page says so where
 the link would be rather than shipping a 404.
+
+**The `/code` route is gone.** Every figure on it came off the site, which left two
+links and no reason for a route. It redirects permanently to `/about`, where the
+Profiles list carries what remains.
