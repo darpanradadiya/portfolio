@@ -84,12 +84,22 @@
   --text-3xl--line-height: 1.15;
 
   /*
-   * The proof strip only. Sized for a two-column strip: the widest value is
-   * "100K+", five monospace characters at roughly 0.6em each, so 6rem needs about
-   * 288px of the ~382px a column gets at the page's full width. Four columns would
-   * cap this at 3.9rem, which is why the strip is two-up.
+   * The proof strip only, and sized by the column it has to fit in.
+   *
+   * The widest value is "100K+": five monospace characters at 0.6em each, so the
+   * numeral is always 3.0x its own font size. The strip is four-up from 768px and
+   * two-up below, which gives it two constraints:
+   *
+   *   768px, four columns:  (768 - 80) / 4 - 32 = 140px available, needs 132px
+   *   320px, two columns:   (320 - 40) / 2 - 16 = 124px available, needs 96px
+   *
+   * 2.75rem is --text-3xl, one step down the scale from where this token used to
+   * sit. It is the largest fixed size the four-column layout has room for; the
+   * clamp floor takes it to 2rem at the narrow end so two-up fits at 320px, where
+   * a column is a third the width. Verified across 320 to 2560 rather than
+   * asserted, because the last change to this grid shipped an overflow.
    */
-  --text-display: clamp(3.25rem, 14vw, 6rem);
+  --text-display: clamp(2rem, 7.5vw, 2.75rem);
   --text-display--line-height: 1;
 
   /* ---- structure ------------------------------------------------------ */
