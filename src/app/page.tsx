@@ -8,19 +8,30 @@ import { CopyEmail } from '@/components/CopyEmail';
 import { ContactForm } from '@/components/ContactForm';
 import { Limitation } from '@/components/Limitation';
 import { currentEducation, profile } from '@/content/profile';
-import { getFeaturedProjects } from '@/lib/projects';
+import { getAllProjects } from '@/lib/projects';
 import { absoluteUrl } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: `${profile.name}, data and analytics engineer in Boston`,
+  // Opens on the line the hero opens on. The previous description led with a
+  // tagline ("Data and analytics engineer with applied ML depth") that was cut
+  // from the page, so a search result promised a sentence the visitor never saw.
   description:
-    'Data and analytics engineer with applied ML depth. Ships tested systems: a 273-module ML pipeline behind 185 pytest functions. Graduating December 2026.',
+    "Most ML pipelines break quietly. I build the ones that don't. Darpan Radadiya, data and analytics engineer, Boston. MPS Analytics, Northeastern, December 2026.",
   alternates: { canonical: absoluteUrl('/') },
 };
 
 export default function Home() {
-  const featured = getFeaturedProjects();
+  const projects = getAllProjects();
+  const featured = projects.filter((project) => project.featured);
   const education = currentEducation();
+
+  // Derived, never written down. "All six projects" outlived the sixth project
+  // and shipped as a false claim on the busiest page on the site; a literal
+  // here is a fact that decays the moment the content directory changes.
+  const allProjectsLabel = `All ${projects.length} ${
+    projects.length === 1 ? 'project' : 'projects'
+  }`;
 
   return (
     <div>
@@ -86,9 +97,11 @@ export default function Home() {
             <WorkRow key={project.slug} project={project} />
           ))}
         </div>
-        <p className="mt-8 text-xs">
-          <Link href="/projects">All six projects</Link>
-        </p>
+        {projects.length > featured.length && (
+          <p className="mt-8 text-xs">
+            <Link href="/projects">{allProjectsLabel}</Link>
+          </p>
+        )}
       </Section>
 
       <Section marker="Method" band="warm" reveal>
