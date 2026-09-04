@@ -224,9 +224,28 @@
   }
 }
 
+/*
+ * The starting opacity is a contrast constraint, not a taste decision.
+ *
+ * `opacity` on the section composites the whole subtree over the page ground, so
+ * every text colour inside it is a blend on the way in. Below-fold sections sit at
+ * this keyframe until they are scrolled to, which is where axe samples them: a
+ * desktop Lighthouse run scored accessibility 96 on the home page, reading the
+ * hero ink as #bfc1bf and the muted text as #d1d4d4 against the band. Both are
+ * real, composited values. The tokens were fine; their intermediates were not.
+ *
+ * Solved for: the tightest pair is a link (--accent, 5.13:1 on a band in light)
+ * carrying 4.5:1 at alpha 0.935. Ink needs only 0.615 and muted 0.925, and every
+ * dark-scheme pair clears by 0.78, so the link sets the floor. 0.94 is the first
+ * value above it.
+ *
+ * That leaves a 0.94 to 1 fade, which is imperceptible: in practice the reveal is
+ * now the 10px rise. Kept as opacity rather than deleted because the number is the
+ * evidence, and anyone lowering it will read this first.
+ */
 @keyframes reveal-in {
   from {
-    opacity: 0;
+    opacity: 0.94;
     transform: translateY(10px);
   }
 

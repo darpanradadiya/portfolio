@@ -139,11 +139,30 @@ in a pipeline, not a stage of it, and it should not look like another box.
 numbers scale in from zero width — 400ms, 60ms stagger, transform-only, so CLS is
 unaffected. The numbers are at their final value from the first frame.
 
-Nothing animates on scroll. There are no entrance transitions, no hover lifts.
-`prefers-reduced-motion: reduce` removes the one moment, leaving the rules present.
+Three further pieces of motion exist and are deliberate: the hero's two-stop
+gradient, a 2px lift on hover over a work row, and a 10px rise as the three
+below-fold sections scroll into view. There is no box-shadow anywhere in the system
+and no count-up. Everything sits inside `prefers-reduced-motion: reduce`, and all
+content is present and readable without any of it.
 
 Counting-up numerals were considered and rejected: they render `0` on the first frame,
 and no statistic on this site may ever display as zero.
+
+### A starting keyframe is a colour pair
+
+An animation that changes opacity must hold its contrast requirement at the keyframe
+it _starts_ from, not only where it ends. `opacity` on a section composites the whole
+subtree over the page ground, so every colour inside it is a blend on the way in, and
+a scroll-driven animation sits at its starting keyframe for as long as the section is
+unread.
+
+The scroll reveal therefore starts at `opacity: 0.94`, not `0`. That number is solved
+for, not chosen: the tightest pair on the page is a link on a cool band, 5.13:1 at
+full opacity, which holds 4.5:1 down to 0.935. Body ink needs only 0.615. The link
+sets the floor for everything.
+
+Verify this with motion **enabled**. A reduced-motion audit skips the animation and
+proves nothing about it.
 
 ## Two rules enforced by tooling
 
