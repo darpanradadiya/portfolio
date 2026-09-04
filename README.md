@@ -47,17 +47,16 @@ npm run dev
 | `npm run test`        | Unit tests                                                       |
 | `npm run test:e2e`    | Smoke tests against the production build                         |
 | `npm run verify`      | Everything except e2e — what CI's first job runs                 |
-| `npm run fetch-stats` | Refreshes `data/stats.json` from the coding profiles             |
+| `npm run check-links` | Resolves every outbound URL the site commits to                  |
 
 ## Environment
 
-| Variable             | Required             | Purpose                                                                 |
-| -------------------- | -------------------- | ----------------------------------------------------------------------- |
-| `SITE_URL`           | No                   | Canonical origin. Falls back to the production URL.                     |
-| `RESEND_API_KEY`     | For the contact form | Without it the endpoint returns 503 and says the message was not sent.  |
-| `CONTACT_FROM_EMAIL` | For the contact form | Verified sender address.                                                |
-| `CONTACT_TO_EMAIL`   | No                   | Defaults to the address in `profile.ts`.                                |
-| `GITHUB_TOKEN`       | No                   | Raises the api.github.com rate limit for `fetch-stats`. CI supplies it. |
+| Variable             | Required             | Purpose                                                                |
+| -------------------- | -------------------- | ---------------------------------------------------------------------- |
+| `SITE_URL`           | No                   | Canonical origin. Falls back to the production URL.                    |
+| `RESEND_API_KEY`     | For the contact form | Without it the endpoint returns 503 and says the message was not sent. |
+| `CONTACT_FROM_EMAIL` | For the contact form | Verified sender address.                                               |
+| `CONTACT_TO_EMAIL`   | No                   | Defaults to the address in `profile.ts`.                               |
 
 Pointing the site at a custom domain is a dashboard change plus a redeploy, not a
 commit: set `SITE_URL` and redeploy. That one value drives canonical tags, the
@@ -97,9 +96,9 @@ Instrument Sans is deliberately next in the stack, so an out-of-subset glyph deg
 to the grotesk rather than to an arbitrary system monospace.
 
 `npm run lint:mono` fails the build if any string rendered in the mono class contains
-a glyph outside that set. It checks the data at its source — the proof strip, case
-study frontmatter, hand-entered figures and the committed stats snapshot — because
-most values reach the component as expressions that cannot be read from the source.
+a glyph outside that set. It checks the data at its source, the proof strip and case
+study frontmatter, because most values reach the component as expressions that cannot
+be read from the source rather than as literals.
 
 Two corrections are applied when the font is generated. The comma, period and colon
 are narrowed from the full 600-unit monospace cell to their own ink plus even
@@ -139,49 +138,45 @@ Rate limiting is honest about being best-effort: serverless instances do not sha
 memory, so it is a courtesy throttle against double-submits, not a security control.
 The decision logic is storage-agnostic, so moving to a shared store is a small change.
 
-## The statistics pipeline
+## Link health, and the pipeline that used to be here
 
-Coding-profile numbers are fetched **at build time in CI** and committed as a static
-snapshot to `data/stats.json`. Nothing is fetched from the browser: CORS blocks most of
-these endpoints, the limits are per-IP, LeetCode's endpoint is undocumented and can
-throttle without notice, and a visitor must never wait on a third party or see a zero.
+This section used to describe a statistics pipeline: coding-profile figures fetched in
+CI, merged under a rule that guaranteed the committed snapshot never got worse, and
+rendered on a `/code` page. All of it is gone, and the reason is worth more than the
+machinery was.
+
+No problem count, difficulty split, coding score or platform ranking renders anywhere
+on this site. Once that was decided, the pipeline was writing data nothing read into a
+public repository on a daily schedule, and the storage rule it was built to honour
+("if we never store them they cannot leak") pointed at deleting it.
+
+One purpose survived. The old script queried Codeforces without storing anything,
+purely to confirm the handle still resolved, because a dead link on a site whose
+argument is that every claim can be checked is worse than a missing one. That check now
+covers every URL the site commits to:
 
 ```
-.github/workflows/refresh-stats.yml   daily cron + on push
-  └─ npm run fetch-stats              scripts/fetch-stats.ts
-       ├─ api.github.com              repos, stars, languages by repo count
-       ├─ leetcode.com/graphql        solved totals by difficulty
-       └─ codeforces.com/api          liveness check only — see below
-     └─ mergeSnapshot()               src/lib/stats.ts — pure, unit-tested
-       └─ data/stats.json             committed only if a rendered value changed
+.github/workflows/check-links.yml    daily cron + on push
+  └─ npm run check-links             scripts/check-links.ts
+       ├─ sameAsUrls()               every profile in the JSON-LD entity graph
+       └─ REPOSITORIES               every row in "Other repositories" on /projects
+     └─ HEAD, then GET               writes nothing, stores nothing, logs no figure
 ```
 
-**The merge rule is the guarantee the whole thing rests on: the file on disk never
-gets worse.** Incoming data is rejected when it is absent, zero, internally
-inconsistent, or lower than what is already stored. Sections are replaced atomically —
-taking the better of each field independently could leave a breakdown that does not sum
-to its own total, which is worse than stale data because it looks authoritative and is
-wrong. That logic is pure and lives in `src/lib/stats.ts` so it can be tested without a
-network; the script only does I/O.
+**It has three outcomes, not two, and the first run is why.** LinkedIn answered `999`,
+LeetCode and Codeforces answered `403`, and all three work perfectly in a browser:
+those codes mean "we do not serve robots", which is not evidence about the link. Only
+`404` and `410` fail the build. A monitor that goes red every night for a reason nobody
+can fix is a monitor nobody reads.
 
-**Activity data is excluded by the shape of the types, not by discipline.** There is no
-field for a streak, a submission calendar, or a last-active date, so none of it can
-leak into the UI. Four tests assert that such a payload fails validation.
+That distinction is also why the script it replaced appeared to work. It checked
+Codeforces through its JSON API rather than its profile URL, so it never met the
+refusal.
 
-**Codeforces is queried but never quantified.** It is linked from the site with no
-figure attached; the fetch exists only to confirm the handle still resolves, so a dead
-outbound link surfaces in CI. Its rating is neither stored nor logged — this repository
-is public, so a CI log is published output.
-
-**GeeksforGeeks has no public API.** Its figures are hand-entered constants in
-`profile.ts` carrying the date they were read, guarded by a test that the difficulty
-tiers sum to the stated total — the only automated defence a typed-in number has.
-
-Each section carries its own `verifiedAt`, which is what the UI renders as "as of".
-A run that confirms the same figures still advances that date and commits, because
-"still 242, checked today" is different information from "242, last checked whenever";
-the commit message distinguishes the two cases. A diff confined to `fetchedAt`, which
-is not rendered, commits nothing.
+The check earns its place immediately: a private repository returns `404` to an
+unauthenticated client, which is exactly what a visitor is. It is what keeps four
+private repositories out of the listing on `/projects`, and it would catch a fifth
+being made private later.
 
 ## CI
 
@@ -204,13 +199,13 @@ src/
     profile.ts            typed single source of truth
     projects/*.mdx        case studies, Zod-validated frontmatter
     clinic-schema.ts      the clinic ERP schema, as data for its ERD
-  lib/                    content loaders, stats merge rule, site config
+    repositories.ts       the rest of the account, one line each
+  lib/                    content loaders, routes, site config
   styles/
     tokens.css            design tokens
     reserved.css          the only file permitted to consume the reserved tokens
-data/stats.json           committed snapshot, written by CI
 scripts/
-  fetch-stats.ts          coding-profile fetch
+  check-links.ts          resolves every outbound URL, writes nothing
   check-mono-subset.ts    monospace guard
   check-fonts.py          font coverage and metrics
   subset-fonts.py         font generation, run by hand and committed

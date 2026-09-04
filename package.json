@@ -20,7 +20,7 @@
     "lint:fonts": "python3 scripts/check-fonts.py",
     "test": "vitest run",
     "test:watch": "vitest",
-    "fetch-stats": "tsx scripts/fetch-stats.ts",
+    "check-links": "tsx scripts/check-links.ts",
     "test:e2e": "playwright test",
     "lint:todo": "node scripts/check-no-todo.mjs"
   },

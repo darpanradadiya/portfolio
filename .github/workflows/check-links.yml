@@ -1,4 +1,15 @@
-name: Refresh coding stats
+name: Check outbound links
+
+# Was "Refresh coding stats". It fetched GitHub and LeetCode figures into
+# data/stats.json and committed them daily. No coding-profile figure renders
+# anywhere on the site now, so the pipeline was writing data nothing read into a
+# public repository on a schedule.
+#
+# One purpose survived: link health. The old job already queried Codeforces
+# purely to confirm the handle resolved, because the rating was never rendered.
+# This job does that for every URL in the JSON-LD sameAs and every repository row
+# on /projects. It writes nothing and needs no credentials, so it needs no write
+# permission and no commit step either.
 
 on:
   schedule:
@@ -6,21 +17,18 @@ on:
     - cron: '17 0 * * *'
   push:
     branches: [main]
-    # Without this the workflow's own commit retriggers it, forever.
-    paths-ignore:
-      - 'data/stats.json'
   workflow_dispatch:
 
 concurrency:
-  group: refresh-stats
+  group: check-links
   cancel-in-progress: false
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  refresh:
-    name: Fetch and commit the snapshot
+  links:
+    name: Resolve every outbound URL
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -34,55 +42,7 @@ jobs:
 
       - run: npm ci
 
-      - name: Fetch statistics
-        # The built-in token raises the api.github.com rate limit. LeetCode and
-        # Codeforces need no credentials.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run fetch-stats
-
-      - name: Verify the snapshot still renders safely
-        # The snapshot feeds <Measured>, so it has to stay inside the font subset.
-        run: npm run lint:mono
-
-      - name: Commit if anything the site renders changed
-        run: |
-          if git diff --quiet -- data/stats.json; then
-            echo "No change to data/stats.json."
-            exit 0
-          fi
-
-          # fetchedAt records when the script last ran and is not rendered, so a
-          # diff confined to it is not worth a commit. verifiedAt IS rendered, as
-          # the "as of" date beside the figures, so a change there is a real
-          # change: it is the difference between "still 242, checked today" and
-          # "242, last checked whenever". Both cases commit, with messages that
-          # say which happened, so the history stays legible.
-          rendered=$(git diff -U0 -- data/stats.json \
-            | grep -E '^[+-]' \
-            | grep -vE '^(\+\+\+|---)' \
-            | grep -v '"fetchedAt"' \
-            || true)
-
-          if [ -z "$rendered" ]; then
-            echo "Only fetchedAt moved, which the site does not render. Not committing."
-            git checkout -- data/stats.json
-            exit 0
-          fi
-
-          figures=$(printf '%s\n' "$rendered" | grep -v '"verifiedAt"' || true)
-          if [ -z "$figures" ]; then
-            message="chore(stats): re-verified, figures unchanged [skip ci]"
-            echo "Figures identical; only the as-of dates advanced."
-          else
-            message="chore(stats): refresh coding-profile snapshot [skip ci]"
-            echo "Figures changed:"
-            printf '%s\n' "$figures"
-          fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/stats.json
-          git commit -m "$message"
-          git push
-          echo "Snapshot updated."
+      # A dead sameAs URL breaks entity resolution without anything looking
+      # wrong, and a dead repository row 404s for every visitor. Either is worth
+      # a red build.
+      - run: npm run check-links

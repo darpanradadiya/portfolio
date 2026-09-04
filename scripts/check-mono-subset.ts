@@ -8,10 +8,13 @@
  *   2. `font-mono` and the mono token appear only in Measured.tsx, so mono cannot
  *      be applied to arbitrary text by bypassing the component.
  *
- * Values that arrive at runtime (a coding-profile snapshot, say) cannot be checked
- * statically. Those degrade gracefully instead: Instrument Sans is the next entry in
- * the mono font stack, so an out-of-subset glyph renders in the grotesk rather than
- * as a missing-glyph box. <Measured> additionally throws in development.
+ * Every value in the mono class is now a literal in the typed content layer, so
+ * both checks are static. That was not always true: figures used to arrive from a
+ * committed coding-profile snapshot at runtime. Those degraded gracefully rather
+ * than being checked, because Instrument Sans is the next entry in the mono font
+ * stack, so an out-of-subset glyph renders in the grotesk rather than as a
+ * missing-glyph box, and <Measured> throws in development. Both defences are still
+ * in place; nothing depends on them any more.
  */
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
@@ -19,7 +22,6 @@ import { join, relative } from 'node:path';
 import { MONO_SUBSET, outOfSubset } from '../src/lib/mono-subset';
 import { profile } from '../src/content/profile';
 import { getAllProjects } from '../src/lib/projects';
-import { stats } from '../src/lib/stats-snapshot';
 
 // npm scripts run from the package root. Resolved from cwd rather than
 // import.meta.dirname because tsx transpiles this module to CJS, where
@@ -91,11 +93,10 @@ for (const dir of SCAN_DIRS) {
 // 3. The typed content itself.
 //
 //    The scan above only sees literal children of <Measured>. Most values reach it
-//    as expressions — {String(stats.leetcode.data.hard)} and the like — which
-//    cannot be resolved by reading the source. So every datum that is rendered in
-//    the mono class is checked here at its source instead: the proof strip, case
-//    study frontmatter, the hand-entered GeeksforGeeks figures, and the committed
-//    coding-profile snapshot.
+//    as expressions rather than literals, which cannot be resolved by reading the
+//    source. So every datum rendered in the mono class is checked here at its
+//    source instead: the proof strip and case study frontmatter, which is now all
+//    of them.
 for (const [index, point] of profile.proof.entries()) {
   const bad = outOfSubset(point.value);
   if (bad.length > 0) {
@@ -121,37 +122,11 @@ for (const project of getAllProjects()) {
 }
 
 /*
- * The GeeksforGeeks block that used to be checked here is gone with the data. The
- * snapshot check below is kept even though nothing renders those values yet: the
- * fetch and its workflow are still in place, and a guard is cheaper to keep than
- * to remember to restore.
+ * Two blocks used to sit here: the hand-entered GeeksforGeeks figures, and the
+ * committed coding-profile snapshot. Both are gone with the data they checked.
+ * The snapshot file, its schema and the fetch that wrote it no longer exist, so
+ * there is nothing left to guard that is not a literal above.
  */
-
-if (stats !== null) {
-  const snapshotValues: [string, number][] = [
-    ...(stats.leetcode === null
-      ? []
-      : ([
-          ['leetcode.total', stats.leetcode.data.total],
-          ['leetcode.easy', stats.leetcode.data.easy],
-          ['leetcode.medium', stats.leetcode.data.medium],
-          ['leetcode.hard', stats.leetcode.data.hard],
-        ] as [string, number][])),
-    ...(stats.github === null
-      ? []
-      : ([['github.publicRepos', stats.github.data.publicRepos]] as [string, number][])),
-  ];
-  for (const [field, value] of snapshotValues) {
-    const bad = outOfSubset(String(value));
-    if (bad.length > 0) {
-      violations.push({
-        file: 'data/stats.json',
-        line: 0,
-        detail: `${field} renders as ${JSON.stringify(String(value))}, containing ${bad.map((c) => JSON.stringify(c)).join(', ')}`,
-      });
-    }
-  }
-}
 
 if (violations.length > 0) {
   console.error(`\n  Monospace subset check failed — ${violations.length} violation(s).`);
@@ -168,14 +143,9 @@ if (violations.length > 0) {
   process.exit(1);
 }
 
-const snapshotCount =
-  stats === null
-    ? 0
-    : (stats.leetcode === null ? 0 : 4) + (stats.github === null ? 0 : 1);
 const checkedValues =
   profile.proof.length +
-  getAllProjects().reduce((total, project) => total + project.metrics.length, 0) +
-  snapshotCount;
+  getAllProjects().reduce((total, project) => total + project.metrics.length, 0);
 
 console.log(
   `  mono subset ok — ${checkedValues} measured values checked against ${JSON.stringify(MONO_SUBSET)}`,

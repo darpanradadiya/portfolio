@@ -142,13 +142,13 @@ page about Darpan Radadiya lands on a profile with a different name on it.
 
 ## Where things stand
 
-|              |                                                                                                                                                 |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| CI           | Green. Typecheck, ESLint, stylelint, monospace guard, font coverage, Prettier, 71 unit tests, build, output guard, 64 e2e at desktop and 320px. |
-| Deploys      | Automatic. Vercel is connected to GitHub; pushing to `main` deploys. Do not run `vercel deploy`.                                                |
-| Lighthouse   | All ten routes ≥96 on all four categories, mobile. CLS 0 everywhere.                                                                            |
-| Coding stats | Snapshot current, re-verified against the live LeetCode API on 2026-09-03. Refreshes daily by cron.                                             |
-| Claims       | Every figure on the site matches the source it came from.                                                                                       |
+|                |                                                                                                                                                 |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| CI             | Green. Typecheck, ESLint, stylelint, monospace guard, font coverage, Prettier, 71 unit tests, build, output guard, 64 e2e at desktop and 320px. |
+| Deploys        | Automatic. Vercel is connected to GitHub; pushing to `main` deploys. Do not run `vercel deploy`.                                                |
+| Lighthouse     | All ten routes ≥96 on all four categories, mobile. CLS 0 everywhere.                                                                            |
+| Outbound links | No coding-profile figure renders anywhere. `check-links` resolves every `sameAs` URL and repository row daily; only a 404 or 410 fails it.      |
+| Claims         | Every figure on the site matches the source it came from.                                                                                       |
 
 ## Known and accepted
 
