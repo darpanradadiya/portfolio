@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Section } from '@/components/Section';
 import { MetaList } from '@/components/MetaList';
 import { StackList } from '@/components/StackList';
-import { Limitation } from '@/components/Limitation';
 import { profile } from '@/content/profile';
 import { absoluteUrl } from '@/lib/site';
 
@@ -18,18 +17,17 @@ export default function AboutPage() {
     <div className="flex flex-col gap-14 md:gap-20">
       <Section marker="About">
         <h1 className="text-3xl">About</h1>
-        {profile.about.length > 0 ? (
+        {/*
+          No empty state. "It is deliberately empty rather than written for him"
+          was the site describing its own build status to a reader, which is the
+          one thing it is not for. The heading alone is the honest rendering.
+        */}
+        {profile.about.length > 0 && (
           <div className="measure mt-6 flex flex-col gap-4">
             {profile.about.map((paragraph) => (
               <p key={paragraph.slice(0, 32)}>{paragraph}</p>
             ))}
           </div>
-        ) : (
-          <Limitation className="measure mt-6">
-            A first-person account belongs here: how Darpan got from an ICT degree to
-            building tested ML pipelines, and what he is looking for next. It is
-            deliberately empty rather than written for him.
-          </Limitation>
         )}
       </Section>
 
