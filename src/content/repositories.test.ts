@@ -61,4 +61,16 @@ describe('the repository list', () => {
       expect(repository.language.trim().length, repository.name).toBeGreaterThan(0);
     }
   });
+
+  it('keeps provenance notes to a tag rather than a sentence', () => {
+    // A row is one line. A note that needs a full stop belongs in a case study.
+    for (const repository of REPOSITORIES) {
+      if (repository.note === null) continue;
+      expect(repository.note, repository.name).not.toMatch(/[.!?]/);
+      expect(repositoryLineWords(repository.note), repository.name).toBeLessThanOrEqual(
+        4,
+      );
+      expect(repository.note, repository.name).not.toMatch(/\d/);
+    }
+  });
 });

@@ -30,13 +30,15 @@
  *   - GroupShare, which is `firebase init` output. The cloud function is the
  *     untouched template with every line commented out, the Firestore rules are
  *     deny-all, and the hosting page is the default welcome screen.
- *   - Two Los Angeles foot-traffic dashboards. The analysis is real, but both read
- *     their data from absolute paths on one laptop and the data is not in either
- *     repository, so neither runs for anyone else.
  *   - Ecommerce_platform, whose README describes a named cafe in Sri Lanka. That
  *     matches nothing else in the account, and on a site whose argument is that
  *     every claim can be checked, an unverifiable one is worse than a gap.
  *   - This repository, already linked in the footer of every page.
+ *
+ * One class of exclusion is worth keeping even though nothing in the account hits
+ * it any more: a repository whose code reads its data from an absolute path on one
+ * machine, with the data absent, does not run for anyone else. Listing it invites a
+ * reader to check a claim they cannot check.
  */
 
 export type Repository = {
@@ -46,6 +48,16 @@ export type Repository = {
   readonly line: string;
   /** The language the source is actually in, not GitHub's linguist guess. */
   readonly language: string;
+  /**
+   * Provenance that changes how the row should be read: invented data, or work
+   * that was not solo. A tag, not a sentence, and rendered in the same muted
+   * treatment as a case study's dataNote.
+   *
+   * `null` is a claim, not an absence: it says the code is Darpan's and the data
+   * is real. Required in every entry rather than optional, so it is a field
+   * someone has to answer instead of one they can forget.
+   */
+  readonly note: string | null;
 };
 
 export const GITHUB_ACCOUNT = 'https://github.com/darpanradadiya';
@@ -57,36 +69,50 @@ export const REPOSITORIES: readonly Repository[] = [
     url: `${GITHUB_ACCOUNT}/GB-Cyclist-Accidents-Dashboard`,
     line: 'Joins UK casualty and collision records to compare injury severity',
     language: 'Python',
+    note: null,
   },
   {
     name: 'medicare-opioid-dashboard',
     url: `${GITHUB_ACCOUNT}/medicare-opioid-dashboard`,
     line: 'Streamlit views over CMS Medicare Part D prescribing records',
     language: 'Python',
+    // The file header names a course module and a second author.
+    note: 'coursework, two-person',
   },
   {
     name: 'Super_store_analysis_Rshiny_app',
     url: `${GITHUB_ACCOUNT}/Super_store_analysis_Rshiny_app`,
     line: 'Retail sales Shiny app with ARIMA forecast and interactive map',
     language: 'R',
+    // Solo, and the Superstore set is a published sample rather than invented.
+    note: null,
   },
   {
     name: 'BCG_Dashboard',
     url: `${GITHUB_ACCOUNT}/BCG_Dashboard`,
     line: 'Deal pipeline dashboard with a logistic-regression outcome model',
     language: 'Python',
+    // Every CSV in the repository is invented. The model trains on invented rows.
+    note: 'generated data',
   },
   {
     name: 'Weather_Monitoring_System',
     url: `${GITHUB_ACCOUNT}/Weather_Monitoring_System`,
     line: 'Express dashboard over seeded Mongo sensor readings',
     language: 'JavaScript',
+    // Found while re-reading for the tags: models/seeds.js inserts nine
+    // hand-typed readings. There is no sensor. "seeded" was doing too much work
+    // in the line to carry that on its own.
+    note: 'generated data',
   },
   {
     name: 'Art_Gallery',
     url: `${GITHUB_ACCOUNT}/Art_Gallery`,
-    line: 'Express and EJS CRUD over artworks, buyers and stock queries',
+    // The line said "EJS", which is the template layer. The interesting half is
+    // that it talks to Postgres directly with hand-written SQL.
+    line: 'Express and Postgres CRUD over artworks, buyers and stock queries',
     language: 'JavaScript',
+    note: null,
   },
 ];
 

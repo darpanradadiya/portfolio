@@ -30,7 +30,18 @@ export function RepositoryList() {
               {repository.language}
             </span>
           </span>
-          <span className="text-ink-muted text-2xs block min-w-0">{repository.line}</span>
+          <span className="text-ink-muted text-2xs block min-w-0">
+            {repository.line}
+            {/*
+              Provenance as a tag, not a sentence. Same muted treatment a case
+              study's dataNote gets, at the density a one-line row can afford:
+              invented data and shared authorship both change how the row reads,
+              and neither fits in the fifteen words.
+            */}
+            {repository.note !== null && (
+              <span className="whitespace-nowrap italic"> ({repository.note})</span>
+            )}
+          </span>
         </li>
       ))}
     </ul>
