@@ -18,9 +18,11 @@ export default async function OpengraphImage({
   const project = getProject(slug);
 
   if (project === undefined) {
+    // Unreachable in practice: generateStaticParams only emits real slugs. Draws
+    // the headline anyway, so no card on the site can show the cut tagline.
     return renderOgImage({
       eyebrow: profile.name,
-      title: profile.role,
+      title: profile.headline,
       meta: profile.location,
     });
   }
