@@ -46,7 +46,11 @@ export function Section({
   const outer = [
     bandClass,
     wash ? 'hero-wash' : '',
-    band !== undefined || wash ? 'py-12 md:py-16' : '',
+    // 3rem, not 4rem, at desktop. Measured: the four banded sections on the home
+    // page were spending 128px each on padding alone, which put the "How I work"
+    // section at 350px for 222px of content. One step down the spacing scale
+    // returns 128px across the page and the zones still read as zones.
+    band !== undefined || wash ? 'py-12' : '',
     reveal ? 'reveal' : '',
   ]
     .filter(Boolean)
