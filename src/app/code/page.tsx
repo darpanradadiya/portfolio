@@ -1,159 +1,53 @@
 import type { Metadata } from 'next';
 import { Section } from '@/components/Section';
-import { Measured } from '@/components/Measured';
-import { StackList } from '@/components/StackList';
-import { DifficultyBar } from '@/components/DifficultyBar';
 import { profile } from '@/content/profile';
-import { stats } from '@/lib/stats-snapshot';
-import { formatDate } from '@/lib/format';
 import { absoluteUrl } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: 'Foundations',
   description:
-    'Data structures and algorithms: 348 medium and 71 hard problems on GeeksforGeeks, 151 medium and 36 hard on LeetCode. Depth rather than volume.',
+    'Data structures and algorithms, and where the code lives. Profiles are linked rather than summarised; the case studies are where the engineering is.',
   alternates: { canonical: absoluteUrl('/code') },
 };
 
+/*
+ * Every figure that was on this page is gone: the problem counts, both difficulty
+ * bars, the coding score, the institute rank, the public-repository count and the
+ * top-languages list. A problem count measures how much practice, not which
+ * problems and not what was built with them, and a platform ranking is a fact
+ * about a leaderboard.
+ *
+ * What is left is the links, which is also the honest amount. The profiles stay
+ * reachable and all three handles stay in the JSON-LD sameAs; nothing is
+ * summarised on the way past.
+ *
+ * GeeksforGeeks is absent from the list rather than listed without a link: its
+ * URL slug is not known, and this site does not render a link that 404s.
+ */
+const LINKED_PROFILES = ['leetcode', 'github'] as const;
+
 export default function CodePage() {
-  const gfg = profile.geeksforgeeks;
-  const leetcode = stats?.leetcode ?? null;
-  const github = stats?.github ?? null;
+  const linked = LINKED_PROFILES.map((key) => profile.links[key]).filter(
+    (link) => link.url !== null,
+  );
 
   return (
-    <div className="flex flex-col gap-14 md:gap-20">
-      <Section marker="Foundations">
-        <h1 className="text-3xl">Foundations</h1>
-        <p className="measure mt-4 text-lg">
-          The interesting number here is not how many problems, but which ones. Medium and
-          hard problems are where data-structure choices stop being interchangeable.
-        </p>
-        <p className="measure text-ink-muted mt-4 text-xs">
-          These are cumulative totals. The two platforms grade difficulty on their own
-          scales, so the tiers are reported separately rather than added together. A
-          &ldquo;hard&rdquo; on one is not a &ldquo;hard&rdquo; on the other.
-        </p>
-      </Section>
+    <Section marker="Foundations">
+      <h1 className="text-3xl">Foundations</h1>
+      <p className="measure mt-4 text-lg">
+        Data structures and algorithms are the part of this work that does not show up in
+        a case study. The profiles are linked rather than summarised.
+      </p>
 
-      <Section marker="GeeksforGeeks" divided>
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-          <h2 className="text-xl">GeeksforGeeks</h2>
-          <p className="text-ink-muted text-2xs">as of {formatDate(gfg.verifiedOn)}</p>
-        </div>
-
-        <div className="mt-6">
-          <DifficultyBar
-            tiers={[
-              { label: 'basic', count: gfg.basic },
-              { label: 'easy', count: gfg.easy },
-              { label: 'medium', count: gfg.medium },
-              { label: 'hard', count: gfg.hard },
-            ]}
-            note={`Basic through hard, ${gfg.basic + gfg.easy + gfg.medium + gfg.hard} problems. The one "school" problem is left off the bar, because a single item is not a tier worth drawing, so the total across all levels is ${gfg.total}.`}
-          />
-        </div>
-
-        <dl className="mt-6 flex flex-col gap-2 text-xs">
-          <div className="flex gap-3">
-            <dt className="text-ink-muted w-28 shrink-0">Coding score</dt>
-            <dd>
-              <Measured>{String(gfg.codingScore)}</Measured>
-            </dd>
-          </div>
-          <div className="flex gap-3">
-            <dt className="text-ink-muted w-28 shrink-0">Institute rank</dt>
-            <dd>
-              <Measured>{String(gfg.instituteRank)}</Measured>
-            </dd>
-          </div>
-        </dl>
-
-        {/*
-          GeeksforGeeks has no public API, so these figures are hand-entered
-          constants rather than a fetch. The profile URL slug is not yet known, so
-          there is no outbound link here rather than a guessed one.
-        */}
-        <p className="text-ink-muted text-2xs mt-6">
-          Read from the profile by hand. GeeksforGeeks publishes no API, and the community
-          scrapers are less reliable than a dated constant.
-        </p>
-      </Section>
-
-      {leetcode !== null && (
-        <Section marker="LeetCode" divided>
-          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-            <h2 className="text-xl">
-              <a href={profile.links.leetcode.url ?? undefined}>LeetCode</a>
-            </h2>
-            <p className="text-ink-muted text-2xs">
-              as of {formatDate(leetcode.verifiedAt)}
-            </p>
-          </div>
-
-          <div className="mt-6">
-            <DifficultyBar
-              tiers={[
-                { label: 'easy', count: leetcode.data.easy },
-                { label: 'medium', count: leetcode.data.medium },
-                { label: 'hard', count: leetcode.data.hard },
-              ]}
-              note={`${leetcode.data.total} problems in total. The bar is proportional within LeetCode only, because the two platforms grade difficulty on their own scales, so the widths are not comparable between sections.`}
-            />
-          </div>
-          <p className="text-ink-muted text-2xs mt-4">
-            Fetched in CI and committed as a static snapshot, so this page never waits on
-            LeetCode and never renders an empty figure.
-          </p>
-        </Section>
+      {linked.length > 0 && (
+        <ul className="mt-8 flex list-none flex-col gap-2 p-0">
+          {linked.map((link) => (
+            <li key={link.label}>
+              <a href={link.url ?? undefined}>{link.label}</a>
+            </li>
+          ))}
+        </ul>
       )}
-
-      <Section marker="Codeforces" divided>
-        <h2 className="text-xl">
-          <a href={profile.links.codeforces.url ?? undefined}>Codeforces</a>
-        </h2>
-        {/*
-          Linked, never quantified. The handle is verified in CI so a dead link
-          surfaces, but no figure from Codeforces is stored or rendered.
-        */}
-        <p className="measure mt-3 text-xs">
-          Contest profile, for anyone who wants to look. Nothing from it is summarised
-          here.
-        </p>
-      </Section>
-
-      {github !== null && (
-        <Section marker="GitHub" divided>
-          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-            <h2 className="text-xl">
-              <a href={profile.links.github.url}>GitHub</a>
-            </h2>
-            <p className="text-ink-muted text-2xs">
-              as of {formatDate(github.verifiedAt)}
-            </p>
-          </div>
-
-          <div className="mt-6">
-            <Measured className="block text-2xl">
-              {String(github.data.publicRepos)}
-            </Measured>
-            <span className="text-2xs text-ink-muted mt-1 block">
-              public repositories
-            </span>
-          </div>
-
-          {github.data.topLanguages.length > 0 && (
-            <div className="mt-6">
-              <p className="text-ink-muted text-2xs">
-                Most used languages, by repository
-              </p>
-              <StackList
-                className="text-ink-muted mt-2 text-xs"
-                items={github.data.topLanguages.map((language) => language.name)}
-              />
-            </div>
-          )}
-        </Section>
-      )}
-    </div>
+    </Section>
   );
 }

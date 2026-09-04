@@ -62,19 +62,43 @@ test('every page has exactly one h1 and a skip link', async ({ page }) => {
 });
 
 test('no statistic renders as an empty value', async ({ page }) => {
-  // The brief forbids any figure rendering as 0, a dash, NaN, or a spinner. The
-  // mono class marks measured values, so every one of them is inspected.
-  for (const route of ['/', '/code']) {
+  /*
+   * The brief forbids any figure rendering as 0, a dash, NaN, or a spinner. The
+   * mono class marks measured values, so every one of them is inspected.
+   *
+   * Every page is scanned rather than a hardcoded pair. /code used to be the
+   * second entry and now renders no figure at all, which would have made this
+   * test fail for the opposite of the reason it exists. A page with no measured
+   * values is fine; a page with a broken one is not, and the site as a whole must
+   * still be rendering some.
+   */
+  let total = 0;
+  for (const route of PAGE_ROUTES) {
     await page.goto(route, { waitUntil: 'networkidle' });
     const values = await page.locator('.font-mono').allInnerTexts();
+    total += values.length;
 
-    expect(values.length, `${route} has measured values`).toBeGreaterThan(0);
     for (const value of values) {
       expect(value.trim(), `${route} empty statistic`).not.toBe('');
       expect(value.trim(), `${route} zero statistic`).not.toBe('0');
       expect(value, `${route} NaN statistic`).not.toContain('NaN');
       expect(value, `${route} dash statistic`).not.toMatch(/^[—–-]$/);
       expect(value, `${route} undefined statistic`).not.toContain('undefined');
+    }
+  }
+  expect(total, 'the site renders at least one measured value').toBeGreaterThan(0);
+});
+
+test('no coding-profile figure renders anywhere', async ({ page }) => {
+  // Problem counts, difficulty splits and platform rankings are off the site.
+  // Enforced against the served HTML, not the source, so a figure cannot arrive
+  // through a snapshot or a stray import.
+  const banned = [/\bproblems solved\b/i, /coding score/i, /institute rank/i];
+  for (const route of PAGE_ROUTES) {
+    await page.goto(route, { waitUntil: 'networkidle' });
+    const text = await page.locator('body').innerText();
+    for (const pattern of banned) {
+      expect(text, `${route} matches ${pattern}`).not.toMatch(pattern);
     }
   }
 });

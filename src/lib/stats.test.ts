@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-  geeksforgeeksBreakdownSums,
-  profile,
-  workPrincipleIdsAreUnique,
-} from '@/content/profile';
+import { profile, workPrincipleIdsAreUnique } from '@/content/profile';
+import { CLINIC_RELATIONSHIPS, CLINIC_TABLES } from '@/content/clinic-schema';
 import {
   chooseSection,
   leetcodeIsUsable,
@@ -247,22 +244,48 @@ describe('parseSnapshot', () => {
   });
 });
 
-describe('hand-entered GeeksforGeeks figures', () => {
-  it('has a breakdown that sums to the stated total', () => {
-    // These are typed in by hand rather than fetched, so this arithmetic check is
-    // the only automated defence against a typo.
-    expect(geeksforgeeksBreakdownSums()).toBe(true);
+describe('the proof strip', () => {
+  /*
+   * The GeeksforGeeks arithmetic tests that used to live here are gone with the
+   * figures they guarded. This is their replacement, and it is a stronger check:
+   * the old one confirmed a hand-typed breakdown added up, this one confirms the
+   * claim on the busiest page of the site matches the data it cites.
+   */
+  const cell = (label: string) => {
+    const found = profile.proof.find((point) => point.label === label);
+    if (found === undefined) throw new Error(`no proof cell labelled "${label}"`);
+    return found;
+  };
+
+  it('claims exactly as many clinic tables as the schema has', () => {
+    expect(cell('tables in 3NF').value).toBe(String(CLINIC_TABLES.length));
   });
 
-  it('records when the figures were verified', () => {
-    expect(profile.geeksforgeeks.verifiedOn).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  it('cites the number of relationships the schema actually declares', () => {
+    expect(cell('tables in 3NF').provenance).toContain(
+      `${CLINIC_RELATIONSHIPS.length} enforced relationships`,
+    );
   });
 
-  it('agrees with the proof strip, which claims 950+ across both platforms', () => {
-    // 719 GeeksforGeeks + 242 LeetCode = 961, so "950+" is true and conservative.
-    const claimed = 950;
-    const actual = profile.geeksforgeeks.total + 242;
-    expect(actual).toBeGreaterThanOrEqual(claimed);
+  it('has an enforcement reason recorded for every relationship it counts', () => {
+    // "enforced" is the load-bearing word in that provenance line.
+    for (const relationship of CLINIC_RELATIONSHIPS) {
+      expect(
+        relationship.enforcedBy.length,
+        `${relationship.from} to ${relationship.to}`,
+      ).toBeGreaterThan(0);
+    }
+  });
+
+  it('renders no coding-profile figure', () => {
+    // No problem count, difficulty split or platform ranking, anywhere.
+    const platforms = ['geeksforgeeks', 'leetcode', 'codeforces', 'problems solved'];
+    for (const point of profile.proof) {
+      const haystack = `${point.label} ${point.provenance}`.toLowerCase();
+      for (const platform of platforms) {
+        expect(haystack, `${point.value} ${point.label}`).not.toContain(platform);
+      }
+    }
   });
 });
 

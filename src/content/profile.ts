@@ -7,8 +7,9 @@
  *
  *   1. Graduation is December 2026. The PDF's summary says December 2026 but its
  *      education block says May 2026; December is correct.
- *   2. The DSA figure is 950+ (719 GeeksforGeeks + 242 LeetCode, verified
- *      2026-09-02). The PDF still says 600+.
+ *   2. The PDF claims "600+" data-structures and algorithms problems. The site
+ *      makes no such claim: no problem count, difficulty split or platform
+ *      ranking renders anywhere. The profiles are linked instead.
  *   3. The phone number in the PDF is deliberately not represented here. The site
  *      has no use for it, and modelling it would make it possible to render.
  *
@@ -23,12 +24,15 @@ export type ExternalProfile = {
   readonly handle: string | null;
   /** Whether to emit this in the JSON-LD `sameAs` array. */
   readonly inSameAs: boolean;
-  /**
-   * Whether any *number* from this platform may be rendered. Codeforces is
-   * deliberately `false`: it is linked, but never quantified. See DESIGN.md.
-   */
-  readonly showStats: boolean;
 };
+
+/*
+ * `showStats` used to live here: a per-platform flag for whether a number from
+ * that platform could be rendered, `false` for Codeforces. It is gone because the
+ * rule it encoded is now site-wide and absolute. No figure from any coding profile
+ * renders anywhere, so a field granting permission per platform could only ever be
+ * wrong. The profiles are links.
+ */
 
 export type ProofPoint = {
   /** Rendered in the subset monospace. Only glyphs in MONO_SUBSET are permitted. */
@@ -57,24 +61,15 @@ export type ExperienceEntry = {
   readonly highlights: readonly string[];
 };
 
-/**
- * GeeksforGeeks figures.
+/*
+ * GeeksforGeeksStats used to be declared here: total, the basic/easy/medium/hard
+ * split, coding score and institute rank, hand-entered from the profile.
  *
- * Hand-entered, not fetched: GeeksforGeeks has no public API, and the community
- * scrapers that exist are unreliable enough that depending on one would be worse
- * than a dated constant. `verifiedOn` is when these were read off the profile.
+ * The type and the data are both gone. No problem count, difficulty split or
+ * platform ranking renders anywhere on the site, and the standing rule for the
+ * fetched snapshot applies just as well to a typed constant: if we never store
+ * them they cannot leak. The profile is still linked.
  */
-export type GeeksforGeeksStats = {
-  readonly verifiedOn: string;
-  readonly total: number;
-  readonly school: number;
-  readonly basic: number;
-  readonly easy: number;
-  readonly medium: number;
-  readonly hard: number;
-  readonly codingScore: number;
-  readonly instituteRank: number;
-};
 
 /** A "How I work" principle: a short claim, then the paragraph that backs it. */
 export type WorkPrinciple = {
@@ -135,7 +130,7 @@ export const profile = {
     "I'm Darpan. I'm finishing an MPS in Analytics at Northeastern in Boston, graduating December 2026, after a B.Tech in Information and Communication Technology from Dhirubhai Ambani University in Gujarat.",
     "The route here was unglamorous. Nine months at PepCoding on data structures and full-stack web development, mentoring at my university's CINS club, a summer research internship. Then ETL on AWS Glue, Lambda and S3 at Clomotech, replacing a legacy ingestion process that held up analytics.",
     "I build things larger than they need to be. That's where the interesting failures live. Carbon Record is 273 modules and six models deep. The clinic ERP is a ten-table 3NF schema with a SQL viewer, so I could check dashboard numbers against the database.",
-    "Alongside that I've solved around 950 algorithm problems across GeeksforGeeks and LeetCode, weighted toward medium and hard. Not the interesting part of my work, but the reason the interesting part goes faster.",
+    "Alongside that I've put a long stretch of time into data structures and algorithms. Not the interesting part of my work, but the reason the interesting part goes faster.",
     "What I'm looking for: analytics or data engineering work where the pipeline is the product, somewhere the correctness of the data matters as much as the model on top of it.",
   ] as readonly string[],
 
@@ -152,12 +147,12 @@ export const profile = {
   openTo:
     'Open to analytics engineering, data engineering, and applied ML roles from December 2026.',
 
-  /**
-   * When the coding-profile figures in `proof` were last checked against the live
-   * profiles. Rendered beside the numbers, so a stale figure is honest rather than
-   * silently wrong.
+  /*
+   * statsVerifiedOn used to live here, dating the coding-profile figures in the
+   * proof strip. There are none left: every cell is now measured from a repository
+   * or documented in the résumé, and none of them changes without a commit. A date
+   * that can only ever agree with itself is not evidence.
    */
-  statsVerifiedOn: '2026-09-02',
 
   links: {
     github: {
@@ -165,40 +160,37 @@ export const profile = {
       url: 'https://github.com/darpanradadiya',
       handle: 'darpanradadiya',
       inSameAs: true,
-      showStats: true,
     },
     linkedin: {
       label: 'LinkedIn',
       url: 'https://www.linkedin.com/in/darpan-radadiya-146a49215',
       handle: 'darpan-radadiya-146a49215',
       inSameAs: true,
-      showStats: false,
     },
     leetcode: {
       label: 'LeetCode',
       url: 'https://leetcode.com/u/darpanradadiya576/',
       handle: 'darpanradadiya576',
       inSameAs: true,
-      showStats: true,
     },
     codeforces: {
       label: 'Codeforces',
-      // Linked, never quantified. The rating is fetched but not rendered.
+      // In sameAs only. The rating was never rendered, and now the link is not
+      // either: the contest profile said nothing the case studies do not say
+      // better. The URL stays so the entity graph is complete.
       url: 'https://codeforces.com/profile/darpanradadiya576',
       handle: 'darpanradadiya576',
       inSameAs: true,
-      showStats: false,
     },
     geeksforgeeks: {
       label: 'GeeksforGeeks',
       // TODO(darpan): the profile display name is "Darpan", which is not enough to
       // build a URL, and the slug is not yet known. Left null rather than guessed —
-      // a wrong sameAs asserts an identity that is not his. The 719 figure below is
-      // hand-entered because GeeksforGeeks has no public API.
+      // a wrong sameAs asserts an identity that is not his. This is now the only
+      // thing blocking the link, because there is no longer a figure to render.
       url: null,
       handle: null,
       inSameAs: true,
-      showStats: true,
     },
   } satisfies Record<string, ExternalProfile>,
 
@@ -225,9 +217,19 @@ export const profile = {
       provenance: 'Pre-commit gated, 21 test files',
     },
     {
-      value: '950+',
-      label: 'problems solved',
-      provenance: 'GeeksforGeeks and LeetCode',
+      /*
+       * Replaces "950+ problems solved". A problem count measures how much
+       * practice, not what was built, and it came from a platform rather than
+       * from the work; this comes out of a schema anyone can read. It also puts a
+       * second project in the strip, which was otherwise Carbon Record twice and
+       * one internship, and it is the only cell that speaks to data modelling.
+       *
+       * Checked against CLINIC_TABLES and CLINIC_RELATIONSHIPS in the unit tests,
+       * so the strip cannot disagree with the schema it cites.
+       */
+      value: '10',
+      label: 'tables in 3NF',
+      provenance: 'Clinic ERP, 9 enforced relationships',
     },
     {
       value: '100K+',
@@ -235,19 +237,6 @@ export const profile = {
       provenance: 'Clomotech ETL on Glue, Lambda and S3',
     },
   ] satisfies readonly ProofPoint[],
-
-  /** See GeeksforGeeksStats — these are read off the profile, not fetched. */
-  geeksforgeeks: {
-    verifiedOn: '2026-09-02',
-    total: 719,
-    school: 1,
-    basic: 74,
-    easy: 225,
-    medium: 348,
-    hard: 71,
-    codingScore: 2270,
-    instituteRank: 70,
-  } satisfies GeeksforGeeksStats,
 
   education: [
     {
@@ -379,7 +368,7 @@ export const profile = {
     {
       category: 'Foundations',
       items: [
-        'Data structures and algorithms (950+ problems solved)',
+        'Data structures and algorithms',
         'Operating systems',
         'Database management systems',
         'Object-oriented programming',
@@ -404,17 +393,6 @@ export function currentEducation(): EducationEntry {
     throw new Error('profile.education must contain at least one entry');
   }
   return first;
-}
-
-/**
- * Guards the hand-entered GeeksforGeeks breakdown against a typo.
- *
- * These numbers are not validated by any fetch, so the one check available is that
- * the tiers add up to the stated total. Called from the unit tests.
- */
-export function geeksforgeeksBreakdownSums(): boolean {
-  const g = profile.geeksforgeeks;
-  return g.school + g.basic + g.easy + g.medium + g.hard === g.total;
 }
 
 /**

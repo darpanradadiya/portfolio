@@ -1,6 +1,6 @@
 import { Measured } from '@/components/Measured';
 import { profile } from '@/content/profile';
-import { cssVar, formatDate } from '@/lib/format';
+import { cssVar } from '@/lib/format';
 
 /**
  * Four measured numbers, each with its evidence directly beneath it. This is where
@@ -91,9 +91,14 @@ export function ProofStrip() {
           );
         })}
       </ol>
+      {/*
+        No verification date. It dated the coding-profile figures, and there are
+        none: every cell is now measured from a repository or documented in the
+        résumé, and none of them moves without a commit.
+      */}
       <p className="text-ink-muted text-2xs mt-5 pb-2">
-        Coding-profile figures verified {formatDate(profile.statsVerifiedOn)}. Everything
-        else is documented in the résumé.
+        Every figure here is measured from the repository it names, or documented in the
+        résumé.
       </p>
     </div>
   );

@@ -120,27 +120,12 @@ for (const project of getAllProjects()) {
   }
 }
 
-const geeks = profile.geeksforgeeks;
-const geeksValues: [string, number][] = [
-  ['total', geeks.total],
-  ['school', geeks.school],
-  ['basic', geeks.basic],
-  ['easy', geeks.easy],
-  ['medium', geeks.medium],
-  ['hard', geeks.hard],
-  ['codingScore', geeks.codingScore],
-  ['instituteRank', geeks.instituteRank],
-];
-for (const [field, value] of geeksValues) {
-  const bad = outOfSubset(String(value));
-  if (bad.length > 0) {
-    violations.push({
-      file: 'src/content/profile.ts',
-      line: 0,
-      detail: `geeksforgeeks.${field} renders as ${JSON.stringify(String(value))}, containing ${bad.map((c) => JSON.stringify(c)).join(', ')}`,
-    });
-  }
-}
+/*
+ * The GeeksforGeeks block that used to be checked here is gone with the data. The
+ * snapshot check below is kept even though nothing renders those values yet: the
+ * fetch and its workflow are still in place, and a guard is cheaper to keep than
+ * to remember to restore.
+ */
 
 if (stats !== null) {
   const snapshotValues: [string, number][] = [
@@ -190,7 +175,6 @@ const snapshotCount =
 const checkedValues =
   profile.proof.length +
   getAllProjects().reduce((total, project) => total + project.metrics.length, 0) +
-  geeksValues.length +
   snapshotCount;
 
 console.log(
