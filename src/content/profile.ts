@@ -78,6 +78,17 @@ export type GeeksforGeeksStats = {
 
 /** A "How I work" principle: a short claim, then the paragraph that backs it. */
 export type WorkPrinciple = {
+  /**
+   * Anchor id for the full paragraph on /about. The home page lists the headings
+   * and links each one here.
+   *
+   * Written down rather than slugified from the heading. A slug derived from prose
+   * changes when the prose is edited, which silently breaks every link to it; this
+   * is a permanent address that a rewrite cannot move. Uniqueness is checked in
+   * the unit tests, because two identical ids would render two elements with the
+   * same anchor and send the link to whichever came first.
+   */
+  readonly id: string;
   readonly heading: string;
   readonly body: string;
 };
@@ -99,18 +110,22 @@ export const profile = {
 
   howIWork: [
     {
+      id: 'tests',
       heading: "1. Tests are how I find out I'm wrong",
       body: "I don't trust my own code, and nobody should trust code that hasn't said what it does when it fails. Carbon Record has 185 pytest functions behind a pre-commit gate. In 65,000 lines I find out I've broken something in seconds, not from a user.",
     },
     {
+      id: 'bad-data',
       heading: '2. Bad data is cheaper to stop than to explain',
       body: 'Almost everything that goes wrong downstream started as a bad record upstream. At Clomotech I wrote validation rules that ran before anything reached a model, cutting manual data-wrangling by around 40%. Catching a malformed row costs seconds; debugging a model trained on one costs days.',
     },
     {
+      id: 'interruption',
       heading: '3. Anything that runs for hours will be interrupted',
       body: 'Carbon Record runs six models in sequence over feature-length input, so I designed for interruption. Embeddings are cached on disk, each stage writes a completion marker, and Gemini calls get three bounded attempts. A job that dies at hour three resumes at hour three.',
     },
     {
+      id: 'uncertainty',
       heading: "4. When a model isn't sure, it should say so",
       body: 'Cast identification carries everything downstream, and there is no answer key. I clustered face embeddings with HDBSCAN rather than k-means because it infers the number of clusters and labels outliers as noise instead of forcing extras into leads. Low-confidence clusters get a human name.',
     },
@@ -127,6 +142,15 @@ export const profile = {
   contact: {
     email: 'radadiya.d@northeastern.edu',
   },
+
+  /**
+   * What Darpan is open to, in one sentence. Rendered on the home page and again
+   * on /contact. It stopped being a literal in JSX the moment it appeared twice:
+   * two copies of a sentence are two things to keep in step, and one of them
+   * always loses.
+   */
+  openTo:
+    'Open to analytics engineering, data engineering, and applied ML roles from December 2026.',
 
   /**
    * When the coding-profile figures in `proof` were last checked against the live
@@ -391,6 +415,18 @@ export function currentEducation(): EducationEntry {
 export function geeksforgeeksBreakdownSums(): boolean {
   const g = profile.geeksforgeeks;
   return g.school + g.basic + g.easy + g.medium + g.hard === g.total;
+}
+
+/**
+ * Guards the "How I work" anchor ids against a copy-paste duplicate.
+ *
+ * Two principles sharing an id renders two elements with the same anchor, and
+ * every link to the second one silently lands on the first. Called from the unit
+ * tests. See WorkPrinciple.
+ */
+export function workPrincipleIdsAreUnique(): boolean {
+  const ids = profile.howIWork.map((principle) => principle.id);
+  return new Set(ids).size === ids.length;
 }
 
 /** Absolute URLs for JSON-LD `sameAs`, excluding profiles whose URL is unknown. */

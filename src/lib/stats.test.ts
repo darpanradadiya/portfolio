@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { geeksforgeeksBreakdownSums, profile } from '@/content/profile';
+import {
+  geeksforgeeksBreakdownSums,
+  profile,
+  workPrincipleIdsAreUnique,
+} from '@/content/profile';
 import {
   chooseSection,
   leetcodeIsUsable,
@@ -259,5 +263,19 @@ describe('hand-entered GeeksforGeeks figures', () => {
     const claimed = 950;
     const actual = profile.geeksforgeeks.total + 242;
     expect(actual).toBeGreaterThanOrEqual(claimed);
+  });
+});
+
+describe('"How I work" anchors', () => {
+  it('gives every principle a unique id', () => {
+    // The home page links to /about#<id>. A duplicate would send two links to the
+    // same paragraph, and nothing about the page would look wrong.
+    expect(workPrincipleIdsAreUnique()).toBe(true);
+  });
+
+  it('uses ids that are valid URL fragments', () => {
+    for (const principle of profile.howIWork) {
+      expect(principle.id, principle.heading).toMatch(/^[a-z][a-z0-9-]*$/);
+    }
   });
 });

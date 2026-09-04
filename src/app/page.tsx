@@ -5,8 +5,6 @@ import { WorkRow } from '@/components/WorkRow';
 import { Section } from '@/components/Section';
 import { MetaList } from '@/components/MetaList';
 import { CopyEmail } from '@/components/CopyEmail';
-import { ContactForm } from '@/components/ContactForm';
-import { Limitation } from '@/components/Limitation';
 import { currentEducation, profile } from '@/content/profile';
 import { getAllProjects } from '@/lib/projects';
 import { absoluteUrl } from '@/lib/site';
@@ -104,36 +102,45 @@ export default function Home() {
         )}
       </Section>
 
-      <Section marker="Method" band="warm" reveal>
-        <h2 className="text-xl">How I work</h2>
-        {profile.howIWork.length > 0 ? (
-          <div className="mt-8 flex flex-col gap-8">
-            {profile.howIWork.map((principle) => (
-              <div key={principle.heading}>
-                <h3 className="text-lg">{principle.heading}</h3>
-                <p className="measure mt-3">{principle.body}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <Limitation className="measure mt-6">
-            Three or four paragraphs on testing, data quality, and tradeoffs belong here.
-          </Limitation>
-        )}
-      </Section>
+      {/*
+        Four claims, and the argument for each one is a click away on /about.
+        The paragraphs used to run in full here, which put 45 words x 4 between
+        a visitor and the rest of the page for a section they had not yet chosen
+        to read. A heading is enough to decide with.
 
+        No empty state. Four headings with nothing behind them is not a section
+        worth rendering, and a note explaining that the copy is unwritten is the
+        site describing its own build status to a reader.
+      */}
+      {profile.howIWork.length > 0 && (
+        <Section marker="Method" band="warm" reveal>
+          <h2 className="text-xl">How I work</h2>
+          <ul className="mt-6 flex list-none flex-col gap-3 p-0">
+            {profile.howIWork.map((principle) => (
+              <li key={principle.id}>
+                <Link href={`/about#${principle.id}`} className="text-lg">
+                  {principle.heading}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
+
+      {/*
+        The address, not the form. A four-field form is ~500px of the home page
+        spent on a visitor who has already decided; the address serves the one who
+        has, and /contact serves the one who would rather write in the browser.
+      */}
       <Section marker="Contact" band="cool" reveal>
         <h2 className="text-xl">Get in touch</h2>
-        <p className="text-ink-muted mt-3 text-xs">
-          Open to analytics engineering, data engineering, and applied ML roles from
-          December 2026.
-        </p>
+        <p className="text-ink-muted mt-3 text-xs">{profile.openTo}</p>
         <div className="mt-5 text-base">
           <CopyEmail email={profile.contact.email} />
         </div>
-        <div className="mt-8">
-          <ContactForm email={profile.contact.email} />
-        </div>
+        <p className="mt-5 text-xs">
+          <Link href="/contact">Send a message instead</Link>
+        </p>
       </Section>
     </div>
   );

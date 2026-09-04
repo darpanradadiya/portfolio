@@ -39,6 +39,7 @@ export function GET(): Response {
     `- [Work](${absoluteUrl('/projects')}): all projects, filterable by domain.`,
     `- [About](${absoluteUrl('/about')}): education, experience, and skills.`,
     `- [Résumé](${absoluteUrl('/resume')}): full résumé, with a PDF download.`,
+    `- [Contact](${absoluteUrl('/contact')}): email address and a message form.`,
     '',
     '## Experience',
     '',

@@ -119,7 +119,8 @@ test('the contact endpoint reports failure instead of pretending to send', async
 });
 
 test('the contact form rejects bad input with a visible message', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'networkidle' });
+  // The form lives on /contact. The home page keeps the address and a link.
+  await page.goto('/contact', { waitUntil: 'networkidle' });
   await page.getByLabel('Name').fill('Ada');
   await page.getByLabel('Email').fill('not-an-email');
   await page.getByLabel('Message').fill('too short');

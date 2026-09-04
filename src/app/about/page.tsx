@@ -33,6 +33,32 @@ export default function AboutPage() {
         )}
       </Section>
 
+      {/*
+        The four principles in full. The home page lists the headings and links
+        each one to the id below, so these anchors are addresses other pages
+        depend on. The ids are written down in profile.ts rather than slugified
+        from the headings, so editing a heading cannot move its anchor.
+
+        scroll-mt clears the sticky header: without it the browser puts the
+        heading under the header and the visitor lands on the paragraph with no
+        idea which claim it belongs to.
+      */}
+      {profile.howIWork.length > 0 && (
+        <Section marker="Method" divided>
+          <h2 className="text-xl">How I work</h2>
+          <div className="mt-6 flex flex-col gap-8">
+            {profile.howIWork.map((principle) => (
+              <div key={principle.id}>
+                <h3 id={principle.id} className="scroll-mt-24 text-lg">
+                  {principle.heading}
+                </h3>
+                <p className="measure mt-3">{principle.body}</p>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+
       <Section marker="Education" divided>
         <h2 className="text-xl">Education</h2>
         <ol className="mt-6 flex list-none flex-col gap-6 p-0">

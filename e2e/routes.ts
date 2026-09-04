@@ -17,6 +17,7 @@ export const PAGE_ROUTES = [
   '/about',
   '/resume',
   '/code',
+  '/contact',
 ] as const;
 
 export const FILE_ROUTES = [
