@@ -188,6 +188,43 @@
   text-decoration-thickness: 2px;
 }
 
+/* ---- call to action --------------------------------------------------
+ * One per page at most, and only for something a reader can go and use.
+ *
+ * The link underline is drawn as a background gradient rather than a
+ * text-decoration, which is what makes it animatable. On a filled control that
+ * gradient draws a line across the bottom of the fill, so it is turned off here
+ * rather than fought with a utility.
+ *
+ * --surface on --accent measures 6.36:1 light and 8.14:1 dark; on the hover
+ * --accent-2 it is 6.37:1 and 9.04:1. Both are the same pairs the submit button
+ * on /contact already uses.
+ */
+
+.cta {
+  display: inline-block;
+  background-image: none;
+  background-color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  color: var(--color-surface);
+  padding: 0.5rem 0.9rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cta {
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease;
+  }
+}
+
+.cta:hover,
+.cta:focus-visible {
+  background-color: var(--color-accent-2);
+  border-color: var(--color-accent-2);
+  color: var(--color-surface);
+}
+
 /* ---- cards -----------------------------------------------------------
  * A tinted surface with a hairline. The lift is a transform and a
  * border-colour change; there is still no box-shadow anywhere in this system.

@@ -118,19 +118,36 @@ export default async function ProjectPage({
           />
         )}
 
+        {/*
+          The demo is a button and the repository is a link, because they are not
+          the same offer. Reading code is work a reader chooses; a running system
+          they can query is the one thing on this site that answers back, and it
+          was previously a text link the same size as everything around it.
+
+          The wait is disclosed rather than discovered. The host sleeps when idle,
+          so a first request can take most of a minute while later ones answer in
+          about a fifth of a second. A visitor who is told that waits; a visitor
+          who is not assumes the link is broken.
+        */}
         {(project.repo !== null || project.demo !== null) && (
-          <ul className="mt-6 flex list-none flex-wrap gap-x-6 p-0 text-xs">
-            {project.repo !== null && (
-              <li>
-                <a href={project.repo}>Repository</a>
-              </li>
-            )}
+          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
             {project.demo !== null && (
-              <li>
-                <a href={project.demo}>Live demo</a>
-              </li>
+              <a href={project.demo} className="cta text-xs">
+                Open the live demo
+              </a>
             )}
-          </ul>
+            {project.repo !== null && (
+              <a href={project.repo} className="text-xs">
+                Repository
+              </a>
+            )}
+          </div>
+        )}
+        {project.demo !== null && (
+          <p className="text-ink-muted text-2xs mt-3">
+            Hosted on a free tier that sleeps when idle, so the first request can take up
+            to a minute. After that it answers in about a fifth of a second.
+          </p>
         )}
 
         {/*

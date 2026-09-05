@@ -200,8 +200,21 @@ export const profile = {
    *
    * `value` renders in the subset monospace; `provenance` renders in the grotesk.
    * That asymmetry is the point — the monospace marks the claim, the grotesk cites
-   * it. Every figure here is documented in the resume or verified against a live
-   * profile, and none of them can render as 0.
+   * it. None of them can render as 0.
+   *
+   * THE PROVENANCE LINE SAYS WHETHER A READER CAN GO AND LOOK. Three of these four
+   * figures cannot be checked by clicking: two live in a private repository and one
+   * exists only on the résumé. On a site whose entire argument is that every claim
+   * can be checked, a strip that reads as four equally inspectable facts is quietly
+   * overclaiming.
+   *
+   * The alternative was to swap in figures from public repositories. Both candidates
+   * were measured and both cost more than they returned; the reasoning is in the
+   * brief so nobody reopens it. Saying which claims are inspectable costs nothing,
+   * changes no value, and is the more honest version of the same strip.
+   *
+   * "Repository private" is a statement about access, not a hedge about accuracy.
+   * Every figure here was re-verified from source on 2026-09-04.
    */
   proof: [
     {
@@ -217,12 +230,12 @@ export const profile = {
        *
        * "24 subsystems" was never evidenced and is not claimed anywhere.
        */
-      provenance: 'Carbon Record, 65K lines',
+      provenance: 'Carbon Record, 65K lines. Repository private.',
     },
     {
       value: '185',
       label: 'pytest functions',
-      provenance: 'Pre-commit gated, 21 test files',
+      provenance: 'Carbon Record, 21 test files. Repository private.',
     },
     {
       /*
@@ -237,12 +250,12 @@ export const profile = {
        */
       value: '10',
       label: 'tables in 3NF',
-      provenance: 'Clinic ERP, 9 enforced relationships',
+      provenance: 'Clinic ERP, 9 enforced relationships. Schema public.',
     },
     {
       value: '100K+',
       label: 'records a day',
-      provenance: 'Clomotech ETL on Glue, Lambda and S3',
+      provenance: 'Clomotech ETL on Glue, Lambda and S3.',
     },
   ] satisfies readonly ProofPoint[],
 

@@ -173,25 +173,21 @@ reporting layer on top rather than denormalise underneath.
 
 ### The sql.js split
 
-The demo runs SQL in the browser through sql.js, and the database file it loads has
-eight patients in it. The real one has five thousand.
+The demo runs SQL in the browser through sql.js. The database file it loads,
+`public/clinic_erp.db`, is 86KB and holds 75 rows across all ten tables: 8 patients, 14
+appointments, 8 encounters, 8 invoices. `server/seed.js` builds 5,000 patients and about
+12,000 appointments instead.
 
-sql.js loads the entire database into browser memory as a single file, so committing
-the full seed would mean a multi-megabyte binary in the repository that every visitor
-downloads before the page is usable, to run queries whose answers a dashboard already
-displays. The eight-patient file proves the viewer works and the queries are real. The
-5,000-row database is built server-side by the seed script, which is where the
-query-performance claims come from.
+That split is deliberate, and the constraint that forces it is sql.js. It loads the
+entire database into browser memory as one file, so committing the full seed would put a
+multi-megabyte binary in the repository that every visitor downloads before the page is
+usable, to run queries whose answers a dashboard already displays. 86KB loads instantly
+and proves the same thing: the viewer works, the joins resolve, the SQL is real.
 
-So there are two databases doing two jobs: one to demonstrate that metrics trace back
-to source tables, one to validate that the schema holds up at scale.
-
-{/*
-  [CHECK] — I've written this as deliberate. If the 8-patient file is just what
-  happened to get committed, say so instead; "the committed sample is small because it
-  was convenient, and the real seed runs server-side" is a fine sentence and a true
-  one.
-*/}
+So there are two databases doing two jobs. The committed fixture demonstrates that
+metrics trace back to source tables. The seeded one validates that the schema holds up at
+volume, and it is where every query-performance claim comes from. Both are in the
+repository: the fixture as a file, the seed as a script you run.
 
 ## Results
 

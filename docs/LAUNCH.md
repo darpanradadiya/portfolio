@@ -94,28 +94,30 @@ python3 scripts/redact-resume.py
 
 ## 4. Answer the review markers
 
-**Status: outstanding.** Six questions and seven author notes, all inside MDX
-comments. None renders: the build guard scans the compiled output for `TODO` and for
-`[CHECK]`, `[INFERRED]`, `[TBD]`, `[FIXME]` and `[XXX]`, and it is green.
+**Status: five left, one closed.** All live in MDX comments and none renders.
+`npm run lint:todo` fails the build if one ever reaches a page, and it is green.
 
-Five `[CHECK]` questions, one `[INFERRED]` note on the clinic problem statement, and
-seven `TODO(darpan)` notes that record why a section is the length it is. Answering
-the six unblocks prose; the seven are context, not debts.
-
-All live in MDX comments and none renders. `npm run lint:todo` fails the build if one
-ever reaches a page.
+Four `[CHECK]` questions and one `[INFERRED]` note, plus seven `TODO(darpan)` notes
+that record why a section is the length it is. Answering the five unblocks prose; the
+seven are context, not debts.
 
 | File                               | Question                                                                                                                      |
 | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | `carbon-record-automation.mdx`     | Is "forty speaking parts" representative? It comes from the reference film's 42 characters.                                   |
 | `carbon-record-automation.mdx`     | Was the deleted caching stage measured before deletion, or after?                                                             |
 | `healthcare-clinic-erp.mdx`        | Does the live SQL viewer follow from the 3NF decision, or was it separate?                                                    |
-| `healthcare-clinic-erp.mdx`        | Was the 8-patient sample deliberate, or just what got committed?                                                              |
 | `bank-term-deposit-prediction.mdx` | Solo or group coursework? The README credits you alone; the notebook imports `capstone_group7`. `role` is null until you say. |
 | `healthcare-clinic-erp.mdx`        | `[INFERRED]`: the problem statement is read from the code rather than from anything you wrote. Confirm or replace it.         |
 
-One `[INFERRED]` also remains, on the clinic's problem statement: it is read from the
-code rather than from you, and the assignment brief would settle it.
+**The sql.js question is closed, and by measurement rather than recollection.** It
+asked whether the eight-patient committed database was deliberate.
+`public/clinic_erp.db` is 86KB and holds 75 rows across all ten tables, of which 8
+patients, 14 appointments, 8 encounters and 8 invoices. `server/seed.js` loops 5,000
+times at line 171 and its own comment documents about 12,000 appointments. The case
+study states both, and the marker is gone.
+
+Worth trying on the rest: at least one more of these is a question the repository can
+answer without anyone having to remember anything.
 
 ## 5. Screenshots
 
